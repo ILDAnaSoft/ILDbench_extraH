@@ -7,6 +7,7 @@ code=$1
 subjob=$2
 
 
+output_folder=/afs/desy.de/user/y/ywang/dust/light_higgs_10_120_1807
 
 mass_profile=(10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120)
 #mass_profile=(45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120)
@@ -26,8 +27,8 @@ do
 		wait
 	fi
 
-	if [[ ! -d  /afs/desy.de/user/y/ywang/dust/light_higgs_10_120_1807/results_${mass} ]]; then
-	    mkdir /afs/desy.de/user/y/ywang/dust/light_higgs_10_120_1807/results_${mass};
+	if [[ ! -d  ${output_folder}/results_${mass} ]]; then
+	    mkdir ${output_folder}/results_${mass};
 	fi
 
 
