@@ -6,5 +6,7 @@ MyProcessor for new higgs analyse
   - Then use the script in the bin_2018 to run the processor
      - ./bin_2018/active.sh   # This will compile the processor 
      - ./bin_2018/run.sh steering_file_name_in_the_xml_isr_folder  # This will run the processor and generate a root file with some observables.
+     - when a root file is generated, it can be further analysed by [BASDA](http://github.com/YancyW/BASDA) to get exclusion limits and all plots.
+     - The configure files for BASDA is in the control_basda folder, put it into BASDA folder, and run with ./BASDA contron_basda/path.dat
  
      
