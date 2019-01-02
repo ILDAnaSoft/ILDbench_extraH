@@ -17,4 +17,4 @@ MyProcessor for new higgs analyse
 	- In order to make the code concisely and easier to read, it uses many functions provided in the ToolSet library. Most of the functions can be understood by their names. The readers can go to ToolSet doc for further checking.
 	- In this package, the Extra_Scalar is the main processor, it uses the collections generated from other processors, the structure is in the following figures.
 		- 
-            ![Image of main structure](https://github.com/ILDAnaSoft/ILDbench_extraH/blob/master/doc/main_structure.png?raw=true)
+            ![Image of main structure](https://raw.githubusercontent.com/ILDAnaSoft/ILDbench_extraH/master/doc/main_structure.png)
