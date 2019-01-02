@@ -1,0 +1,77 @@
+<marlin>
+	<execute>
+		<processor name="MyIsolatedPhotonFinderProcessor"/>
+	</execute>
+
+	<global>
+		<parameter name="LCIOInputFiles">
+			/pnfs/desy.de/ilc/prod/ilc/mc-dbd/ild/dst-merged/250-TDR_ws/2f_Z_leptonic/ILD_o1_v05/v01-16-p10_250/rv01-16-p10_250.sv01-14-01-p00.mILD_o1_v05.E250-TDR_ws.I106605.P2f_z_l.eL.pR-00001-DST.slcio 
+		</parameter>
+		<parameter name="GearXMLFile"> GearOutput.xml </parameter> 
+		<parameter name="MaxRecordNumber" value="100" />  
+		<parameter name="SkipNEvents" value="0" />  
+		<parameter name="SupressCheck" value="false" />  
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
+		<parameter name="AllowToModifyEvent" value="true" />
+	</global>
+
+
+	<processor name="MyIsolatedPhotonFinderProcessor" type="PandoraIsolatedPhotonFinder">
+		<!--Isolated Lepton Finder Processor-->
+
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs </parameter>
+		<!--Copy of input collection but without the isolated photon-->
+		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOsWithoutIsoPhoton</parameter>
+		<!--Output collection of isolated photon-->
+		<parameter name="OutputCollectionIsolatedPhotons" type="string" lcioOutType="ReconstructedParticle">PandoraIsoPhoton </parameter>
+		<!--Output collection of isolated photon in the forward region-->
+		<parameter name="OutputCollectionIsolatedForwardPhotons" type="string" lcioOutType="ReconstructedParticle">PandoraIsoForwardPhoton </parameter>
+
+		<!---------------------------->
+		<!-- Isolation requirements -->
+		<!---------------------------->
+
+		<!--Use energy cuts-->
+		<parameter name="UseEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalEnergyCut" type="float">30 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts-->
+		<parameter name="UsePolarAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalPolarAngle" type="float">0.85 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalPollarAngle" type="float">0.95 </parameter>
+
+
+
+		<!--Use energy cuts in forward region-->
+		<parameter name="UseForwardEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardEnergyCut" type="float">3 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts in forward region-->
+		<parameter name="UseForwardPolarAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardPollarAngle" type="float">0.98 </parameter>
+
+
+
+
+		<!--Use Isolation Cone-->
+		<parameter name="UseIsolationCone" type="bool">true</parameter>
+		<!--Maximum cos cone angle size-->
+		<parameter name="MaximalCosConeAngle" type="float">0.95 </parameter>
+		<!--photon energy over cone energy ratio should larger than this value-->
+		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
+	</processor>
+
+</marlin>
+

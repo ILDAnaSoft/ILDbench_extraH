@@ -1,0 +1,85 @@
+<marlin>
+	<execute>
+		<processor name="MyIsolatedPhotonFinderProcessor"/>
+	</execute>
+
+	<global>
+		<parameter name="LCIOInputFiles">
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/np-light-higgs/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250268.Pnp-lmh_mh30_e2e2h.eL.pR.n001.d_dstm_10929_0.slcio /pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/np-light-higgs/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250268.Pnp-lmh_mh30_e2e2h.eL.pR.n001.d_dstm_10929_1.slcio
+		</parameter>
+		<parameter name="MaxRecordNumber" value="10000" />  
+		<parameter name="SkipNEvents" value="0" />  
+		<parameter name="SupressCheck" value="false" />  
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
+		<parameter name="AllowToModifyEvent" value="true" />
+	</global>
+
+
+	<processor name="MyIsolatedPhotonFinderProcessor" type="MCPhotonFinderX">
+		<!--Isolated Lepton Finder Processor-->
+
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputMCCollection" type="string" lcioInType="MCParticle">MCParticle</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPFOCollection" type="string" lcioInType="MCParticle">PandoraPFOs</parameter>
+		<!--Copy of input collection but without the isolated photon-->
+		<parameter name="OutputPFOCollectionWithoutIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PFOsWithoutIsoPhoton</parameter>
+		<!--Output collection of isolated photon-->
+		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="MCParticle">MCsPhoton_Pythia </parameter>
+		<!--Output collection of isolated photon in the forward region-->
+		<parameter name="OutputCollectionIsolatedForwardPhoton" type="string" lcioOutType="MCParticle">MCsForwardPhoton_Pythia </parameter>
+		<!--Copy of input collection but without the isolated photon-->
+		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="MCParticle">MCsWithoutIsoPhoton_Pythia</parameter>
+		<!--Output collection of isolated photon-->
+		<parameter name="OutputCollectionIsolatedPhoton_Conversion" type="string" lcioOutType="MCParticle">MCsPhoton_Conversion </parameter>
+		<!--Copy of input collection but without the isolated photon-->
+		<parameter name="OutputCollectionWithoutIsolatedPhoton_Conversion" type="string" lcioOutType="MCParticle">MCsWithoutIsoPhoton_Conversion</parameter>
+		<!--Input collection of Link from Reco to MC-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+		<!--Input collection of Link from MC to Reco-->
+		<parameter name="InputMCTruthRecoLink" type="string" lcioInType="LCRELATION">MCTruthRecoLink</parameter>
+
+		<!---------------------------->
+		<!-- Isolation requirements -->
+		<!---------------------------->
+
+		<!--Use energy cuts-->
+		<parameter name="UseEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalEnergyCut" type="float">0 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts-->
+		<parameter name="UsePolarAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalPolarAngle" type="float">0.0 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalPollarAngle" type="float">0.95 </parameter>
+
+
+		<!--Use energy cuts in forward region-->
+		<parameter name="UseForwardEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardEnergyCut" type="float">0 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts in forward region-->
+		<parameter name="UseForwardPolarAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardPollarAngle" type="float">1.0 </parameter>
+
+
+		<!--Use Isolation Cone-->
+		<parameter name="UseIsolationCone" type="bool">false</parameter>
+		<!--Maximum cos cone angle size-->
+		<parameter name="MaximalCosConeAngle" type="float">0.95 </parameter>
+		<!--photon energy over cone energy ratio should larger than this value-->
+		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
+	</processor>
+
+</marlin>
+
