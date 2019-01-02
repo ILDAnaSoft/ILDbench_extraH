@@ -16,4 +16,4 @@ MyProcessor for new higgs analyse
 	- All processors are based on the same template --> "Minimal_Processor", the readers could first read this processor for understanding the structure of my processors.
 	- In order to make the code concisely and easier to read, it uses many functions provided in the ToolSet library. Most of the functions can be understood by their names. The readers can go to ToolSet doc for further checking.
 	- In this package, the Extra_Scalar is the main processor, it uses the collections generated from other processors, the structure is in the following figures.
-        ![Image of main structure](https://raw.githubusercontent.com/ILDAnaSoft/ILDbench_extraH/master/doc/main_structure.png)
+        ![Image of main structure](http://github.com/ILDAnaSoft/ILDbench_extraH/raw/master/doc/main_structure.png)
