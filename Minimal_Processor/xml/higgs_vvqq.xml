@@ -1,0 +1,31 @@
+<marlin>
+	<execute>
+		<processor name="My_Minimal_Processor"/>
+	</execute>
+
+	<global>
+		<parameter name="LCIOInputFiles">
+			/afs/desy.de/user/y/ywang/dust/DBD_Events/rv01-16-p10_250.sv01-14-01-p00.mILD_o1_v05.E250-TDR_ws.I106483.Pnnh.eL.pR-00001-DST.slcio
+		</parameter>
+		<parameter name="GearXMLFile"> GearOutput.xml </parameter> 
+		<parameter name="MaxRecordNumber" value="100" />  
+		<parameter name="SkipNEvents" value="0" />  
+		<parameter name="SupressCheck" value="false" />  
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
+		<parameter name="AllowToModifyEvent" value="true" />
+	</global>
+
+
+	<processor name="My_Minimal_Processor" type="Minimal_Processor">
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCParticleCollection" type="string" lcioInType="MCParticles">MCParticlesSkimmed</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPOParticleCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs </parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+		<!--Output root file name-->
+		<parameter name="RootFileName"> $PWD/../results/higgs_e2_eL.pR.root </parameter>
+	</processor>
+
+</marlin>
+

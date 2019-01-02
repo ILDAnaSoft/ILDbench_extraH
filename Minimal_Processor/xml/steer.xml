@@ -1,0 +1,69 @@
+<processor name="MyIsolatedPhotonFinderProcessor" type="IsolatedPhotonFinderProcessor">
+ <!--Isolated Lepton Finder Processor-->
+
+  <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+
+	<!---------------------------------->
+	<!-- Input and output collections -->
+	<!---------------------------------->
+
+  <!--Input collection of ReconstructedParticles-->
+  <parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs </parameter>
+  <!--Output collection of isolated photon-->
+  <parameter name="OutputCollectionIsolatedPhotons" type="string" lcioOutType="ReconstructedParticle">IsoPhoton </parameter>
+  <!--Output collection of isolated photon in the forward region-->
+  <parameter name="OutputCollectionIsolatedForwardPhotons" type="string" lcioOutType="ReconstructedParticle">IsoForwardPhoton </parameter>
+  <!--Copy of input collection but without the isolated photon-->
+  <parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOsWithoutIsoPhoton</parameter>
+
+	<!---------------------------->
+	<!-- Isolation requirements -->
+	<!---------------------------->
+
+  <!--Use energy cuts-->
+  <parameter name="UseEnergy" type="bool">true </parameter>
+  <!--Minimum energy cut for isolation requirement-->
+  <parameter name="MinimalEnergyCut" type="float">30 </parameter>
+  <!--Maximum energy cut for isolation requirement-->
+  <parameter name="MaximalEnergyCut" type="float">-1 </parameter>
+
+  <!--Use polar angle cuts-->
+  <parameter name="UsePolarAngle" type="bool">true </parameter>
+  <!--Minimum energy cut for isolation requirement-->
+  <parameter name="MinimalPolarAngle" type="float">0.85 </parameter>
+  <!--Maximum energy cut for isolation requirement-->
+  <parameter name="MaximalPollarAngle" type="float">0.95 </parameter>
+
+
+  <!--Use energy ratio cut on ecal/total energy-->
+  <parameter name="UseEnergyRatio" type="bool">true </parameter>
+  <!--Minimum energy cut for isolation requirement-->
+  <parameter name="MinimalEnergyRatio" type="float">0.90 </parameter>
+  <!--Maximum energy cut for isolation requirement-->
+  <parameter name="MaximalEnergyRatio" type="float">-1 </parameter>
+
+  
+  <!--Use energy cuts in forward region-->
+  <parameter name="UseForwardEnergy" type="bool">true </parameter>
+  <!--Minimum energy cut for isolation requirement-->
+  <parameter name="MinimalForwardEnergyCut" type="float">10 </parameter>
+  <!--Maximum energy cut for isolation requirement-->
+  <parameter name="MaximalForwardEnergyCut" type="float">-1 </parameter>
+
+  <!--Use polar angle cuts in forward region-->
+  <parameter name="UseForwardPolarAngle" type="bool">true </parameter>
+  <!--Minimum energy cut for isolation requirement-->
+  <parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
+  <!--Maximum energy cut for isolation requirement-->
+  <parameter name="MaximalForwardPollarAngle" type="float">0.98 </parameter>
+
+
+  <!--Use energy ratio cut on ecal/total energy in forward region-->
+  <parameter name="UseForwardEnergyRatio" type="bool">false</parameter>
+  <!--Minimum energy cut for isolation requirement-->
+  <parameter name="MinimalForwardEnergyRatio" type="float">0.90 </parameter>
+  <!--Maximum energy cut for isolation requirement-->
+  <parameter name="MaximalForwardEnergyRatio" type="float">-1 </parameter>
+
+</processor>
