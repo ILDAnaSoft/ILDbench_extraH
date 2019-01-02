@@ -11,3 +11,10 @@ MyProcessor for new higgs analyse
        HTCondor in bin_2018/channel.sh. Or one can change wo his own submit scripts.
      - when a root file is generated, it can be further analysed by [BASDA](http://github.com/YancyW/BASDA) to get exclusion limits and all plots.
      - The configure files for BASDA is in the control_basda folder, put it into BASDA folder, and run with ./BASDA contron_basda/path.dat
+
+# How to read the code
+	- All processors are based on the same template --> "Minimal_Processor", the readers could first read this processor for understanding the structure of my processors.
+	- In order to make the code concisely and easier to read, it uses many functions provided in the ToolSet library. Most of the functions can be understood by their names. The readers can go to ToolSet doc for further checking.
+	- In this package, the Extra_Scalar is the main processor, it uses the collections generated from other processors, the structure is in the following figures.
+		- 
+            ![Image of main structure](https://github.com/ILDAnaSoft/ILDbench_extraH/main_structure.png)
