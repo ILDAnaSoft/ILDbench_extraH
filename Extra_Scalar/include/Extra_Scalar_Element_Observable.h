@@ -377,7 +377,7 @@ class Extra_Scalar_Information{
 
 }; 
 
-class MCPhotonFinder_Output_Collection{
+class Extra_Scalar_Output_Collection{
 	public:
     	std::string      name;
 		LCCollectionVec* col;
