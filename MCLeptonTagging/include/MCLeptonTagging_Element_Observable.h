@@ -28,6 +28,10 @@ class TTree;
 #include "CChain.h"
 #include "CLorentzVector.h"
 
+#include <IMPL/LCCollectionVec.h>
+#include <EVENT/MCParticle.h>
+#include <EVENT/ReconstructedParticle.h>
+
 using ToolSet::operator<<;
 using ToolSet::operator+;
 using ToolSet::operator-;
@@ -124,9 +128,11 @@ class MCLeptonTagging_Observable{
 		//inserted by process file
 		//************************
 		float visible_energy   ;        
+		float invisible_energy   ;        
 
 		void Init(){
 		    visible_energy =-10000.1;        
+		    invisible_energy =-10000.1;        
 		}
 
 		void Fill_Data(TTree* tree, std::string prefix);
@@ -174,6 +180,14 @@ class MCLeptonTagging_Variable_Vec{
 		std::vector<float> phi                  ;        
 		std::vector<float> e                    ;        
 		std::vector<float> mass                 ;        
+		std::vector<float> endpointx            ;        
+		std::vector<float> endpointy            ;        
+		std::vector<float> endpointz            ;        
+		std::vector<float> endpointr            ;        
+		std::vector<float> vertexx              ;        
+		std::vector<float> vertexy              ;        
+		std::vector<float> vertexz              ;        
+		std::vector<float> vertexr              ;        
 
 		void Init(){
 		    pdg              .clear();        
@@ -183,6 +197,14 @@ class MCLeptonTagging_Variable_Vec{
 		    phi              .clear();        
 		    e                .clear();        
 		    mass             .clear();        
+			endpointx        .clear();
+			endpointy        .clear();
+			endpointz        .clear();
+			endpointr        .clear();
+			vertexx          .clear();
+			vertexy          .clear();
+			vertexz          .clear();
+			vertexr          .clear();
 		}
 
 		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
@@ -196,14 +218,20 @@ class MCLeptonTagging_Number{
 		float num_plus                   ;
 		float num_minus                  ;
 		float num_neutral                ;
+		float num_central                ;
+		float num_forward                ;
 
 		void Init(){
 		    num                = 0;
 		    num_plus           = 0;
 		    num_minus          = 0;
 			num_neutral        = 0;
+			num_central        = 0;
+			num_forward        = 0;
 		}
 
+		void Get_MCParticles_Number ( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles_Number( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
@@ -225,12 +253,9 @@ class MCLeptonTagging_Information_Single{
 		}
 
 
-		void Fill_Data(TTree* tree, std::string prefix){
-			obv              .Fill_Data(tree,prefix+"_obv");
-			leps             .Fill_Data(tree,prefix+"_leps");
-			num_muon         .Fill_Data(tree,prefix+"_num_muon");
-			num_MCs          .Fill_Data(tree,prefix+"_num_MCs" );
-		}
+		void Get_MCParticles ( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles( std::vector<ReconstructedParticle*> input) ;
+		void Fill_Data(TTree* tree, std::string prefix);
 
 }; 
 
@@ -263,6 +288,61 @@ class CLEPTON_CUT{
 
 		CLEPTON_CUT(){
 			Read_Cut();
+		}
+};
+
+class MCLeptonTagging_Output_Collection{
+	public:
+    	std::string      name;
+		LCCollectionVec* col;
+		bool             Jopen;
+	
+		void Init(){
+			Jopen=false;
+		}
+
+		void Set_Switch(bool open){
+			Jopen=open;
+		}
+
+		void Set_Name(std::string in_name){
+			name=in_name;
+		}
+
+		void Set_Collection_MCParticle(){
+			if(Jopen){
+				col= new LCCollectionVec( LCIO::MCPARTICLE ) ;
+			    col->setSubset(true) ;
+			}
+		}
+
+		void Set_Collection_RCParticle(){
+			if(Jopen){
+				col= new LCCollectionVec( LCIO::RECONSTRUCTEDPARTICLE) ;
+			    col->setSubset(true) ;
+			}
+		}
+
+		void Add_Collection(LCEvent* evt){
+			if(Jopen){
+				evt->addCollection(col, name.c_str() );
+			}
+		}
+
+		void Add_Element_MCParticle(std::vector<MCParticle*> input){
+			if(Jopen){
+			    for (int i = 0; i < input.size(); i++ ) {
+			    	col->addElement(input[i]);
+			    }
+			}
+		}
+
+		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
+			if(Jopen){
+			    for (int i = 0; i < input.size(); i++ ) {
+			    	col->addElement(input[i]);
+			    }
+			}
 		}
 };
 #endif

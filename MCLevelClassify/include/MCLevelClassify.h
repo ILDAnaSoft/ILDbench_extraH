@@ -43,35 +43,48 @@ class MCLevelClassify : public Processor {
 		/** Input collection */
 		std::string _inputMCsCollection;
 
-		/** Output collection of isolated photons */
+		/** Output collection of different levels*/
 		std::string _outputHardScatteringCollection;
-
-		/** Output collection (all input with isolated photons removed) */
 		std::string _outputPythiaStableCollection;
 		std::string _outputDetectorSimulationCollection;
 
 		LCCollection*    _MCsCol;
-		LCCollectionVec* _outputHSCol;
-	    LCCollectionVec* _outputPSCol;
-	    LCCollectionVec* _outputDSCol;
+		MCLevelClassify_Output_Collection _outputHSCol;
+		MCLevelClassify_Output_Collection _outputPSCol;
+		MCLevelClassify_Output_Collection _outputDSCol;
+
+		bool _output_switch_root;
+		bool _output_switch_collection;
+
 
 		std::string _pfomcsRelation;
 		LCRelationNavigator* _navpfomcs;
 		std::string _mcspfoRelation;
 		LCRelationNavigator* _navmcspfo;
 
+		// output
+		std::string _rootfilename;
+		TFile*      _outfile;
+		TTree*      _datatrain;
+		void makeNTuple();
+
+
+		// internal para
 		int   _nEvt; 
 		int   _nRun; 
 
 
+		// internal function 
 		void Init  (LCEvent* evt); 
 		void Finish(LCEvent* evt);
-		void Counter(int JMC, LCEvent* evt);
+		void Counter(bool JMC, LCEvent* evt);
 
 
-		bool analyseMCParticle( LCCollection* inputmcCol, LCCollectionVec* outputHSCol,LCCollectionVec* outpuwPSCol, LCCollectionVec* outpuDSCol);
+		//bool analyseMCParticle( LCCollection* inputmcCol, LCCollectionVec* outputHSCol,LCCollectionVec* outputPSCol, LCCollectionVec* outputDSCol, MCLevelClassify_Information& info, MCLevelClassify_Function_Counter &counter);
+		bool analyseMCParticle( LCCollection* inputmcCol, MCLevelClassify_Output_Collection& outputHSCol,MCLevelClassify_Output_Collection& outputPSCol, MCLevelClassify_Output_Collection& outputDSCol, MCLevelClassify_Information& info, MCLevelClassify_Function_Counter &counter);
 
 
+		//self-defined variable
 		MCLevelClassify_Single_Counter       _single_counter;
 		MCLevelClassify_Global_Counter       _global_counter;
 		MCLevelClassify_Counter              _counter;

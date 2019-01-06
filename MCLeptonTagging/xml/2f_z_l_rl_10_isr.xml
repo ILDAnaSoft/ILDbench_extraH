@@ -51,7 +51,7 @@
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
-		<parameter name="RootFileName"> ../result/output.root </parameter>
+		<parameter name="RootFileName"> ../results/output.root </parameter>
 	</processor>
 
 </marlin>

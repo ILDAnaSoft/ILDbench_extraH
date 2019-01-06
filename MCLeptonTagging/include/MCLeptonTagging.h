@@ -50,8 +50,8 @@ class MCLeptonTagging : public Processor {
 		std::string _outputMCsWoLeptonCollection;
 
 		LCCollection*    _MCsCol;
-		LCCollectionVec* _outputLeptonCol;
-	    LCCollectionVec* _outputWoLeptonCol;
+		MCLeptonTagging_Output_Collection _outputLeptonCol;
+		MCLeptonTagging_Output_Collection _outputWoLeptonCol;
 
 		bool _output_switch_root;
 		bool _output_switch_collection;
@@ -73,10 +73,10 @@ class MCLeptonTagging : public Processor {
 		// internal function 
 		void Init  (LCEvent* evt); 
 		void Finish(LCEvent* evt);
-		void Counter(int JMC, LCEvent* evt);
+		void Counter(bool JMC, LCEvent* evt);
 
 
-		bool analyseMCParticle( LCCollection* inputmcCol, LCCollectionVec* outputleptonCol,LCCollectionVec* outpuwWoleptonCol, MCLeptonTagging_Information_Single& info, MCLeptonTagging_Function_Counter &counter);
+		bool analyseMCParticle( LCCollection* inputmcCol, MCLeptonTagging_Output_Collection &outputLeptonCol,MCLeptonTagging_Output_Collection &outputWoleptonCol, MCLeptonTagging_Information_Single &info, MCLeptonTagging_Function_Counter &counter);
 		void checkIsoLeptons(std::vector<MCParticle*> input, std::vector<MCParticle*> &IsoLep, std::vector<MCParticle*> &mcs_WO_IsoLep );
 		bool IsIsoLep( MCParticle* mcs, std::vector<MCParticle*> allmcs) ;
 		bool IsCharged( MCParticle* mcs ) ;

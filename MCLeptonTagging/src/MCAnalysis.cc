@@ -1,27 +1,19 @@
 #include "MCLeptonTagging.h"
 
 
-bool MCLeptonTagging::analyseMCParticle( LCCollection* inputmcCol, LCCollectionVec* outputleptonCol,LCCollectionVec* outpuwWoleptonCol, MCLeptonTagging_Information_Single &info, MCLeptonTagging_Function_Counter &counter){
+bool MCLeptonTagging::analyseMCParticle( LCCollection* inputmcCol, MCLeptonTagging_Output_Collection &outputLeptonCol,MCLeptonTagging_Output_Collection &outputWoleptonCol, MCLeptonTagging_Information_Single &info, MCLeptonTagging_Function_Counter &counter){
 	std::vector<MCParticle*> MCs =ToolSet::CMC::Get_MCParticle(inputmcCol);
 	std::vector<MCParticle*> leps,woleps;
 
 	checkIsoLeptons(MCs,leps,woleps);
 
-	info.leps.Get_MCParticles_Information(leps);
-	for(unsigned int i=0;i<leps.size();i++){
-		if(leps[i]->getCharge()>0){
-			info.num_muon.num_plus++;
-		}
-		else if(leps[i]->getCharge()<0){
-			info.num_muon.num_minus++;
-		}
-		else{
-			info.num_muon.num_neutral++;
-		}
-		info.num_muon.num++;
-	}
+	outputLeptonCol  .Add_Element_MCParticle(leps);
+	outputWoleptonCol.Add_Element_MCParticle(woleps);
 
-	counter.pass_all++;
+	if(_output_switch_root){
+		info.Get_MCParticles(leps);
+		counter.pass_all++;
+	}
 
 	return(true);
 }

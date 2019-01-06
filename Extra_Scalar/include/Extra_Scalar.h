@@ -1,3 +1,11 @@
+/**
+ * @brief Marlin processor for finding isolated photons.
+ * @author Yan Wang <yan.wang@desy.de>
+ * @version $Id:$
+ *
+ * Given a list of MCParticle, identify isolated photons
+ * based on the ecal energy, photon identification,
+ */
 #ifndef Extra_Scalar_h
 #define Extra_Scalar_h  
 
@@ -8,18 +16,12 @@
 #include <lcio.h>
 
 #include <EVENT/LCCollection.h>
-#include <IMPL/LCCollectionVec.h>
-#include <EVENT/MCParticle.h>
-#include <EVENT/ReconstructedParticle.h>
 #include <EVENT/LCParameters.h>
 #include <UTIL/LCRelationNavigator.h>
-
 
 using namespace lcio;
 using namespace marlin;
 using namespace IMPL;
-
-
 
 class Extra_Scalar : public Processor{
 
@@ -48,7 +50,7 @@ class Extra_Scalar : public Processor{
 
 		//Prepare NTuple to check the data
 		void makeNTuple();
-		void Counter(int JMC, int JPFO, int JPFO_MC_Cheating_Muon, int JPFO_MC_Cheating_ISR, LCEvent* evt);
+		void Counter(bool JMC, bool JPFO, bool JPFO_MC_Cheating_Muon, bool JPFO_MC_Cheating_ISR, LCEvent* evt);
 		void Init(LCEvent* evt);
 		void Finish(LCEvent* evt); 
 

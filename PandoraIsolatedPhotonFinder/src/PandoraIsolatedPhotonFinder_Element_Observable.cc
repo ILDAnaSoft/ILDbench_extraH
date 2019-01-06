@@ -1,21 +1,48 @@
 #include "PandoraIsolatedPhotonFinder_Element_Observable.h"
 void PandoraIsolatedPhotonFinder_Global_Counter::Fill_Data(TTree* tree){
-	tree->Branch( "total_event_number", &nevt,"total_event_number"     );
-	tree->Branch( "total_pass_all", &pass_all,"total_pass_all"     );
+	tree->Branch( "total_event_number"             , &nevt                     ,"total_event_number"              );
+	tree->Branch( "total_run_number"               , &nrun                     ,"total_run_number"                );
+	tree->Branch( "total_scale_factor"             , &gweight                  ,"total_scale_factor"              );
+	tree->Branch( "total_pass_PFO"                 , &pass_PFO                 ,"total_pass_PFO"                  );
+	tree->Branch( "total_pass_all"                 , &pass_all                 ,"total_pass_all"                  );
 }
 
 void PandoraIsolatedPhotonFinder_Single_Counter::Fill_Data(TTree* tree){
-	tree->Branch( "event_number", &nevt,"event_number"     );
-	tree->Branch( "run_number", &nrun,"run_number"     );
-	tree->Branch( "weight", &weight,"weight"     );
-	tree->Branch( "pass_all", &pass_all,"pass_all"     );
+	tree->Branch( "event_number"             , &evt                      ,"event_number"              );
+	tree->Branch( "run_number"               , &run                      ,"run_number"                );
+	tree->Branch( "scale_factor"             , &weight                   ,"scale_factor"              );
+	tree->Branch( "pass_PFO"                 , &pass_PFO                 ,"pass_PFO"                  );
+	tree->Branch( "pass_all"                 , &pass_all                 ,"pass_all"                  );
+}
+
+
+void PandoraIsolatedPhotonFinder_Function_Counter::Fill_Data(TTree* tree, std::string prefix){
+	tree->Branch( (prefix+"_pass_all").c_str()     , &pass_all,(prefix+"_pass_all").c_str()  );
+}
+
+
+void PandoraIsolatedPhotonFinder_Observable::Get_MCParticles_Information( std::vector<MCParticle*> input) {
+	TLorentzVector visible=ToolSet::CMC::Get_Sum_To_Lorentz(input);
+	visible_energy = visible.E();
+	TLorentzVector invisible=ToolSet::CMC::Get_InVisible_To_Lorentz(input);
+	invisible_energy = invisible.E();
+	return ;
+}
+
+
+void PandoraIsolatedPhotonFinder_Observable::Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) {
+	TLorentzVector visible=ToolSet::CRC::Get_Sum_To_Lorentz(input);
+	visible_energy = visible.E();
+	TLorentzVector invisible=ToolSet::CRC::Get_InVisible_To_Lorentz(input);
+	invisible_energy = invisible.E();
+	return ;
 }
 
 
 void PandoraIsolatedPhotonFinder_Observable::Fill_Data(TTree* tree, std::string prefix){
 	tree->Branch( (prefix+"_visible_energy").c_str()     , &visible_energy,(prefix+"_visible_energy").c_str()     );
+	tree->Branch( (prefix+"_invisible_energy").c_str()   , &invisible_energy,(prefix+"_invisible_energy").c_str()   );
 }
-
 void PandoraIsolatedPhotonFinder_Variable::Get_MCParticle_Information( MCParticle* input) {
 	pdg      =input->getPDG();
 	p        =ToolSet::CMC::Cal_P(input);
@@ -104,3 +131,74 @@ void PandoraIsolatedPhotonFinder_Variable_Vec::Fill_Data(TTree* tree, std::strin
 	tree->Branch( (prefix+"_vertexz"          ).c_str(), &vertexz            );
 }
 
+void PandoraIsolatedPhotonFinder_Number::Get_MCParticles_Number( std::vector<MCParticle*> input) {
+	num=input.size();
+	for(unsigned int i=0;i<input.size();i++){
+		if(input[i]->getCharge()>0){
+			num_plus++;
+		}
+		else if(input[i]->getCharge()<0){
+			num_minus++;
+		}
+		else{
+			num_neutral++;
+		}
+		if(std::abs(ToolSet::CMC::Cal_CosTheta(input[i]))<0.95){
+			num_central++;
+		}
+		else{
+			num_forward++;
+		}
+	}
+	return ;
+}
+
+
+void PandoraIsolatedPhotonFinder_Number::Get_PFOParticles_Number( std::vector<ReconstructedParticle*> input) {
+	num=input.size();
+	for(unsigned int i=0;i<input.size();i++){
+		if(input[i]->getCharge()>0){
+			num_plus++;
+		}
+		else if(input[i]->getCharge()<0){
+			num_minus++;
+		}
+		else{
+			num_neutral++;
+		}
+		if(std::abs(ToolSet::CMC::Cal_CosTheta(input[i]))<0.95){
+			num_central++;
+		}
+		else{
+			num_forward++;
+		}
+	}
+	return ;
+}
+
+void PandoraIsolatedPhotonFinder_Number::Fill_Data(TTree* tree, std::string prefix){
+	tree->Branch( (prefix+"num"            ).c_str()    , &num        ,(prefix+"num"            ).c_str()        );
+	tree->Branch( (prefix+"num_plus"       ).c_str()    , &num_plus   ,(prefix+"num_plus"       ).c_str()        );
+	tree->Branch( (prefix+"num_minus"      ).c_str()    , &num_minus  ,(prefix+"num_minus"      ).c_str()        );
+	tree->Branch( (prefix+"num_neutral"    ).c_str()    , &num_neutral,(prefix+"num_neutral"    ).c_str()        );
+	tree->Branch( (prefix+"num_central"    ).c_str()    , &num_central,(prefix+"num_central"    ).c_str()        );
+	tree->Branch( (prefix+"num_forward"    ).c_str()    , &num_forward,(prefix+"num_forward"    ).c_str()        );
+}
+
+
+void PandoraIsolatedPhotonFinder_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
+	photon.Get_MCParticles_Information(input);
+	num_photon.Get_MCParticles_Number(input);
+}
+
+void PandoraIsolatedPhotonFinder_Information_Single::Get_PFOParticles( std::vector<ReconstructedParticle*> input) {
+	photon.Get_PFOParticles_Information(input);
+	num_photon.Get_PFOParticles_Number(input);
+}
+
+void PandoraIsolatedPhotonFinder_Information_Single::Fill_Data(TTree* tree, std::string prefix){
+	obv              .Fill_Data(tree,prefix+"_obv");
+	photon           .Fill_Data(tree,prefix+"_photon");
+	num_photon       .Fill_Data(tree,prefix+"_num_photon");
+	num_PFO          .Fill_Data(tree,prefix+"_num_PFO" );
+}

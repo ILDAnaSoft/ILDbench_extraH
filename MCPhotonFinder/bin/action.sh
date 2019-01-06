@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ $#==1 ] ; then 
-	PROJECTNAME=MyProcessor
-elif [ $#==2 ] ; then 
-	PROJECTNAME=$1"Processor"
+if [ $# = 0 ] ; then 
+	PROJECTNAME=MCPhotonFinder
+elif [ $# = 1 ] ; then 
+	PROJECTNAME=$1
 else
-	echo "usage: ./action.sh [Processor Name (will append \"Processor\" automatically)]"
+	echo "usage: ./action.sh [Processor Name (default = \"MCPhotonFinder\")]"
 	exit
 fi
 

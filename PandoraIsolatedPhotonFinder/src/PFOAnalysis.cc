@@ -1,22 +1,30 @@
 #include "PandoraIsolatedPhotonFinder.h"
 
 
-bool PandoraIsolatedPhotonFinder::analysePFOParticle( LCCollection* input_pfo, LCCollectionVec* output_photon,LCCollectionVec* output_other, PandoraIsolatedPhotonFinder_Single_Counter& counter){
-	std::vector<ReconstructedParticle*> PFOs =ToolSet::CRC::Get_POParticle(input_pfo);
+bool PandoraIsolatedPhotonFinder::analysePFOParticle( LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhotonCol, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information_Single& info, PandoraIsolatedPhotonFinder_Function_Counter& counter){
+	std::vector<ReconstructedParticle*> FS =ToolSet::CRC::Get_POParticle(input_pfo);
+	std::vector<ReconstructedParticle*> all_photon=ToolSet::CRC::Get_POParticleType(FS,22);
+	std::vector<ReconstructedParticle*> photon;
+	std::vector<ReconstructedParticle*> wophoton;
 
-    for (int i = 0; i < PFOs.size(); i++ ) {
-    	ReconstructedParticle* pfo= PFOs[i];
+	for (int i = 0; i < all_photon.size(); i++ ) {
+		ReconstructedParticle* mc = all_photon[i];
 
-    	int output_iso =  IsIsolatedPhoton( pfo, PFOs);
-    	if ((output_iso  == 1) || (output_iso == 2) ){
-    		counter.pass_all++;
-    		output_photon->addElement( pfo);
-    	} 
+		int output_iso =  IsIsolatedPhoton( mc, FS);
+		if ((output_iso  == 1) || (output_iso == 2) ){
+			photon.push_back(mc);
+		} 
 		else{
-    		output_other->addElement( pfo );
+			wophoton.push_back(mc);
 		}
-    }
+	}
 
+	outputPhotonCol.Add_Element_RCParticle(photon);
+	outputWoPhotonCol.Add_Element_RCParticle(wophoton);
+
+	info.Get_PFOParticles(photon);
+
+	return(true);
 }
 
 

@@ -81,7 +81,14 @@ void MCLeptonTagging::init() {
 	printParameters() ;
 	_global_counter.Init();
 	_single_counter.Init();
-	_counter.Init();
+	_counter       .Init();
+
+
+	_outputLeptonCol.Set_Switch(_output_switch_collection);
+	_outputLeptonCol.Set_Name(_outputLeptonCollection);
+	_outputWoLeptonCol.Set_Switch(_output_switch_collection);
+	_outputWoLeptonCol.Set_Name(_outputMCsWoLeptonCollection);
+
 	if(_output_switch_root){
 		makeNTuple();
 	}
@@ -116,8 +123,8 @@ void MCLeptonTagging::processEvent( LCEvent * evt ) {
 
 
 
-void MCLeptonTagging::Counter(int JMC, LCEvent* evt){
-	if(JMC==1){
+void MCLeptonTagging::Counter(bool JMC, LCEvent* evt){
+	if(JMC){
 		_global_counter.pass_MCs++;
 		_global_counter.pass_all++;
 		_single_counter.pass_MCs++;
@@ -152,29 +159,18 @@ void MCLeptonTagging::Init(LCEvent* evt) {
 	}
 
 
-	if(_output_switch_collection){
-		// Output PFOs removed isolated photon 
-		_outputWoLeptonCol= new LCCollectionVec( LCIO::MCPARTICLE) ;
-		_outputWoLeptonCol->setSubset(true) ;
-		
-		// Output PFOs of isolated photon 
-		_outputLeptonCol= new LCCollectionVec( LCIO::MCPARTICLE);
-		_outputLeptonCol->setSubset(true);
-	}
+	_outputLeptonCol  .Set_Collection_MCParticle() ;
+	_outputWoLeptonCol.Set_Collection_MCParticle() ;
 
 }
 
 
 void MCLeptonTagging::Finish(LCEvent* evt) { 
-	ToolSet::ShowMessage(2,"nEvt",_global_counter.nevt);
 	if(_output_switch_root){
 		_datatrain->Fill();
 	}
-	if(_output_switch_collection){
-		// Add pfos to new collection
-		evt->addCollection(_outputLeptonCol,  _outputLeptonCollection.c_str() );
-		evt->addCollection(_outputWoLeptonCol,_outputMCsWoLeptonCollection.c_str());
-	}
+	_outputLeptonCol  .Add_Collection(evt);
+	_outputWoLeptonCol.Add_Collection(evt);
 
 }
 
@@ -201,7 +197,8 @@ void MCLeptonTagging::makeNTuple() {
 	//Define root tree
 	_global_counter.Fill_Data(_datatrain);
 	_single_counter.Fill_Data(_datatrain);
-	_info .Fill_Data(_datatrain);
+	_counter       .Fill_Data(_datatrain);
+	_info          .Fill_Data(_datatrain);
 	return;
 
 }

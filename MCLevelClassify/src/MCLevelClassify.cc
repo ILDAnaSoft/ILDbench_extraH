@@ -36,6 +36,12 @@ MCLevelClassify::MCLevelClassify()
 				_inputMCsCollection,
 				std::string("MCParticle"));
 
+		//Output Collection 
+		registerProcessorParameter( "SwitchOutputCollection",
+				"whether to write a Marlin collection for further Marlin",
+				_output_switch_collection,
+				bool(true) );
+
 		registerOutputCollection( LCIO::MCPARTICLE,
 				"OutputCollectionHardScattering",
 				"Output collection of Hard Scattering particles",
@@ -68,6 +74,16 @@ MCLevelClassify::MCLevelClassify()
 				_mcspfoRelation,
 				std::string("MCTruthRecoLink"));
 
+		//Output root 
+		registerProcessorParameter( "SwitchOutputRoot",
+				"whether to write a root tree for observables",
+				_output_switch_root,
+				bool(true) );
+
+		registerProcessorParameter( "RootFileName",
+				"Name of Root file (default: output.root)",
+				_rootfilename, 
+				std::string("../result/output.root") );
 
 	}
 
@@ -79,7 +95,18 @@ void MCLevelClassify::init() {
 	printParameters() ;
 	_global_counter.Init();
 	_single_counter.Init();
-	_counter.Init();
+	_counter       .Init();
+
+	_outputHSCol.Set_Switch(_output_switch_collection);
+	_outputHSCol.Set_Name(_outputHardScatteringCollection);
+	_outputPSCol.Set_Switch(_output_switch_collection);
+	_outputPSCol.Set_Name(_outputPythiaStableCollection);
+	_outputDSCol.Set_Switch(_output_switch_collection);
+	_outputDSCol.Set_Name(_outputDetectorSimulationCollection);
+
+	if(_output_switch_root){
+		makeNTuple();
+	}
 }
 
 void MCLevelClassify::processRunHeader( LCRunHeader* run) { 
@@ -100,7 +127,7 @@ void MCLevelClassify::processRunHeader( LCRunHeader* run) {
 void MCLevelClassify::processEvent( LCEvent * evt ) { 
 	Init(evt);
 
-	bool JMC=analyseMCParticle( _MCsCol, _outputHSCol, _outputPSCol, _outputDSCol) ;
+	bool JMC=analyseMCParticle( _MCsCol, _outputHSCol, _outputPSCol, _outputDSCol, _info, _counter.MCs) ;
 
 	Counter(JMC, evt);
 
@@ -111,10 +138,12 @@ void MCLevelClassify::processEvent( LCEvent * evt ) {
 
 
 
-void MCLevelClassify::Counter(int JMC, LCEvent* evt){
-	if(JMC==1){
+void MCLevelClassify::Counter(bool JMC, LCEvent* evt){
+	if(JMC){
 		_global_counter.pass_MCs++;
+		_global_counter.pass_all++;
 		_single_counter.pass_MCs++;
+		_single_counter.pass_all++;
 	}
 	else{
 		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
@@ -126,6 +155,7 @@ void MCLevelClassify::Init(LCEvent* evt) {
 	_nEvt++;
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
+	_global_counter.gweight=1;
 	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
 
 	_info.Init();
@@ -145,39 +175,72 @@ void MCLevelClassify::Init(LCEvent* evt) {
 	_navpfomcs = new LCRelationNavigator( evt->getCollection( _pfomcsRelation ) );
 	_navmcspfo = new LCRelationNavigator( evt->getCollection( _mcspfoRelation ) );
 
-
-	_outputHSCol= new LCCollectionVec( LCIO::MCPARTICLE) ;
-	_outputHSCol->setSubset(true) ;
-
-	_outputPSCol= new LCCollectionVec( LCIO::MCPARTICLE);
-	_outputPSCol->setSubset(true);
-
-	_outputDSCol= new LCCollectionVec( LCIO::MCPARTICLE);
-	_outputDSCol->setSubset(true);
+	_outputHSCol.Set_Collection_MCParticle() ;
+	_outputPSCol.Set_Collection_MCParticle() ;
+	_outputDSCol.Set_Collection_MCParticle() ;
 
 	ToolSet::CMC::Set_Nav_From_MC_To_RC(_navmcspfo);
 }
 
 
 void MCLevelClassify::Finish(LCEvent* evt) { 
-	// Add pfos to new collection
-	evt->addCollection(_outputHSCol,_outputHardScatteringCollection.c_str() );
-	evt->addCollection(_outputPSCol,_outputPythiaStableCollection.c_str());
-	evt->addCollection(_outputDSCol,_outputDetectorSimulationCollection.c_str());
-	streamlog_out(DEBUG) << "   processing event: " << evt->getEventNumber() 
-		<< "   in run:  " << evt->getRunNumber() 
-		<< std::endl ;
+	if(_output_switch_root){
+		_datatrain->Fill();
+	}
+	_outputHSCol.Add_Collection(evt);
+	_outputPSCol.Add_Collection(evt);
+	_outputDSCol.Add_Collection(evt);
 }
 
 void MCLevelClassify::check( LCEvent * evt ) { 
 }
 
 void MCLevelClassify::end() { 
-	std::cout << "MCLevelClassify::end()  " << name() 
-		<< " processed " << _nEvt << " events in " << _nRun << " runs "
-		<< std::endl ;
+	if(_output_switch_root){
+		_outfile->cd();
+		_datatrain->Write();
+		_outfile->Close();
+	}
+	_global_counter.Print();
 
 }
+
+
+void MCLevelClassify::makeNTuple() {
+
+	//Output root file
+	std::cout << _rootfilename << std::endl;
+	_outfile = new TFile( _rootfilename.c_str() , "RECREATE" );
+	_datatrain= new TTree( "datatrain" , "events" );
+
+	//Define root tree
+	_global_counter.Fill_Data(_datatrain);
+	_single_counter.Fill_Data(_datatrain);
+	_counter       .Fill_Data(_datatrain);
+	_info          .Fill_Data(_datatrain);
+	return;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

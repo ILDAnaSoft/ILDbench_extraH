@@ -2,7 +2,7 @@
 #include "CRC.h"
 
 
-int Strange_Photon::analysePFOParticle(LCCollection* PFOs_col, LCRelationNavigator* navPFOToMC, Strange_Photon_Information &info, Strange_Photon_Counter& counter){
+int Strange_Photon::analysePFOParticle(LCCollection* PFOs_col, LCRelationNavigator* navPFOToMC, Strange_Photon_Information_Single &info, Strange_Photon_Function_Counter& counter){
 
 	std::vector<ReconstructedParticle*> pfo = ToolSet::CRC::Get_POParticle(PFOs_col);
 
@@ -11,7 +11,6 @@ int Strange_Photon::analysePFOParticle(LCCollection* PFOs_col, LCRelationNavigat
 
 	//info.data_variable_vec.Get_PFOParticles_Information( pfo);
 
-	counter.pass_all++ ;
 	return(1);
 }
 

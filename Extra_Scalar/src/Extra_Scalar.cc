@@ -190,9 +190,9 @@ void Extra_Scalar::processEvent( LCEvent * evt )
 { 
 	Init(evt);
 
-	int JOverlay, JMC,JPFO, JPFO_MC_Cheating_Muon, JPFO_MC_Cheating_ISR;
+	bool JOverlay, JMC,JPFO, JPFO_MC_Cheating_Muon, JPFO_MC_Cheating_ISR;
 
-	JMC=analyseMCParticle(_mcsCol,_info);
+	JMC=analyseMCParticle(_MCsCol,_info);
 
 	JPFO=analysePhysicalObject(_PFOMuonCol,_PFOPhotonCol,_PFOWoMuonPhotonCol, _info.po);
 
@@ -208,8 +208,8 @@ void Extra_Scalar::processEvent( LCEvent * evt )
 
 
 
-void Extra_Scalar::Counter(int JMC, int JPFO, int JPFO_MC_Cheating_Muon, int JPFO_MC_Cheating_ISR, LCEvent* evt){
-    if(JMC==1){
+void Extra_Scalar::Counter(bool JMC, bool JPFO, bool JPFO_MC_Cheating_Muon, bool JPFO_MC_Cheating_ISR, LCEvent* evt){
+    if(JMC){
     	_global_counter.pass_MCs++;
     	_single_counter.pass_MCs++;
     }
@@ -217,7 +217,7 @@ void Extra_Scalar::Counter(int JMC, int JPFO, int JPFO_MC_Cheating_Muon, int JPF
 		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
     }
 	
-    if(JPFO==1){
+    if(JPFO){
     	_global_counter.pass_PFO++;
     	_single_counter.pass_PFO++;
     }
@@ -225,7 +225,7 @@ void Extra_Scalar::Counter(int JMC, int JPFO, int JPFO_MC_Cheating_Muon, int JPF
 		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
     }
 
-    if(JPFO_MC_Cheating_Muon==1){
+    if(JPFO_MC_Cheating_Muon){
     	_global_counter.pass_PFO_MC_Cheating_Muon++;
     	_single_counter.pass_PFO_MC_Cheating_Muon++;
     }
@@ -233,7 +233,7 @@ void Extra_Scalar::Counter(int JMC, int JPFO, int JPFO_MC_Cheating_Muon, int JPF
 		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
     }
 
-    if(JPFO_MC_Cheating_ISR==1){
+    if(JPFO_MC_Cheating_ISR){
     	_global_counter.pass_PFO_MC_Cheating_ISR++;
     	_single_counter.pass_PFO_MC_Cheating_ISR++;
     }
@@ -241,7 +241,7 @@ void Extra_Scalar::Counter(int JMC, int JPFO, int JPFO_MC_Cheating_Muon, int JPF
 		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
     }
 
-	if(JMC==1&&JPFO==1&&JPFO_MC_Cheating_Muon==1&&JPFO_MC_Cheating_ISR==1){
+	if(JMC&&JPFO&&JPFO_MC_Cheating_Muon&&JPFO_MC_Cheating_ISR){
 		_global_counter.pass_all++;
     	_single_counter.pass_all++;
 	}
@@ -309,7 +309,7 @@ void Extra_Scalar::Init(LCEvent* evt){
 	}
 
 	try{
-		_PFOWoLepPhotonCol = evt->getCollection( _inputPFOWoMuonPhotonCollection );
+		_PFOWoMuonPhotonCol = evt->getCollection( _inputPFOWoMuonPhotonCollection );
 	}
 	catch(...){
 		std::cout << "no pfos after Pandora isolated photon tagging in this event" << std::endl;
@@ -339,7 +339,7 @@ void Extra_Scalar::Init(LCEvent* evt){
 
 
 	try{
-		_MCsWoLepPhotonCol= evt->getCollection( _inputMCsWoMuonPhotonCollection );
+		_MCsWoMuonPhotonCol= evt->getCollection( _inputMCsWoMuonPhotonCollection );
 	}
 	catch(...){
 		std::cout << "no MCs without photon pythia in this event" << std::endl;

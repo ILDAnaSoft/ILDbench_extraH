@@ -5,10 +5,14 @@
 
 	<global>
 		<parameter name="LCIOInputFiles">
-			/pnfs/desy.de/ilc/prod/ilc/mc-dbd/ild/dst-merged/250-TDR_ws/2f_Z_leptonic/ILD_o1_v05/v01-16-p10_250/rv01-16-p10_250.sv01-14-01-p00.mILD_o1_v05.E250-TDR_ws.I106605.P2f_z_l.eL.pR-00001-DST.slcio 
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_0.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_1.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_2.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_3.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_4.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_5.slcio
 		</parameter>
-		<parameter name="GearXMLFile"> GearOutput.xml </parameter> 
-		<parameter name="MaxRecordNumber" value="100" />  
+		<parameter name="MaxRecordNumber" value="1000" />  
 		<parameter name="SkipNEvents" value="0" />  
 		<parameter name="SupressCheck" value="false" />  
 		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
@@ -21,12 +25,16 @@
 
 		<!--Input collection of ReconstructedParticles-->
 		<parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs </parameter>
-		<!--Copy of input collection but without the isolated photon-->
-		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOsWithoutIsoPhoton</parameter>
-		<!--Output collection of isolated photon-->
-		<parameter name="OutputCollectionIsolatedPhotons" type="string" lcioOutType="ReconstructedParticle">PandoraIsoPhoton </parameter>
-		<!--Output collection of isolated photon in the forward region-->
-		<parameter name="OutputCollectionIsolatedForwardPhotons" type="string" lcioOutType="ReconstructedParticle">PandoraIsoForwardPhoton </parameter>
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> false </parameter>
+		<!--Output collection of isolated photons-->
+		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOWoIsoPhoton</parameter>
+		<!--Output collection of without isolated photons-->
+		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PandoraIsoPhoton</parameter>
+
+		<!--Output root file-->
+		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
+		<parameter name="RootFileName"> ../results/output_PFO.root </parameter>
 
 		<!---------------------------->
 		<!-- Isolation requirements -->

@@ -2,7 +2,7 @@
 #include "CMC.h"
 using namespace lcio;
 
-int Strange_Photon::analyseMCParticle( LCCollection* Allmc,  LCRelationNavigator* navMCToPFO,  Strange_Photon_Information &info, Strange_Photon_Information &info2, Strange_Photon_Counter& counter) {
+int Strange_Photon::analyseMCParticle( LCCollection* Allmc,  LCRelationNavigator* navMCToPFO,  Strange_Photon_Information_Single &info, Strange_Photon_Information_Single &info2, Strange_Photon_Information_Single& pfo, Strange_Photon_Function_Counter& counter) {
 	//generate all basic sorts 
 	ToolSet::CMC::Set_Nav_From_MC_To_RC(navMCToPFO);
 
@@ -50,8 +50,8 @@ int Strange_Photon::analyseMCParticle( LCCollection* Allmc,  LCRelationNavigator
 		if(mc_energy-pfo_energy>20){
 
 			// store data
-			info.data_variable_vec.Get_MCParticles_Information(_photon_chain.Get_FromRC_MC()[i]);
-			info.data_observable.visible_energy=mc_energy-pfo_energy;
+			info.photon.Get_MCParticles_Information(_photon_chain.Get_FromRC_MC()[i]);
+			info.obv.visible_energy=mc_energy-pfo_energy;
 
 			MC_photon_conversion.push_back(_photon_chain.Get_Combined_RC()[i]);
 			lost_energy_mc_photon.push_back(_photon_chain.Get_MCInput()[i]);
@@ -60,11 +60,10 @@ int Strange_Photon::analyseMCParticle( LCCollection* Allmc,  LCRelationNavigator
 	}
 
 	// store data
-	info2    .data_variable_vec.Get_MCParticles_Information(lost_energy_mc_photon);
-	_pfo_info.data_variable_vec.Get_PFOParticles_Information(MC_photon_conversion);
+	info2.photon.Get_MCParticles_Information(lost_energy_mc_photon);
+	pfo  .photon.Get_PFOParticles_Information(MC_photon_conversion);
 
 	// finish
-	counter.pass_all++;
 	_photon_chain.Clear();
 
 

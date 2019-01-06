@@ -16,9 +16,6 @@
 #include <lcio.h>
 
 #include <EVENT/LCCollection.h>
-#include <IMPL/LCCollectionVec.h>
-#include <EVENT/MCParticle.h>
-#include <EVENT/ReconstructedParticle.h>
 #include <EVENT/LCParameters.h>
 #include <UTIL/LCRelationNavigator.h>
 
@@ -39,22 +36,29 @@ class MCPhotonFinder : public Processor {
 		virtual void check( LCEvent * evt ) ; 
 		virtual void end() ;
 
-    public:
 	protected:
 
     	/** Input collection */
-    	std::string _input_MCsCollection;
+    	std::string _inputMCsCollection;
 
     	/** Output collection of isolated photons */
-    	std::string _output_IsoPhotonCollection;
+    	std::string _outputIsoPhotonCollection;
 
     	/** Output collection (all input with isolated photons removed) */
-    	std::string _output_WoIsoPhotonCollection;
+    	std::string _outputWoIsoPhotonCollection;
 
+    	LCCollection*    _MCsCol;
+		MCPhotonFinder_Output_Collection _outputWoIsoPhotonCol;
+		MCPhotonFinder_Output_Collection _outputIsoPhotonCol;
 
-    	LCCollection*    _input_MCsCol;
-		LCCollectionVec* _output_WoIsoPhotonCol;
-	    LCCollectionVec* _output_IsoPhotonCol;
+		bool _output_switch_root;
+		bool _output_switch_collection;
+
+		// output
+		std::string _rootfilename;
+		TFile*      _outfile;
+		TTree*      _datatrain;
+		void makeNTuple();
 
     	/** If set to true, uses Energy cuts in the central region*/
     	bool  _useEnergy;
@@ -81,13 +85,16 @@ class MCPhotonFinder : public Processor {
     	float _maxCosConeAngle;
     	float _ConeEnergyRatio;
 
-
+		//internal para
 		int   _nEvt;
+		int   _nRun; 
 
+		// internal function 
 		void  Init  (LCEvent* evt); 
 		void  Finish(LCEvent* evt);
+		void  Counter(bool JMC, LCEvent* evt);
 
-		bool  analyseMCParticle( LCCollection* input_mc, LCCollectionVec* output_photon,LCCollectionVec* output_mcother, MCPhotonFinder_Single_Counter& counter);
+		bool  analyseMCParticle( LCCollection* inputmcCol, MCPhotonFinder_Output_Collection& outputPhotonCol,MCPhotonFinder_Output_Collection &outputWoPhotonCol, MCPhotonFinder_Information_Single & info, MCPhotonFinder_Function_Counter  &counter);
 
     	/** Calculates the cone energy */
     	float getConeEnergy( MCParticle* mc, std::vector<MCParticle*> all ) ;
@@ -104,9 +111,11 @@ class MCPhotonFinder : public Processor {
     	/** Returns true if it passes photon ID cuts */
     	bool IsCentralPhoton( MCParticle* mc ) ;
 
-		MCPhotonFinder_Single_Counter       _photon_counter;
+		//self-defined variable
 		MCPhotonFinder_Global_Counter       _global_counter;
-		MCPhotonFinder_Information          _photon_info;
+		MCPhotonFinder_Single_Counter       _single_counter;
+		MCPhotonFinder_Counter              _counter;
+		MCPhotonFinder_Information          _info;
 
 } ;
 

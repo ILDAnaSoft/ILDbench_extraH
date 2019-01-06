@@ -11,9 +11,16 @@
 
 #include "Overlay_Removal_Element_Observable.h"
 
-//class TFile;
-//class TTree;
+#include <marlin/Processor.h>
+#include <marlin/VerbosityLevels.h>
+#include <lcio.h>
 
+#include <EVENT/LCCollection.h>
+#include <EVENT/LCParameters.h>
+#include <UTIL/LCRelationNavigator.h>
+
+using namespace lcio ;
+using namespace marlin ;
 
 class Overlay_Removal : public Processor {
 
@@ -41,50 +48,53 @@ class Overlay_Removal : public Processor {
 		std::string _inputJetPOsCollection;
 		LCCollection* _in_jetpoCol;
 
-
 		std::string _inputIsolepsCollection;
 		LCCollection* _in_islCol;
 
+
+
+		std::string _outputPFOWoOverlayCollection;
+		Overlay_Removal_Output_Collection _outputPFOWoOverlayCol;
+
+		std::string _outputMCsWoOverlayCollection;
+		Overlay_Removal_Output_Collection _outputMCsWoOverlayCol;
+
+
 		bool _output_switch_collection;
-
-
-		std::string _outputPFOwoOverlayCollection;
-		LCCollectionVec* _ot_PFOwoOverlay;
-
-		std::string _outputMCwoOverlayCollection;
-		LCCollectionVec* _ot_MCwoOverlay;
-
-
 		bool _output_switch_root;
+
+		// output 
 		std::string _rootfilename;
+		TFile*      _outfile;
+		TTree*      _datatrain;
+		void makeNTuple();
 
 
+		//internal para
 		int  _nEvt; 
 		int _nRun;
 
 
-		// output 
-		TFile* _otfile;
-		TTree* _datatrain;
 
 
 		//function
 		void  Init  (LCEvent* evt); 
 		void  Finish(LCEvent* evt);
+		void  Counter(bool JMC, LCEvent* evt);
 
 
 		/** Calculates the cone energy */
-		std::vector<MCParticle*>            analyseMCParticle( LCCollection* MCs_col, Overlay_Removal_Information &info);
-		std::vector<ReconstructedParticle*> analyseJet       ( LCCollection* Isolep, LCCollection* Jet_POs_col, Overlay_Removal_Information &info);
+		std::vector<MCParticle*>            analyseMCParticle( LCCollection* MCs_col, Overlay_Removal_Information_Single &info);
+		std::vector<ReconstructedParticle*> analyseJet       ( LCCollection* Isolep, LCCollection* Jet_POs_col, Overlay_Removal_Information_Single &info);
 
 
-		void makeNTuple();
 
 
 	public:
-		Overlay_Removal_Information          _mc_info;
-		Overlay_Removal_Information          _jet_info;
-		Overlay_Removal_Global_Counter       _global_counter;
+		Overlay_Removal_Global_Counter      _global_counter;
+		Overlay_Removal_Single_Counter      _single_counter;
+		Overlay_Removal_Counter             _counter;
+		Overlay_Removal_Information         _info;
 
 } ;
 

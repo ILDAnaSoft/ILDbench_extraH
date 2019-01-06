@@ -15,10 +15,7 @@
 #include <marlin/VerbosityLevels.h>
 #include <lcio.h>
 
-#include <EVENT/ReconstructedParticle.h>
-#include <EVENT/MCParticle.h>
 #include <EVENT/LCCollection.h>
-#include <IMPL/LCCollectionVec.h>
 #include <EVENT/LCParameters.h>
 #include <UTIL/LCRelationNavigator.h>
 
@@ -42,17 +39,26 @@ class PandoraIsolatedPhotonFinder : public Processor {
 	protected:
 
 		/** Input collection */
-		std::string _input_PFOsCollection;
+		std::string _inputPFOsCollection;
 
 		/** Output collection of isolated photons */
-		std::string _output_IsoPhotonCollection;
+		std::string _outputIsoPhotonCollection;
 
 		/** Output collection (all input with isolated photons removed) */
-		std::string _output_WoIsoPhotonCollection;
+		std::string _outputWoIsoPhotonCollection;
 
-		LCCollection* _input_PFOCol;
-		LCCollectionVec* _output_WoIsoPhotonCol;
-	    LCCollectionVec* _output_IsoPhotonCol;
+		LCCollection*    _PFOCol;
+		PandoraIsolatedPhotonFinder_Output_Collection _outputWoIsoPhotonCol;
+	    PandoraIsolatedPhotonFinder_Output_Collection _outputIsoPhotonCol;
+
+		bool _output_switch_root;
+		bool _output_switch_collection;
+
+		// output
+		std::string _rootfilename;
+		TFile*      _outfile;
+		TTree*      _datatrain;
+		void makeNTuple();
 
 		/** If set to true, uses Energy cuts in the central region*/
 		bool  _useEnergy;
@@ -78,19 +84,21 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		float _maxCosConeAngle;
 		float _ConeEnergyRatio;
 
-		int   _nEvt; 
+		//internal para
+		int   _nEvt;
+		int   _nRun; 
 
-
+		// internal function 
 		void  Init  (LCEvent* evt); 
 		void  Finish(LCEvent* evt);
+		void  Counter(bool JPFO, LCEvent* evt);
 
 
-		bool  analysePFOParticle( LCCollection* input_pfo, LCCollectionVec* output_photon,LCCollectionVec* output_other, PandoraIsolatedPhotonFinder_Single_Counter& counter);
+		bool  analysePFOParticle( LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhoton, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information_Single& info, PandoraIsolatedPhotonFinder_Function_Counter& counter);
 
 
 		/** Calculates the cone energy */
 		float getConeEnergy( ReconstructedParticle* pfo, std::vector<ReconstructedParticle*> all) ;
-
 
 		/** Returns true if pfo is an isolated photon */
 		int IsIsolatedPhoton( ReconstructedParticle* pfo, std::vector<ReconstructedParticle*> all) ;
@@ -104,9 +112,10 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		/** Returns true if it passes photon ID cuts */
 		bool IsCentralPhoton( ReconstructedParticle* pfo ) ;
 
-		PandoraIsolatedPhotonFinder_Single_Counter       _photon_counter;
 		PandoraIsolatedPhotonFinder_Global_Counter       _global_counter;
-		PandoraIsolatedPhotonFinder_Information          _photon_info;
+		PandoraIsolatedPhotonFinder_Single_Counter       _single_counter;
+		PandoraIsolatedPhotonFinder_Counter              _counter;
+		PandoraIsolatedPhotonFinder_Information          _info;
 } ;
 
 #endif

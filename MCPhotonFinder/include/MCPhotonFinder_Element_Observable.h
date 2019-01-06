@@ -25,6 +25,11 @@ class TTree;
 #include "CFormat.h"
 #include "CVector.h"
 #include "CChain.h"
+#include "CLorentzVector.h"
+
+#include <IMPL/LCCollectionVec.h>
+#include <EVENT/MCParticle.h>
+#include <EVENT/ReconstructedParticle.h>
 
 using ToolSet::operator<<;
 using ToolSet::operator+;
@@ -37,15 +42,23 @@ class MCPhotonFinder_Global_Counter{
 		//event number
 		//***********
 		float nevt        ;
+		float nrun        ;
+		float gweight     ;
+		float pass_MCs    ;
 		float pass_all    ;
 
 		void Init(){
-			nevt          =0;
-			pass_all      =0;
+			nevt          = 0;
+			nrun          = 0;
+			gweight       = 0;
+	        pass_MCs      = 0;
+			pass_all      = 0;
 		}
 
 		void Print(){
-			std::cout << "In the Global Event Counter, Till now, there are totally " << nevt << " events, and " <<pass_all << " events pass all criterion." << std::endl; 
+			std::cout << "In the Global Event Counter, Till now, there are totally " << nevt << " events and within " << nrun <<" runs " << " the global scale weight is " << gweight << std::endl; 
+			std::cout << "There are " << pass_MCs << " events pass MCs;" << std::endl;
+			std::cout << "  totally " << pass_all << " events pass all criterion." << std::endl; 
 		}
 
 
@@ -57,25 +70,54 @@ class MCPhotonFinder_Single_Counter{
 		//***********
 		//event number
 		//***********
-		float nevt        ;
-		float weight      ;
-		float nrun        ;
-		float pass_all    ;
+		float evt        ;
+		float weight     ;
+		float run        ;
+		float pass_MCs   ;
+		float pass_all   ;
 
 		void Init(){
-			nevt          =0;
-			nrun          =0;
-			weight        =0;
-			pass_all      =0;
+			evt         = 0;
+			run         = 0;
+			weight      = 0;
+	        pass_MCs    = 0;
+			pass_all    = 0;
 		}
 
 		void Print(){
-			std::cout << "in the Single Event Counter, this is  the " << nevt << "th event and the " << nrun <<" run " << " the weight is " << weight << std::endl; 
+			std::cout << "In the Single Event Counter, this is the " << evt << "th event, in the " << run << "th run." << std::endl;
+			std::cout << " and " << pass_MCs << " events pass MC;" << std::endl;
 			std::cout << "in this event it has " << pass_all << " pass all criterion." << std::endl; 
 		}
 
 		void Fill_Data(TTree* tree);
 
+};
+
+class MCPhotonFinder_Function_Counter   {
+	public:
+		float pass_all    ;
+
+		void Init(){
+	        pass_all    = 0;
+		}
+
+		void Fill_Data(TTree* tree, std::string prefix);
+};
+
+
+
+class MCPhotonFinder_Counter{
+	public:
+		MCPhotonFinder_Function_Counter MCs;
+
+		void Init(){
+	        MCs.Init();
+		}
+
+		void Fill_Data(TTree* tree){
+			MCs                 .Fill_Data(tree,"MCs");
+		}
 };
 
 class MCPhotonFinder_Observable{
@@ -84,11 +126,15 @@ class MCPhotonFinder_Observable{
 		//inserted by process file
 		//************************
 		float visible_energy   ;        
+		float invisible_energy   ;        
 
 		void Init(){
 		    visible_energy =-10000.1;        
+		    invisible_energy =-10000.1;        
 		}
 
+		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
@@ -166,32 +212,119 @@ class MCPhotonFinder_Variable_Vec{
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
-class MCPhotonFinder_Information{
+class MCPhotonFinder_Number{
 	public:
-		MCPhotonFinder_Variable                        data_variable;
-		MCPhotonFinder_Variable_Vec                    data_variable_vec;
-		MCPhotonFinder_Observable                      data_observable;
+		float num                ;
+		float num_plus                   ;
+		float num_minus                  ;
+		float num_neutral                ;
+		float num_central        ;
+		float num_forward        ;
 
-
-		MCPhotonFinder_Information(){
+		void Init(){
+		    num                = 0;
+		    num_plus           = 0;
+		    num_minus          = 0;
+			num_neutral        = 0;
+		    num_central        = 0;
+		    num_forward        = 0;
 		}
+
+		void Get_MCParticles_Number ( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles_Number( std::vector<ReconstructedParticle*> input) ;
+		void Fill_Data(TTree* tree, std::string prefix);
+};
+
+class MCPhotonFinder_Information_Single{
+	public:
+		MCPhotonFinder_Observable                      obv;
+		MCPhotonFinder_Variable_Vec                    photon;
+		MCPhotonFinder_Number                          num_photon;
+		MCPhotonFinder_Number                          num_MCs;
 
 
 		void Init(){
-			data_variable.Init();
-			data_variable_vec.Init();
-			data_observable.Init();
+			obv        .Init();
+			photon     .Init();
+			num_photon .Init();
+			num_MCs    .Init();
 		}
 
 
-		void Fill_Data(TTree* tree, std::string prefix){
-			data_observable  .Fill_Data(tree,prefix+"_observable");
-			data_variable    .Fill_Data(tree,prefix+"_variable");
-			data_variable_vec.Fill_Data(tree,prefix+"_variable_vec");
-		}
+		void Get_MCParticles ( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles( std::vector<ReconstructedParticle*> input) ;
+		void Fill_Data(TTree* tree, std::string prefix);
 
-		~MCPhotonFinder_Information(){
-		}
 }; 
 
+
+class MCPhotonFinder_Information{
+	public:
+		MCPhotonFinder_Information_Single isophoton;
+
+		void Init(){
+			isophoton.Init();
+		}
+
+
+		void Fill_Data(TTree* tree){
+			isophoton.Fill_Data(tree,"isophoton");
+		}
+
+}; 
+
+class MCPhotonFinder_Output_Collection{
+	public:
+    	std::string      name;
+		LCCollectionVec* col;
+		bool             Jopen;
+	
+		void Init(){
+			Jopen=false;
+		}
+
+		void Set_Switch(bool open){
+			Jopen=open;
+		}
+
+		void Set_Name(std::string in_name){
+			name=in_name;
+		}
+
+		void Set_Collection_MCParticle(){
+			if(Jopen){
+				col= new LCCollectionVec( LCIO::MCPARTICLE ) ;
+			    col->setSubset(true) ;
+			}
+		}
+
+		void Set_Collection_RCParticle(){
+			if(Jopen){
+				col= new LCCollectionVec( LCIO::RECONSTRUCTEDPARTICLE) ;
+			    col->setSubset(true) ;
+			}
+		}
+
+		void Add_Collection(LCEvent* evt){
+			if(Jopen){
+				evt->addCollection(col, name.c_str() );
+			}
+		}
+
+		void Add_Element_MCParticle(std::vector<MCParticle*> input){
+			if(Jopen){
+			    for (int i = 0; i < input.size(); i++ ) {
+			    	col->addElement(input[i]);
+			    }
+			}
+		}
+
+		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
+			if(Jopen){
+			    for (int i = 0; i < input.size(); i++ ) {
+			    	col->addElement(input[i]);
+			    }
+			}
+		}
+};
 #endif

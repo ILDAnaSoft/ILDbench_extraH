@@ -1,4 +1,24 @@
 #include "Overlay_Removal_Element_Observable.h"
+void Overlay_Removal_Global_Counter::Fill_Data(TTree* tree){
+	tree->Branch( "total_event_number"             , &nevt                     ,"total_event_number"              );
+	tree->Branch( "total_run_number"               , &nrun                     ,"total_run_number"                );
+	tree->Branch( "total_scale_factor"             , &gweight                  ,"total_scale_factor"              );
+	tree->Branch( "total_pass_MCs"                 , &pass_MCs                 ,"total_pass_MCs"                  );
+	tree->Branch( "total_pass_all"                 , &pass_all                 ,"total_pass_all"                  );
+}
+
+void Overlay_Removal_Single_Counter::Fill_Data(TTree* tree){
+	tree->Branch( "event_number"             , &evt                      ,"event_number"              );
+	tree->Branch( "run_number"               , &run                      ,"run_number"                );
+	tree->Branch( "scale_factor"             , &weight                   ,"scale_factor"              );
+	tree->Branch( "pass_MCs"                 , &pass_MCs                 ,"pass_MCs"                  );
+	tree->Branch( "pass_all"                 , &pass_all                 ,"pass_all"                  );
+}
+
+void Overlay_Removal_Function_Counter::Fill_Data(TTree* tree, std::string prefix){
+	tree->Branch( (prefix+"_pass_all").c_str()     , &pass_all,(prefix+"_pass_all").c_str()  );
+}
+
 void Overlay_Removal_Observable::Get_MCParticles_Information( std::vector<MCParticle*> input) {
 	TLorentzVector visible=ToolSet::CMC::Get_Sum_To_Lorentz(input);
 	visible_energy = visible.E();
@@ -53,6 +73,14 @@ void Overlay_Removal_Variable_Vec::Get_MCParticles_Information( std::vector<MCPa
 		phi      .push_back(ToolSet::CMC::Cal_Azimuth(input[i]));
 		e        .push_back(input[i]->getEnergy());
 		mass     .push_back(input[i]->getMass());
+		endpointx.push_back(input[i]->getEndpoint()[0]);
+		endpointy.push_back(input[i]->getEndpoint()[1]);
+		endpointz.push_back(input[i]->getEndpoint()[2]);
+		endpointr.push_back(std::sqrt(std::pow(input[i]->getEndpoint()[0],2)+std::pow(input[i]->getEndpoint()[1],2)));
+		vertexx.push_back(input[i]->getVertex()[0]);
+		vertexy.push_back(input[i]->getVertex()[1]);
+		vertexz.push_back(input[i]->getVertex()[2]);
+		vertexr.push_back(std::sqrt(std::pow(input[i]->getVertex()[0],2)+std::pow(input[i]->getVertex()[1],2)));
 	}
 	return ;
 }
@@ -90,5 +118,83 @@ void Overlay_Removal_Variable_Vec::Fill_Data(TTree* tree, std::string prefix){
 	tree->Branch( (prefix+"_phi_vec")          .c_str()  , &phi          );
 	tree->Branch( (prefix+"_e_vec")            .c_str()  , &e            );
 	tree->Branch( (prefix+"_mass_vec")         .c_str()  , &mass         );
+	tree->Branch( (prefix+"_endpointr"          ).c_str(), &endpointr            );
+	tree->Branch( (prefix+"_endpointx"          ).c_str(), &endpointx            );
+	tree->Branch( (prefix+"_endpointy"          ).c_str(), &endpointy            );
+	tree->Branch( (prefix+"_endpointz"          ).c_str(), &endpointz            );
+	tree->Branch( (prefix+"_vertexr"          ).c_str(), &vertexr            );
+	tree->Branch( (prefix+"_vertexx"          ).c_str(), &vertexx            );
+	tree->Branch( (prefix+"_vertexy"          ).c_str(), &vertexy            );
+	tree->Branch( (prefix+"_vertexz"          ).c_str(), &vertexz            );
 }
 
+void Overlay_Removal_Number::Get_MCParticles_Number( std::vector<MCParticle*> input) {
+	num=input.size();
+	for(unsigned int i=0;i<input.size();i++){
+		if(input[i]->getCharge()>0){
+			num_plus++;
+		}
+		else if(input[i]->getCharge()<0){
+			num_minus++;
+		}
+		else{
+			num_neutral++;
+		}
+		if(std::abs(ToolSet::CMC::Cal_CosTheta(input[i]))<0.95){
+			num_central++;
+		}
+		else{
+			num_forward++;
+		}
+	}
+	return ;
+}
+
+
+void Overlay_Removal_Number::Get_PFOParticles_Number( std::vector<ReconstructedParticle*> input) {
+	num=input.size();
+	for(unsigned int i=0;i<input.size();i++){
+		if(input[i]->getCharge()>0){
+			num_plus++;
+		}
+		else if(input[i]->getCharge()<0){
+			num_minus++;
+		}
+		else{
+			num_neutral++;
+		}
+		if(std::abs(ToolSet::CMC::Cal_CosTheta(input[i]))<0.95){
+			num_central++;
+		}
+		else{
+			num_forward++;
+		}
+	}
+	return ;
+}
+
+void Overlay_Removal_Number::Fill_Data(TTree* tree, std::string prefix){
+	tree->Branch( (prefix+"num"            ).c_str()    , &num        ,(prefix+"num"            ).c_str()        );
+	tree->Branch( (prefix+"num_plus"       ).c_str()    , &num_plus   ,(prefix+"num_plus"       ).c_str()        );
+	tree->Branch( (prefix+"num_minus"      ).c_str()    , &num_minus  ,(prefix+"num_minus"      ).c_str()        );
+	tree->Branch( (prefix+"num_neutral"    ).c_str()    , &num_neutral,(prefix+"num_neutral"    ).c_str()        );
+	tree->Branch( (prefix+"num_central"    ).c_str()    , &num_central,(prefix+"num_central"    ).c_str()        );
+	tree->Branch( (prefix+"num_forward"    ).c_str()    , &num_forward,(prefix+"num_forward"    ).c_str()        );
+}
+
+
+void Overlay_Removal_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
+	wo_overlay.Get_MCParticles_Information(input);
+	num_wo_overlay.Get_MCParticles_Number(input);
+}
+
+void Overlay_Removal_Information_Single::Get_PFOParticles( std::vector<ReconstructedParticle*> input) {
+	wo_overlay.Get_PFOParticles_Information(input);
+	num_wo_overlay.Get_PFOParticles_Number(input);
+}
+
+void Overlay_Removal_Information_Single::Fill_Data(TTree* tree, std::string prefix){
+	obv.Fill_Data(tree,prefix+"_obv");
+	wo_overlay.Fill_Data(tree,prefix+"_wo_overlay");
+	num_wo_overlay.Fill_Data(tree,prefix+"_wo_overlay_num");
+}

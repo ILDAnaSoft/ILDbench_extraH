@@ -12,21 +12,39 @@ MCPhotonFinder::MCPhotonFinder()
     	registerInputCollection( LCIO::MCPARTICLE,
     			"InputMCCollection" ,
     			"Input collection of MCParticles",
-    			_input_MCsCollection,
+    			_inputMCsCollection,
     			std::string("MCParticle"));
+
+		//Output Collection 
+		registerProcessorParameter( "SwitchOutputCollection",
+				"whether to write a Marlin collection for further Marlin",
+				_output_switch_collection,
+				bool(true) );
 
     	registerOutputCollection( LCIO::MCPARTICLE,
     			"OutputCollectionIsolatedPhoton",
     			"Output collection of isolated photon in non-forward region",
-    			_output_IsoPhotonCollection,
-    			std::string("MCsIsoPhoton_Pythia") );
+    			_outputIsoPhotonCollection,
+    			std::string("MCsIsoPhoton") );
 
     	registerOutputCollection( LCIO::MCPARTICLE,
     			"OutputCollectionWithoutIsolatedPhoton",
     			"Copy of input collection but without the isolated photon",
-    			_output_WoIsoPhotonCollection,
-    			std::string("MCsWoIsoPhoton_Pythia") );
+    			_outputWoIsoPhotonCollection,
+    			std::string("MCsWoIsoPhoton") );
 
+		//Output root 
+		registerProcessorParameter( "SwitchOutputRoot",
+				"whether to write a root tree for observables",
+				_output_switch_root,
+				bool(true) );
+
+		registerProcessorParameter( "RootFileName",
+				"Name of Root file (default: output.root)",
+				_rootfilename, 
+				std::string("../result/output.root") );
+
+		//Input parameters 
     	registerProcessorParameter( "UseEnergy",
     			"Use energy cut",
     			_useEnergy,
@@ -52,7 +70,7 @@ MCPhotonFinder::MCPhotonFinder()
     			_minCosTheta,
     			float(0.0));
 
-    	registerProcessorParameter( "MaximalPollarAngle",
+    	registerProcessorParameter( "MaximalPolarAngle",
     			"The maximal cosine polar angle for a isolated photon",
     			_maxCosTheta,
     			float(0.95));
@@ -77,12 +95,12 @@ MCPhotonFinder::MCPhotonFinder()
     			_useForwardPolarAngle,
     			bool(true));
 
-    	registerProcessorParameter( "MinimalForwardPollarAngle",
+    	registerProcessorParameter( "MinimalForwardPolarAngle",
     			"The minimal cosine angle to define a forward region",
     			_minForwardCosTheta,
     			float(0.95));
 
-    	registerProcessorParameter( "MaximalForwardPollarAngle",
+    	registerProcessorParameter( "MaximalForwardPolarAngle",
     			"The maximal cosine angle to define a forward region",
     			_maxForwardCosTheta,
     			float(0.98));
@@ -111,54 +129,89 @@ MCPhotonFinder::MCPhotonFinder()
 
 
 void MCPhotonFinder::init() { 
-    streamlog_out(DEBUG) << "   init called  " << std::endl ;
+    streamlog_out(DEBUG) << "   init MCPhotonFinder " << std::endl ;
     printParameters() ;
+
 	_nEvt = 0;
+	_nRun = 0;
+	_global_counter.Init();
+	_single_counter.Init();
+	_counter.Init();
+
+	_outputWoIsoPhotonCol.Set_Switch(_output_switch_collection);
+	_outputWoIsoPhotonCol.Set_Name(_outputWoIsoPhotonCollection);
+	_outputIsoPhotonCol.Set_Switch(_output_switch_collection);
+	_outputIsoPhotonCol.Set_Name(_outputIsoPhotonCollection);
+
+	if(_output_switch_root){
+		makeNTuple();
+	}
 }
 
 void MCPhotonFinder::processRunHeader( LCRunHeader* run) { 
+	_nRun++;
 } 
 
 void MCPhotonFinder::processEvent( LCEvent * evt ) { 
 	Init(evt);
 
-	analyseMCParticle( _input_MCsCol, _output_IsoPhotonCol, _output_WoIsoPhotonCol,_photon_counter) ;
+	bool JMC=analyseMCParticle( _MCsCol, _outputIsoPhotonCol, _outputWoIsoPhotonCol, _info.isophoton, _counter.MCs) ;
 
+	Counter(JMC, evt);
 
 	Finish(evt);
 }
 
+void MCPhotonFinder::Counter(bool JMC, LCEvent* evt){
+	if(JMC){
+		_global_counter.pass_MCs++;
+		_global_counter.pass_all++;
+		_single_counter.pass_MCs++;
+		_single_counter.pass_all++;
+	}
+	else{
+		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
+	}
+}
+
+
 void MCPhotonFinder::Init(LCEvent* evt) { 
 	_nEvt++;
 	_global_counter.nevt=_nEvt;
+	_global_counter.nrun=_nRun;
+	_global_counter.gweight=1;
 	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
 
-	_photon_counter.Init();
-	_photon_info.Init();
+	_info.Init();
+	_counter.Init();
+	_single_counter.Init();
 
-	_photon_counter.nevt  =evt->getEventNumber();
-	_photon_counter.weight=evt->getWeight();
-	_photon_counter.nrun  =evt->getRunNumber();
+	_single_counter.evt   =evt->getEventNumber();
+	_single_counter.weight=evt->getWeight();
+	_single_counter.run   =evt->getRunNumber();
 
-    _input_MCsCol= evt->getCollection( _input_MCsCollection ) ;
 
-    // Output mcs removed isolated photon 
-    _output_WoIsoPhotonCol= new LCCollectionVec( LCIO::MCPARTICLE ) ;
-    _output_WoIsoPhotonCol->setSubset(true) ;
+	try{
+		_MCsCol= evt->getCollection( _inputMCsCollection) ;
+	}
+	catch(...){
+		std::cout << "no MCs without overlay in this event" << std::endl;
+	}
 
-    _output_IsoPhotonCol= new LCCollectionVec( LCIO::MCPARTICLE );
-    _output_IsoPhotonCol->setSubset(true);
 
+	_outputWoIsoPhotonCol .Set_Collection_MCParticle();
+	_outputIsoPhotonCol.Set_Collection_MCParticle();
 }
 
 
 void MCPhotonFinder::Finish(LCEvent* evt) { 
-    // Add mcs to new collection
-    evt->addCollection(_output_WoIsoPhotonCol, _output_WoIsoPhotonCollection.c_str() );
-    evt->addCollection(_output_IsoPhotonCol,   _output_IsoPhotonCollection.c_str());
-        streamlog_out(DEBUG) << "   processing event: " << evt->getEventNumber() 
-    	<< "   in run:  " << evt->getRunNumber() 
-    	<< std::endl ;
+	if(_output_switch_root){
+		_datatrain->Fill();
+	}
+// Add mcs to new collection
+	_outputWoIsoPhotonCol.Add_Collection(evt);
+	_outputIsoPhotonCol.Add_Collection(evt);
+
 }
 
 
@@ -166,10 +219,53 @@ void MCPhotonFinder::check( LCEvent * evt ) {
 }
 
 void MCPhotonFinder::end() { 
-    std::cout << "MCPhotonFinder::end()   " << std::endl;
-    std::cout << "the total number         " << _photon_counter.nevt           << std::endl;
-    std::cout << "the iso photon number    " <<    _photon_counter.pass_all<< std::endl;
+	if(_output_switch_root){
+		_outfile->cd();
+		_datatrain->Write();
+		_outfile->Close();
+	}
+	_global_counter.Print();
 }
+
+
+void MCPhotonFinder::makeNTuple() {
+
+	//Output root file
+	std::cout << _rootfilename << std::endl;
+	_outfile = new TFile( _rootfilename.c_str() , "RECREATE" );
+	_datatrain= new TTree( "datatrain" , "events" );
+
+	//Define root tree
+	_global_counter.Fill_Data(_datatrain);
+	_single_counter.Fill_Data(_datatrain);
+	_counter       .Fill_Data(_datatrain);
+	_info          .Fill_Data(_datatrain);
+	return;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -20,6 +20,23 @@ void MCLevelClassify_Function_Counter::Fill_Data(TTree* tree, std::string prefix
 	tree->Branch( (prefix+"_pass_all").c_str()     , &pass_energy,(prefix+"_pass_energy").c_str()  );
 }
 
+void MCLevelClassify_Observable::Get_MCParticles_Information( std::vector<MCParticle*> input) {
+	TLorentzVector visible=ToolSet::CMC::Get_Sum_To_Lorentz(input);
+	visible_energy = visible.E();
+	TLorentzVector invisible=ToolSet::CMC::Get_InVisible_To_Lorentz(input);
+	invisible_energy = invisible.E();
+	return ;
+}
+
+
+void MCLevelClassify_Observable::Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) {
+	TLorentzVector visible=ToolSet::CRC::Get_Sum_To_Lorentz(input);
+	visible_energy = visible.E();
+	TLorentzVector invisible=ToolSet::CRC::Get_InVisible_To_Lorentz(input);
+	invisible_energy = invisible.E();
+	return ;
+}
+
 void MCLevelClassify_Observable::Fill_Data(TTree* tree, std::string prefix){
 	tree->Branch( (prefix+"_visible_energy").c_str()     , &visible_energy,(prefix+"_visible_energy").c_str()     );
 }
@@ -94,6 +111,59 @@ void MCLevelClassify_Variable_Vec::Fill_Data(TTree* tree, std::string prefix){
 	tree->Branch( (prefix+"_phi_vec")          .c_str()  , &phi          );
 	tree->Branch( (prefix+"_e_vec")            .c_str()  , &e            );
 	tree->Branch( (prefix+"_mass_vec")         .c_str()  , &mass         );
+	tree->Branch( (prefix+"_endpointr"          ).c_str(), &endpointr            );
+	tree->Branch( (prefix+"_endpointx"          ).c_str(), &endpointx            );
+	tree->Branch( (prefix+"_endpointy"          ).c_str(), &endpointy            );
+	tree->Branch( (prefix+"_endpointz"          ).c_str(), &endpointz            );
+	tree->Branch( (prefix+"_vertexr"          ).c_str(), &vertexr            );
+	tree->Branch( (prefix+"_vertexx"          ).c_str(), &vertexx            );
+	tree->Branch( (prefix+"_vertexy"          ).c_str(), &vertexy            );
+	tree->Branch( (prefix+"_vertexz"          ).c_str(), &vertexz            );
+}
+
+void MCLevelClassify_Number::Get_MCParticles_Number( std::vector<MCParticle*> input) {
+	num=input.size();
+	for(unsigned int i=0;i<input.size();i++){
+		if(input[i]->getCharge()>0){
+			num_plus++;
+		}
+		else if(input[i]->getCharge()<0){
+			num_minus++;
+		}
+		else{
+			num_neutral++;
+		}
+		if(std::abs(ToolSet::CMC::Cal_CosTheta(input[i]))<0.95){
+			num_central++;
+		}
+		else{
+			num_forward++;
+		}
+	}
+	return ;
+}
+
+
+void MCLevelClassify_Number::Get_PFOParticles_Number( std::vector<ReconstructedParticle*> input) {
+	num=input.size();
+	for(unsigned int i=0;i<input.size();i++){
+		if(input[i]->getCharge()>0){
+			num_plus++;
+		}
+		else if(input[i]->getCharge()<0){
+			num_minus++;
+		}
+		else{
+			num_neutral++;
+		}
+		if(std::abs(ToolSet::CMC::Cal_CosTheta(input[i]))<0.95){
+			num_central++;
+		}
+		else{
+			num_forward++;
+		}
+	}
+	return ;
 }
 
 void MCLevelClassify_Number::Fill_Data(TTree* tree, std::string prefix){
@@ -103,4 +173,21 @@ void MCLevelClassify_Number::Fill_Data(TTree* tree, std::string prefix){
 	tree->Branch( (prefix+"num_neutral"    ).c_str()    , &num_neutral,(prefix+"num_neutral"    ).c_str()        );
 	tree->Branch( (prefix+"num_central"    ).c_str()    , &num_central,(prefix+"num_central"    ).c_str()        );
 	tree->Branch( (prefix+"num_forward"    ).c_str()    , &num_forward,(prefix+"num_forward"    ).c_str()        );
+}
+
+
+void MCLevelClassify_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
+	particle.Get_MCParticles_Information(input);
+	num_MCs.Get_MCParticles_Number(input);
+}
+
+void MCLevelClassify_Information_Single::Get_PFOParticles( std::vector<ReconstructedParticle*> input) {
+	particle.Get_PFOParticles_Information(input);
+	num_MCs.Get_PFOParticles_Number(input);
+}
+
+void MCLevelClassify_Information_Single::Fill_Data(TTree* tree, std::string prefix){
+	obv              .Fill_Data(tree,prefix+"_obv");
+	particle         .Fill_Data(tree,prefix+"_particle");
+	num_MCs          .Fill_Data(tree,prefix+"_num_MCs" );
 }
