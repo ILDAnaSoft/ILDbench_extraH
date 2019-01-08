@@ -13,7 +13,7 @@ Minimal_Processor::Minimal_Processor()
 				"InputMCParticleCollection", 
 				"Name of the MC particle collection",
 				_inputMCsCollection,
-				std::string("MCParticlesSkimmed") );
+				std::string("MCParticle") );
 
 		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
 				"InputPOParticleCollection" ,
@@ -59,19 +59,24 @@ Minimal_Processor::Minimal_Processor()
 
 void Minimal_Processor::init() { 
 	std::cout << "   init Minimal_Processor " << std::endl ;
-	std::cout << "the output root file is " << _rootfilename << std::endl; 
 
 	// usually a good idea to
 	printParameters();
+
+	_nEvt = 0;
+	_nRun = 0;
+	_global_counter.Init();
+	_single_counter.Init();
+	_counter.Init();
+
+	_outputPFOCol       .Set_Switch(_output_switch_collection);
+	_outputPFOCol       .Set_Name(_outputPFOCollection);
 
 	// make Ntuple
 	if(_output_switch_root){
 		makeNTuple();
 	}
 
-	_nRun = 0;
-	_nEvt = 0;
-	_global_counter.Init();
 }
 
 void Minimal_Processor::processRunHeader( LCRunHeader* run) { 
@@ -82,53 +87,65 @@ void Minimal_Processor::processEvent( LCEvent * evt ) {
 
 	Init(evt);
 
-    bool JMC,JPFO;
+    bool JMC =analyseMCParticle(_mcCol, _navmcpfo, _info.MCs, _counter.MCs);
 
-    JMC =analyseMCParticle(_mcCol, _navmcpfo, _mc_info, _mc_counter);
-    if(JMC){
-    	_global_counter.pass_mc++;
-    }
-    else{
-		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
-    }
+    bool JPFO=analysePFOParticle(_pfoCol, _outputPFOCol, _navpfomc, _info.PFO, _counter.PFO);
 
-
-
-    JPFO=analysePFOParticle(_pfoCol, _navpfomc, _pfo_info, _pfo_counter);
-    if(JPFO){
-    	_global_counter.pass_pfo++;
-    }
-    else{
-		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
-    }
-
-	if(JMC&&JPFO){
-		_global_counter.pass_all++;
-	}
-	if(_output_switch_collection){
-	// choose a RECONSTRUCTEDPARTICLE vector to write into the collection 
-////	for(unsigned int i=0;i<JetPFOwoOverlay.size();i++){
-////		_otPFOCol->addElement( JetPFOwoOverlay[i]);
-////	}
-	}
+	Counter(JMC, JPFO, evt);
 
 	Finish(evt);
 }
 
+
+
+
+void Minimal_Processor::Counter(bool JMC, bool JPFO, LCEvent* evt){
+	if(JMC){
+		_global_counter.pass_MCs++;
+		_single_counter.pass_MCs++;
+	}
+    else{
+		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ", evt->getEventNumber());
+    }
+
+
+    if(JPFO){
+    	_global_counter.pass_PFO++;
+    	_single_counter.pass_PFO++;
+    }
+    else{
+		ToolSet::ShowMessage(1,"in processEvent: not pass analysePFOParticle ",evt->getEventNumber());
+    }
+
+	if(JMC&&JPFO){
+		_global_counter.pass_all++;
+    	_single_counter.pass_all++;
+	}
+    else{
+		ToolSet::ShowMessage(1,"in processEvent: not pass all",evt->getEventNumber());
+    }
+}
+
+
+
+
+
+
 void Minimal_Processor::Init(LCEvent* evt) { 
 	//init
 	_nEvt ++;
+	_global_counter.nevt=_nEvt;
+	_global_counter.nrun=_nRun;
+	_global_counter.gweight=1;
 	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
-    _mc_info.Init();
-    _pfo_info.Init();
-    _mc_counter.Init();
-    _pfo_counter.Init();
 
+	_info.Init();
+	_counter.Init();
+	_single_counter.Init();
 
-	if(_output_switch_collection){
-		_outPFOCol= new LCCollectionVec( LCIO::RECONSTRUCTEDPARTICLE ) ;
-		_outPFOCol->setSubset(true) ;
-	}
+	_single_counter.evt=evt->getEventNumber();
+	_single_counter.weight=evt->getWeight();
+	_single_counter.run=evt->getRunNumber();
 
 
 	// PFO loop
@@ -137,6 +154,7 @@ void Minimal_Processor::Init(LCEvent* evt) {
     _navmcpfo = new LCRelationNavigator( evt->getCollection( _mcpfoRelation ) );
     _navpfomc = new LCRelationNavigator( evt->getCollection( _pfomcRelation ) );
 
+	_outputPFOCol.Set_Collection_RCParticle();
 }
 
 void Minimal_Processor::Finish(LCEvent* evt) { 
@@ -144,13 +162,12 @@ void Minimal_Processor::Finish(LCEvent* evt) {
 		_datatrain->Fill();
 	}
 
+	_outputPFOCol       .Add_Collection(evt);
+
 	// delete
     delete _navmcpfo;
     delete _navpfomc;
 
-	streamlog_out(DEBUG) << "   processing event: " << evt->getEventNumber() 
-		<< "   in run:  " << evt->getRunNumber() 
-		<< std::endl ;
 }
 
 
@@ -164,7 +181,6 @@ void Minimal_Processor::end() {
 		_outfile->Close();
 	}
 	_global_counter.Print();
-	std::cout << "Minimal_Processor::end()  " << std::endl;
 }
 
 
@@ -177,9 +193,10 @@ void Minimal_Processor::makeNTuple() {
 	_outfile = new TFile( _rootfilename.c_str() , "RECREATE" );
 	_datatrain= new TTree( "datatrain" , "events" );
 
-	//Define root tree
-	_mc_info .Fill_Data(_datatrain,"mc");
-	_pfo_info.Fill_Data(_datatrain,"po");
+	_global_counter.Fill_Data(_datatrain);
+	_single_counter.Fill_Data(_datatrain);
+	_info          .Fill_Data(_datatrain);
+	_counter       .Fill_Data(_datatrain);
 	return;
 
 }
