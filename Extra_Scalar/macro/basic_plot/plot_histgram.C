@@ -79,7 +79,7 @@ void plot_histgram(std::vector<std::string> mhmass) {
 		num << i;
 		num >> fnum;
 		std::string hname=title_name+fnum;
-    	hvariable[i] = new TH1F(hname.c_str(),title_name.c_str(),27,0,27);
+    	hvariable[i] = new TH1F(hname.c_str(),title_name.c_str(),300,0,300);
     	hvariable[i]->SetTitle(axis_name.c_str());
 
 

@@ -43,22 +43,23 @@ class Strange_Photon_Global_Counter{
 		float nevt        ;
 		float nrun        ;
 		float gweight     ;
-		float pass_MCs    ;
-		float pass_PFO    ;
+		float pass_MCs1   ;
+		float pass_MCs2   ;
 		float pass_all    ;
 
 		void Init(){
 			nevt          = 0;
 			nrun          = 0;
 			gweight       = 0;
-	        pass_MCs      = 0;
-	        pass_PFO      = 0;
+	        pass_MCs1     = 0;
+	        pass_MCs2     = 0;
 			pass_all      = 0;
 		}
 
 		void Print(){
 			std::cout << "In the Global Event Counter, Till now, there are totally " << nevt << " events and within " << nrun <<" runs " << " the global scale weight is " << gweight << std::endl; 
-			std::cout << "There are " << pass_MCs << " events pass MCs;" << std::endl;
+			std::cout << "There are " << pass_MCs1 << " events pass MCs1;" << std::endl;
+			std::cout << "There are " << pass_MCs2 << " events pass MCs2;" << std::endl;
 			std::cout << "  totally " << pass_all << " events pass all criterion." << std::endl; 
 		}
 
@@ -74,22 +75,23 @@ class Strange_Photon_Single_Counter{
 		float evt        ;
 		float weight     ;
 		float run        ;
-		float pass_MCs   ;
-		float pass_PFO   ;
+		float pass_MCs1   ;
+		float pass_MCs2   ;
 		float pass_all   ;
 
 		void Init(){
 			evt         = 0;
 			run         = 0;
 			weight      = 0;
-	        pass_MCs    = 0;
-	        pass_PFO    = 0;
+	        pass_MCs1     = 0;
+	        pass_MCs2     = 0;
 			pass_all    = 0;
 		}
 
 		void Print(){
 			std::cout << "In the Single Event Counter, this is the " << evt << "th event, in the " << run << "th run." << std::endl;
-			std::cout << " and " << pass_MCs << " events pass MC;" << std::endl;
+			std::cout << " and " << pass_MCs1 << " events pass MCs1;" << std::endl;
+			std::cout << " and " << pass_MCs2 << " events pass MCs2;" << std::endl;
 			std::cout << "in this event it has " << pass_all << " pass all criterion." << std::endl; 
 		}
 
@@ -112,17 +114,17 @@ class Strange_Photon_Function_Counter   {
 
 class Strange_Photon_Counter{
 	public:
-		Strange_Photon_Function_Counter MCs;
-		Strange_Photon_Function_Counter PFO;
+		Strange_Photon_Function_Counter MCs1;
+		Strange_Photon_Function_Counter MCs2;
 
 		void Init(){
-	        MCs.Init();
-	        PFO.Init();
+	        MCs1.Init();
+	        MCs2.Init();
 		}
 
 		void Fill_Data(TTree* tree){
-			MCs                 .Fill_Data(tree,"MCs");
-			PFO                 .Fill_Data(tree,"PFO");
+			MCs1                .Fill_Data(tree,"MCs1");
+			MCs2                .Fill_Data(tree,"MCs2");
 		}
 };
 
@@ -247,16 +249,14 @@ class Strange_Photon_Number{
 class Strange_Photon_Information_Single{
 	public:
 		Strange_Photon_Observable                      obv;
-		Strange_Photon_Variable_Vec                    photon;
-		Strange_Photon_Number                          num_photon;
-		Strange_Photon_Number                          num_MCs;
+		Strange_Photon_Variable_Vec                    particle;
+		Strange_Photon_Number                          num;
 
 
 		void Init(){
-			obv        .Init();
-			photon     .Init();
-			num_photon .Init();
-			num_MCs    .Init();
+			obv         .Init();
+			particle    .Init();
+			num.Init();
 		}
 
 
@@ -268,21 +268,42 @@ class Strange_Photon_Information_Single{
 
 class Strange_Photon_Information{
 	public:
-		Strange_Photon_Information_Single mc;
-		Strange_Photon_Information_Single mc2;
-		Strange_Photon_Information_Single pfo;
+		Strange_Photon_Information_Single mcs_lostenergy_photon;
+		Strange_Photon_Information_Single pfo_lostenergy_photon;
+
+		Strange_Photon_Information_Single pfo_photon_conversion;
+		Strange_Photon_Information_Single pfo_wophoton_conversion;
+		Strange_Photon_Information_Single pfo_lostenergy_photon_combined;
+
+		Strange_Photon_Information_Single pfo_photon_only;
+		Strange_Photon_Information_Single pfo_wophoton_only;
+		Strange_Photon_Information_Single pfo_lostenergy_photon_rconly;
 
 		void Init(){
-			mc .Init();
-			mc2.Init();
-			pfo.Init();
+			mcs_lostenergy_photon.Init();
+			pfo_lostenergy_photon.Init();
+
+			pfo_photon_conversion.Init();
+			pfo_wophoton_conversion.Init();
+			pfo_lostenergy_photon_combined.Init();
+
+			pfo_photon_only      .Init();
+			pfo_wophoton_only    .Init();
+			pfo_lostenergy_photon_rconly.Init();
 		}
 
 
 		void Fill_Data(TTree* tree){
-			mc .Fill_Data(tree,"mc");
-			mc2.Fill_Data(tree,"mc2");
-			pfo.Fill_Data(tree,"pfo");
+			mcs_lostenergy_photon  .Fill_Data(tree,"mcs_lostenergy_photon");
+			pfo_lostenergy_photon  .Fill_Data(tree,"pfo_lostenergy_photon");
+
+			pfo_photon_conversion  .Fill_Data(tree,"pfo_photon_conversion");
+			pfo_wophoton_conversion.Fill_Data(tree,"pfo_wophoton_conversion");
+			pfo_lostenergy_photon_combined.Fill_Data(tree,"pfo_lostenergy_photon_combined");
+
+			pfo_photon_only        .Fill_Data(tree,"pfo_photon_only");
+			pfo_wophoton_only      .Fill_Data(tree,"pfo_wophoton_only");
+			pfo_lostenergy_photon_rconly.Fill_Data(tree,"pfo_lostenergy_photon_rconly");
 		}
 
 }; 
@@ -328,7 +349,9 @@ class Strange_Photon_Output_Collection{
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
@@ -336,7 +359,9 @@ class Strange_Photon_Output_Collection{
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}

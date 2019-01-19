@@ -64,7 +64,7 @@ void kcut_zmass(std::vector<std::string> mhmass) {
 	gPad->SetLogy();
 
 	
-	string title_name="po_muon_kcut_zmass";
+	string title_name="po_vari_photon_central_e";
 	string x_name=";"+title_name+ "(GeV/c^{2})";
 	string y_name=";Events";
 	string axis_name=x_name+y_name;
@@ -77,7 +77,7 @@ void kcut_zmass(std::vector<std::string> mhmass) {
 		MyLCTuple->SetBranchAddress(title_name.c_str(), &variable);
 		//		MyLCTuple->SetBranchStatus("mc_ISR_elec_mass",1);
 
-		hvariable[i] = new TH1F(title_name.c_str(),title_name.c_str(), 150,0,150);
+		hvariable[i] = new TH1F(title_name.c_str(),title_name.c_str(), 300,0,300);
 		hvariable[i]->SetTitle(axis_name.c_str());
 
 

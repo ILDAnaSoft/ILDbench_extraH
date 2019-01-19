@@ -41,7 +41,7 @@ Minimal_Processor::Minimal_Processor()
 		registerProcessorParameter( "RootFileName",
 				"Name of Root file (default: output.root)",
 				_rootfilename, 
-				std::string("../result/output.root") );
+				std::string("../results/output.root") );
 
 		registerProcessorParameter( "SwitchOutputCollection",
 				"whether to write a Marlin collection for further Marlin",
@@ -137,7 +137,13 @@ void Minimal_Processor::Init(LCEvent* evt) {
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
 	_global_counter.gweight=1;
-	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
+	if( _nEvt % 50 == 0 ){
+		if(_output_switch_collection&&!_output_switch_root){
+		}
+		else{
+			ToolSet::ShowMessage(1,"processing event",_nEvt);
+		}
+	} 
 
 	_info.Init();
 	_counter.Init();

@@ -73,6 +73,14 @@ void MCLeptonTagging_Variable_Vec::Get_MCParticles_Information( std::vector<MCPa
 		phi      .push_back(ToolSet::CMC::Cal_Azimuth(input[i]));
 		e        .push_back(input[i]->getEnergy());
 		mass     .push_back(input[i]->getMass());
+		endpointx.push_back(input[i]->getEndpoint()[0]);
+		endpointy.push_back(input[i]->getEndpoint()[1]);
+		endpointz.push_back(input[i]->getEndpoint()[2]);
+		endpointr.push_back(std::sqrt(std::pow(input[i]->getEndpoint()[0],2)+std::pow(input[i]->getEndpoint()[1],2)));
+		vertexx.push_back(input[i]->getVertex()[0]);
+		vertexy.push_back(input[i]->getVertex()[1]);
+		vertexz.push_back(input[i]->getVertex()[2]);
+		vertexr.push_back(std::sqrt(std::pow(input[i]->getVertex()[0],2)+std::pow(input[i]->getVertex()[1],2)));
 	}
 	return ;
 }

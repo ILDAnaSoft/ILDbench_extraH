@@ -188,18 +188,17 @@ void MCPhotonFinder_Number::Fill_Data(TTree* tree, std::string prefix){
 
 
 void MCPhotonFinder_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
-	photon.Get_MCParticles_Information(input);
-	num_photon.Get_MCParticles_Number(input);
+	particle.Get_MCParticles_Information(input);
+	num.Get_MCParticles_Number(input);
 }
 
 void MCPhotonFinder_Information_Single::Get_PFOParticles( std::vector<ReconstructedParticle*> input) {
-	photon.Get_PFOParticles_Information(input);
-	num_photon.Get_PFOParticles_Number(input);
+	particle.Get_PFOParticles_Information(input);
+	num.Get_PFOParticles_Number(input);
 }
 
 void MCPhotonFinder_Information_Single::Fill_Data(TTree* tree, std::string prefix){
 	obv              .Fill_Data(tree,prefix+"_obv");
-	photon           .Fill_Data(tree,prefix+"_photon");
-	num_photon       .Fill_Data(tree,prefix+"_num_photon");
-	num_MCs          .Fill_Data(tree,prefix+"_num_MCs" );
+	particle         .Fill_Data(tree,prefix+"_particle");
+	num              .Fill_Data(tree,prefix+"_num");
 }

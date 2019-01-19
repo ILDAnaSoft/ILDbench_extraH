@@ -135,6 +135,8 @@ class MCLeptonTagging_Observable{
 		    invisible_energy =-10000.1;        
 		}
 
+		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
@@ -276,21 +278,6 @@ class MCLeptonTagging_Information{
 
 
 
-class CLEPTON_CUT{
-	public:
-		float MinEnergy;
-		float detector_costheta;
-
-		void Read_Cut(){
-			this->MinEnergy=5.0;
-			this->detector_costheta=0.97;
-		}
-
-		CLEPTON_CUT(){
-			Read_Cut();
-		}
-};
-
 class MCLeptonTagging_Output_Collection{
 	public:
     	std::string      name;
@@ -332,7 +319,9 @@ class MCLeptonTagging_Output_Collection{
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
@@ -340,7 +329,9 @@ class MCLeptonTagging_Output_Collection{
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}

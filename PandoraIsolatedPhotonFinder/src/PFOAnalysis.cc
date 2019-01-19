@@ -1,7 +1,7 @@
 #include "PandoraIsolatedPhotonFinder.h"
 
 
-bool PandoraIsolatedPhotonFinder::analysePFOParticle( LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhotonCol, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information_Single& info, PandoraIsolatedPhotonFinder_Function_Counter& counter){
+bool PandoraIsolatedPhotonFinder::analysePFOParticle( LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhotonCol, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information_Single& info_photon, PandoraIsolatedPhotonFinder_Information_Single& info_wophoton, PandoraIsolatedPhotonFinder_Function_Counter& counter){
 	std::vector<ReconstructedParticle*> FS =ToolSet::CRC::Get_POParticle(input_pfo);
 	std::vector<ReconstructedParticle*> all_photon=ToolSet::CRC::Get_POParticleType(FS,22);
 	std::vector<ReconstructedParticle*> photon;
@@ -14,15 +14,15 @@ bool PandoraIsolatedPhotonFinder::analysePFOParticle( LCCollection* input_pfo, P
 		if ((output_iso  == 1) || (output_iso == 2) ){
 			photon.push_back(mc);
 		} 
-		else{
-			wophoton.push_back(mc);
-		}
 	}
 
-	outputPhotonCol.Add_Element_RCParticle(photon);
+	wophoton=FS-photon;
+
+	outputPhotonCol  .Add_Element_RCParticle(photon);
 	outputWoPhotonCol.Add_Element_RCParticle(wophoton);
 
-	info.Get_PFOParticles(photon);
+	info_photon.Get_PFOParticles(photon);
+	info_wophoton.Get_PFOParticles(wophoton);
 
 	return(true);
 }
@@ -84,8 +84,8 @@ float PandoraIsolatedPhotonFinder::getConeEnergy( ReconstructedParticle* pfo, st
 
 bool PandoraIsolatedPhotonFinder::IsCentralPhoton( ReconstructedParticle* pfo) {
 	float  energy = pfo->getEnergy();
-	float  p      = TVector3( pfo->getMomentum() ).Mag();
-	float  angle  = abs(TVector3( pfo->getMomentum() ).CosTheta());
+	float  p      = ToolSet::CMC::Cal_P(pfo);
+	float  angle  = std::abs(ToolSet::CMC::Cal_CosTheta(pfo));
 	// set cut
 	if (_useEnergy){
 		if(_maxEnergyCut > 0 && energy > _maxEnergyCut){
@@ -103,11 +103,7 @@ bool PandoraIsolatedPhotonFinder::IsCentralPhoton( ReconstructedParticle* pfo) {
 //			ShowMessage(2,"not min angle cut, 0",angle);
 			return false;
 		}
-		if(_maxCosTheta >0 && _useForwardPolarAngle && angle> _minForwardCosTheta){
-//			ShowMessage(2,"not max angle cut with forward, 0",angle);
-			return false;
-		}
-		if(_maxCosTheta >0 && !_useForwardPolarAngle && angle> _maxCosTheta){
+		if(_maxCosTheta >0 && angle> _maxCosTheta){
 //			ShowMessage(2,"not max angle cut no forward, 0",angle);
 			return false;
 		}
@@ -120,8 +116,8 @@ bool PandoraIsolatedPhotonFinder::IsCentralPhoton( ReconstructedParticle* pfo) {
 
 bool PandoraIsolatedPhotonFinder::IsForwardPhoton( ReconstructedParticle* pfo) {
 	float energy = pfo->getEnergy();
-	float  p      = TVector3( pfo->getMomentum() ).Mag();
-	float  angle  = abs(TVector3( pfo->getMomentum() ).CosTheta());
+	float  p      = ToolSet::CMC::Cal_P(pfo);
+	float  angle  = std::abs(ToolSet::CMC::Cal_CosTheta(pfo));
 	// set cut
 	if (_useForwardEnergy){
 		if(_maxForwardEnergyCut > 0 && energy > _maxForwardEnergyCut){

@@ -94,7 +94,7 @@ class MCPhotonFinder : public Processor {
 		void  Finish(LCEvent* evt);
 		void  Counter(bool JMC, LCEvent* evt);
 
-		bool  analyseMCParticle( LCCollection* inputmcCol, MCPhotonFinder_Output_Collection& outputPhotonCol,MCPhotonFinder_Output_Collection &outputWoPhotonCol, MCPhotonFinder_Information_Single & info, MCPhotonFinder_Function_Counter  &counter);
+		bool  analyseMCParticle( LCCollection* inputmcCol, MCPhotonFinder_Output_Collection& outputPhotonCol,MCPhotonFinder_Output_Collection &outputWoPhotonCol, MCPhotonFinder_Information_Single & info_photon, MCPhotonFinder_Information_Single & info_wophoton, MCPhotonFinder_Function_Counter  &counter);
 
     	/** Calculates the cone energy */
     	float getConeEnergy( MCParticle* mc, std::vector<MCParticle*> all ) ;

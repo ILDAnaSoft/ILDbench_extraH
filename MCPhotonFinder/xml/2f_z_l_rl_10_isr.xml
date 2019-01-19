@@ -28,14 +28,25 @@
 
 		<!--Input collection of ReconstructedParticles-->
 		<parameter name="InputCollection" type="string" lcioInType="MCParticle">MCParticle</parameter>
+
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true</parameter>
 		<!--Output collection of hard scattering level-->
 		<parameter name="OutputCollectionHardScattering" type="string" lcioOutType="MCParticle">MCHS</parameter>
 		<!--Output collection of pythia stable level-->
 		<parameter name="OutputCollectionPythiaStable" type="string" lcioOutType="MCParticle">MCPS</parameter>
 		<!--Output collection of detector simulation level -->
 		<parameter name="OutputCollectionDetectorSimulation" type="string" lcioOutType="MCParticle">MCDS</parameter>
-	</processor>
 
+		<!--Input collection of Link from Reco to MC-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+		<!--Input collection of Link from MC to Reco-->
+		<parameter name="InputMCTruthRecoLink" type="string" lcioInType="LCRELATION">MCTruthRecoLink</parameter>
+
+		<!--Output root file-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> ../results/output_level.root </parameter>
+	</processor>
 
 	<processor name="MyMCPhotonFinder_HS" type="MCPhotonFinder">
 		<!--Isolated Lepton Finder Processor-->
@@ -47,7 +58,7 @@
 		<!--Output collection of isolated photons-->
 		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="MCParticle">HSPhoton</parameter>
 		<!--Output collection of without isolated photons-->
-		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="MCParticle">HSWoPhoton</parameter>
+		<parameter name="OutputCollectionWoIsolatedPhoton" type="string" lcioOutType="MCParticle">HSWoPhoton</parameter>
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
@@ -84,7 +95,7 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPolarAngle" type="float">1.0 </parameter>
+		<parameter name="MaximalForwardPolarAngle" type="float">0.98 </parameter>
 
 
 		<!--Use Isolation Cone-->
@@ -105,7 +116,7 @@
 		<!--Output collection of isolated photons-->
 		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="MCParticle">PSPhoton</parameter>
 		<!--Output collection of without isolated photons-->
-		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="MCParticle">PSWoPhoton</parameter>
+		<parameter name="OutputCollectionWoIsolatedPhoton" type="string" lcioOutType="MCParticle">PSWoPhoton</parameter>
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
@@ -142,7 +153,7 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPolarAngle" type="float">1.0 </parameter>
+		<parameter name="MaximalForwardPolarAngle" type="float">0.98 </parameter>
 
 
 		<!--Use Isolation Cone-->
@@ -163,7 +174,7 @@
 		<!--Output collection of isolated photons-->
 		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="MCParticle">DSPhoton</parameter>
 		<!--Output collection of without isolated photons-->
-		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="MCParticle">DSWoPhoton</parameter>
+		<parameter name="OutputCollectionWoIsolatedPhoton" type="string" lcioOutType="MCParticle">DSWoPhoton</parameter>
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
@@ -200,7 +211,7 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPolarAngle" type="float">1.0 </parameter>
+		<parameter name="MaximalForwardPolarAngle" type="float">0.98 </parameter>
 
 
 		<!--Use Isolation Cone-->

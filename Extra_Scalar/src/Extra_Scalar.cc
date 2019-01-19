@@ -13,7 +13,7 @@ Extra_Scalar::Extra_Scalar() : Processor( "Extra_Scalar" ) {
 			"MCParticleCollection", 
 			"Name of the MC particle collection",
 			_inputMCsCollection,
-			std::string("MCParticlesSkimmed") );
+			std::string("MCParticle") );
 
 	//Input collection from FastJet
 	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
@@ -25,37 +25,137 @@ Extra_Scalar::Extra_Scalar() : Processor( "Extra_Scalar" ) {
 
 
 
-	//Input collection from IsolatedLeptonTaggingProcessor
-	registerInputCollection( LCIO::LCRELATION,
-			"InputRecoMCTruthLink",
-			"Relation between MC and PFO particles",
-			_pfomcsRelation,
-			std::string("RecoMCTruthLink"));
-
-	registerInputCollection( LCIO::LCRELATION,
-			"InputMCTruthRecoLink",
-			"Relation between PFO particles and MC",
-			_mcspfoRelation,
-			std::string("MCTruthRecoLink"));
-
-
-
-
-
-
 
 	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-			"InputPFOwoOverlayCollection", 
+			"InputPFOWoOverlayCollection", 
 			"The input after removing the overlay",
 			_inputPFOWoOverlayCollection,
-			std::string("PFOwoOverlay") );
+			std::string("PFOWoOverlay") );
 
+
+
+
+
+
+
+
+	//Input collection from MCPhotonFinder 
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCHS_Collection",
+			"Name of the MC collection",
+			_inputMCHS_Collection,
+			std::string("MCHS") );
 
 	registerInputCollection( LCIO::MCPARTICLE,
-			"InputMCwoOverlayCollection", 
-			"The input after removing the overlay",
-			_inputMCsWoOverlayCollection,
-			std::string("MCwoOverlay") );
+			"InputMCHS_IsoLeptonCollection",
+			"Name of the MC isolated lepton collection",
+			_inputMCHS_MuonCollection,
+			std::string("MCHS_Lepton") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCHS_IsoPhotonCollection",
+			"Name of the MC isolated photon collection",
+			_inputMCHS_PhotonCollection,
+			std::string("MCHS_Photon") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCHS_WoIsoPhotonCollection", 
+			"Name of the PFO after MC isolated Photon tagging collection",
+			_inputMCHS_WoMuonPhotonCollection,
+			std::string("MCHS_WoPhoton") );
+
+
+
+	//Input collection from MCPhotonFinder 
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCPS_Collection",
+			"Name of the MC collection",
+			_inputMCPS_Collection,
+			std::string("MCPS") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCPS_IsoLeptonCollection",
+			"Name of the MC isolated lepton collection",
+			_inputMCPS_MuonCollection,
+			std::string("MCPS_Lepton") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCPS_IsoPhotonCollection",
+			"Name of the MC isolated photon collection",
+			_inputMCPS_PhotonCollection,
+			std::string("MCPS_Photon") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCPS_WoIsoPhotonCollection", 
+			"Name of the PFO after MC isolated Photon tagging collection",
+			_inputMCPS_WoMuonPhotonCollection,
+			std::string("MCPS_WoPhoton") );
+
+
+
+
+	//Input collection from MCPhotonFinder 
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCDS_Collection",
+			"Name of the MC collection",
+			_inputMCDS_Collection,
+			std::string("MCDS") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCDS_IsoLeptonCollection",
+			"Name of the MC isolated photon collection",
+			_inputMCDS_MuonCollection,
+			std::string("MCDS_Lepton") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCDS_IsoPhotonCollection",
+			"Name of the MC isolated photon collection",
+			_inputMCDS_PhotonCollection,
+			std::string("MCDS_Photon") );
+
+	registerInputCollection( LCIO::MCPARTICLE,
+			"InputMCDS_WoIsoPhotonCollection", 
+			"Name of the PFO after MC isolated Photon tagging collection",
+			_inputMCDS_WoMuonPhotonCollection,
+			std::string("MCDS_WoPhoton") );
+
+
+
+
+	//Input collection from Strange Lepton 
+	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+			"InputPFOIsoLeptonConversionCollection", 
+			"Name of the PFO Lepton after changing MC isolated Lepton",
+			_inputPFOLepton_ConversionCollection,
+			std::string("PFOIsoLeptonConversion") );
+
+
+
+
+	//Input collection from Strange Photon 
+	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+			"InputPFOIsoPhotonConversionCollection", 
+			"Name of the PFO Photon after changing MC isolated Photon",
+			_inputPFOPhoton_ConversionCollection,
+			std::string("PFOIsoPhotonConversion") );
+
+	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+			"InputPFOWoIsoPhotonConversionCollection", 
+			"Name of the PFOs after remove related to MC isolated Photon",
+			_inputPFOWoPhoton_ConversionCollection,
+			std::string("PFORemovedIsoPhotonConversion") );
+
+	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+			"InputPFOIsoPhotonOnlyCollection", 
+			"Name of the PFOs after remove related to MC isolated Photon",
+			_inputPFOPhoton_OnlyCollection,
+			std::string("PFOIsoPhotonOnly") );
+
+	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+			"InputPFOWoIsoPhotonOnlyCollection", 
+			"Name of the PFOs after remove related to MC isolated Photon",
+			_inputPFOWoPhoton_onlyCollection,
+			std::string("PFORemovedIsoPhotonOnly") );
 
 
 
@@ -69,10 +169,12 @@ Extra_Scalar::Extra_Scalar() : Processor( "Extra_Scalar" ) {
 			std::string("Isoleps") );
 
 	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-			"InputPFOWithoutIsolepsCollection", 
+			"InputPFOWoIsolepsCollection", 
 			"Name of the PFO after isolated lepton tagging collection",
 			_inputPFOWoMuonCollection,
-			std::string("PFOWithoutIsoleps") );
+			std::string("PFOWoIsoleps") );
+
+
 
 	//Input collection from PandoraIsolatedPhotonFinder 
 	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
@@ -82,62 +184,30 @@ Extra_Scalar::Extra_Scalar() : Processor( "Extra_Scalar" ) {
 			std::string("PandoraIsoPhoton") );
 
 	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-			"InputPandoraPFOWithoutIsoPhotonCollection", 
+			"InputPandoraPFOWoIsoPhotonCollection", 
 			"Name of the PFO after Pandora isolated Photon tagging collection",
 			_inputPFOWoMuonPhotonCollection,
-			std::string("PandoraPFOWithoutIsoPhoton") );
-
-
-
-
-
-	//Input collection from MCPhotonFinderX 
-	registerInputCollection( LCIO::MCPARTICLE,
-			"InputMCsMuonCollection",
-			"Name of the MC isolated photon collection",
-			_inputMCsMuonCollection,
-			std::string("MCsMuon_Pythia") );
-
-	registerInputCollection( LCIO::MCPARTICLE,
-			"InputMCsWoMuonCollection",
-			"Name of the MC isolated photon collection",
-			_inputMCsWoMuonCollection,
-			std::string("MCsPhoton_Pythia") );
-
-	registerInputCollection( LCIO::MCPARTICLE,
-			"InputMCIsoPhotonCollection",
-			"Name of the MC isolated photon collection",
-			_inputMCsPhotonCollection,
-			std::string("MCsPhoton_Pythia") );
-
-	registerInputCollection( LCIO::MCPARTICLE,
-			"InputMCsWithoutIsoPhotonCollection", 
-			"Name of the PFO after MC isolated Photon tagging collection",
-			_inputMCsWoMuonPhotonCollection,
-			std::string("MCsWithoutIsoPhoton_Pythia") );
+			std::string("PandoraPFOWoIsoPhoton") );
 
 
 
 
 
 
-	registerInputCollection( LCIO::MCPARTICLE,
-			"InputMCIsoPhotonConversionCollection",
-			"Name of the MC isolated photon collection",
-			_inputMCsPhotonConversionCollection,
-			std::string("MCsPhoton_Conversion") );
+	//Input collection from Link 
+	registerInputCollection( LCIO::LCRELATION,
+			"InputRecoMCTruthLink",
+			"Relation between MC and PFO particles",
+			_pfomcsRelation,
+			std::string("RecoMCTruthLink"));
 
-	registerInputCollection( LCIO::MCPARTICLE,
-			"InputMCsWithoutIsoPhotonConversionCollection", 
-			"Name of the PFO after MC isolated Photon tagging collection",
-			_inputMCsWoPhotonConversionCollection,
-			std::string("MCsWithoutIsoPhoton_Conversion") );
+	registerInputCollection( LCIO::LCRELATION,
+			"InputMCTruthRecoLink",
+			"Relation between PFO particles and MC",
+			_mcspfoRelation,
+			std::string("MCTruthRecoLink"));
 
-	registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-			"InputMCPFOWithoutIsoPhotonCollection", 
-			"Name of the PFOs after MC isolated Photon tagging collection",
-			_inputMCsPFOWoPhotonCollection,
-			std::string("PFOWithoutIsoPhoton") );
+
 
 	//Input parameters 
 	registerProcessorParameter( "hmass",
@@ -190,17 +260,31 @@ void Extra_Scalar::processEvent( LCEvent * evt )
 { 
 	Init(evt);
 
-	bool JOverlay, JMC,JPFO, JPFO_MC_Cheating_Muon, JPFO_MC_Cheating_ISR;
 
-	JMC=analyseMCParticle(_MCsCol,_info);
+    int  JMC_HS=analyseMCParticle( _MCHS_MuonCol, _MCHS_PhotonCol,_MCHS_WoMuonPhotonCol,_info.hs);
 
-	JPFO=analysePhysicalObject(_PFOMuonCol,_PFOPhotonCol,_PFOWoMuonPhotonCol, _info.po);
+    int  JMC_PS=analyseMCParticle( _MCPS_MuonCol, _MCPS_PhotonCol,_MCPS_WoMuonPhotonCol,_info.py);
 
-	JPFO_MC_Cheating_Muon=analysePO_MC_Cheating_Muon(_MCsMuonCol, _PFOPhotonCol, _PFOWoMuonPhotonCol, _navmcspfo, _info.po_cmuon);
+    int  JMC_DS=analyseMCParticle( _MCDS_MuonCol, _MCDS_PhotonCol,_MCDS_WoMuonPhotonCol,_info.de);
 
-	JPFO_MC_Cheating_ISR =analysePO_MC_Cheating_ISR (_PFOMuonCol, _MCsPhotonCol, _PFOWoMuonCol,       _navpfomcs, _info.po_cisr );
 
-	Counter(JMC, JPFO, JPFO_MC_Cheating_Muon, JPFO_MC_Cheating_ISR, evt);
+	int JPFO                 =analysePhysicalObject(_PFOMuonCol        ,_PFOPhotonCol            ,_PFOWoMuonPhotonCol        , _info.po      ,1);
+
+////if((JMC_HS!=1||JMC_PS!=1||JMC_DS!=1)&&JPFO==1){
+////	std::vector<MCParticle*> muon_hs    =ToolSet::CMC::Get_MCParticle(_MCHS_MuonCol);
+////	std::vector<MCParticle*> muon_ps    =ToolSet::CMC::Get_MCParticle(_MCPS_MuonCol);
+////	std::vector<MCParticle*> muon_ds    =ToolSet::CMC::Get_MCParticle(_MCDS_MuonCol);
+////	std::vector<ReconstructedParticle*> muon_pfo   =ToolSet::CRC::Get_POParticle(_PFOMuonCol);
+////	ToolSet::ShowMessage(1,"mc_hs",muon_hs);
+////	ToolSet::ShowMessage(1,"mc_ps",muon_ps);
+////	ToolSet::ShowMessage(1,"mc_ds",muon_ds);
+////	ToolSet::ShowMessage(1,"pfo",muon_pfo);
+////}
+  	int JPFO_MC_Cheating_Muon=analysePhysicalObject(_PFOLepton_ConversionCol, _PFOPhotonCol           , _PFOWoMuonPhotonCol, _info.po_cmuon,2);
+
+	int JPFO_MC_Cheating_ISR =analysePhysicalObject(_PFOMuonCol        , _PFOPhoton_ConversionCol, _PFOWoPhoton_ConversionCol, _info.po_cisr,1 );
+
+	Counter(JMC_HS, JMC_PS, JMC_DS, JPFO, JPFO_MC_Cheating_Muon, JPFO_MC_Cheating_ISR, evt);
 
 	Finish(evt);
 }
@@ -208,48 +292,52 @@ void Extra_Scalar::processEvent( LCEvent * evt )
 
 
 
-void Extra_Scalar::Counter(bool JMC, bool JPFO, bool JPFO_MC_Cheating_Muon, bool JPFO_MC_Cheating_ISR, LCEvent* evt){
-    if(JMC){
+void Extra_Scalar::Counter(int JMC_HS,int JMC_PS, int JMC_DS,  int JPFO, int JPFO_MC_Cheating_Muon, int JPFO_MC_Cheating_ISR, LCEvent* evt){
+    if(JMC_HS==1&&JMC_PS==1&&JMC_DS==1){
     	_global_counter.pass_MCs++;
     	_single_counter.pass_MCs++;
     }
     else{
-		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
+//		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ", _nEvt);
     }
 	
-    if(JPFO){
+    if(JPFO==1){
     	_global_counter.pass_PFO++;
     	_single_counter.pass_PFO++;
     }
     else{
-		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
+//		ToolSet::ShowMessage(1,"in processEvent: not pass analysePFOParticle ",_nEvt);
     }
 
-    if(JPFO_MC_Cheating_Muon){
+    if(JPFO_MC_Cheating_Muon==1){
     	_global_counter.pass_PFO_MC_Cheating_Muon++;
     	_single_counter.pass_PFO_MC_Cheating_Muon++;
     }
     else{
-		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
+//		ToolSet::ShowMessage(1,"in processEvent: not pass analysePO_MC_Cheating_Muon",_nEvt);
     }
 
-    if(JPFO_MC_Cheating_ISR){
+    if(JPFO_MC_Cheating_ISR==1){
+
     	_global_counter.pass_PFO_MC_Cheating_ISR++;
     	_single_counter.pass_PFO_MC_Cheating_ISR++;
     }
     else{
-		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
+//		ToolSet::ShowMessage(1,"in processEvent: not pass analysePO_MC_Cheating_ISR",_nEvt);
     }
 
-	if(JMC&&JPFO&&JPFO_MC_Cheating_Muon&&JPFO_MC_Cheating_ISR){
+	if(JMC_HS==1&&JMC_PS==1&&JMC_DS==1&&JPFO==1&&JPFO_MC_Cheating_Muon==1&&JPFO_MC_Cheating_ISR==1){
 		_global_counter.pass_all++;
+
     	_single_counter.pass_all++;
 	}
 }
 
 
+
 void Extra_Scalar::Init(LCEvent* evt){
 	_nEvt++;
+
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
 	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
@@ -278,29 +366,154 @@ void Extra_Scalar::Init(LCEvent* evt){
 		std::cout << "no PFOs without overlay in this event" << std::endl;
 	}
 
+
+
+	//mc hs
 	try{
-		_MCsWoOverlayCol = evt->getCollection( _inputMCsWoOverlayCollection );
+		_MCHS_Col= evt->getCollection( _inputMCHS_Collection);
 	}
 	catch(...){
-		std::cout << "no MCs without overlay in this event" << std::endl;
+		std::cout << "no mc hs in this event" << std::endl;
+	}
+	try{
+		_MCHS_MuonCol= evt->getCollection( _inputMCHS_MuonCollection);
+	}
+	catch(...){
+		std::cout << "no mc hs isolated leptons in this event" << std::endl;
+	}
+
+	try{
+		_MCHS_PhotonCol= evt->getCollection( _inputMCHS_PhotonCollection);
+	}
+	catch(...){
+		std::cout << "no mc hs photons in this event" << std::endl;
+	}
+
+	try{
+		_MCHS_WoMuonPhotonCol= evt->getCollection( _inputMCHS_WoMuonPhotonCollection);
+	}
+	catch(...){
+		std::cout << "no mc hs particles in this event" << std::endl;
 	}
 
 
+	//mc ps
+	try{
+		_MCPS_Col= evt->getCollection( _inputMCPS_Collection);
+	}
+	catch(...){
+		std::cout << "no mc ps in this event" << std::endl;
+	}
+
+	try{
+		_MCPS_MuonCol= evt->getCollection( _inputMCPS_MuonCollection);
+	}
+	catch(...){
+		std::cout << "no mc ps isolated leptons in this event" << std::endl;
+	}
+
+	try{
+		_MCPS_PhotonCol= evt->getCollection( _inputMCPS_PhotonCollection);
+	}
+	catch(...){
+		std::cout << "no mc ps photons in this event" << std::endl;
+	}
+
+	try{
+		_MCPS_WoMuonPhotonCol= evt->getCollection( _inputMCPS_WoMuonPhotonCollection);
+	}
+	catch(...){
+		std::cout << "no mc ps particles in this event" << std::endl;
+	}
+
+
+	//mc ds
+	try{
+		_MCDS_Col= evt->getCollection( _inputMCDS_Collection);
+	}
+	catch(...){
+		std::cout << "no mc ds in this event" << std::endl;
+	}
+
+	try{
+		_MCDS_MuonCol= evt->getCollection( _inputMCDS_MuonCollection);
+	}
+	catch(...){
+		std::cout << "no mc ds isolated leptons in this event" << std::endl;
+	}
+
+	try{
+		_MCDS_PhotonCol= evt->getCollection( _inputMCDS_PhotonCollection);
+	}
+	catch(...){
+		std::cout << "no mc ds photons in this event" << std::endl;
+	}
+
+	try{
+		_MCDS_WoMuonPhotonCol= evt->getCollection( _inputMCDS_WoMuonPhotonCollection);
+	}
+	catch(...){
+		std::cout << "no mc ds particles in this event" << std::endl;
+	}
+
+
+
+	//strange lepton
+	try{
+		_PFOLepton_ConversionCol= evt->getCollection( _inputPFOLepton_ConversionCollection);
+	}
+	catch(...){
+		std::cout << "no PFO Lepton conversion in this event" << std::endl;
+	}
+
+
+	//strange photon
+	try{
+		_PFOPhoton_ConversionCol= evt->getCollection( _inputPFOPhoton_ConversionCollection);
+	}
+	catch(...){
+		std::cout << "no PFO Photon conversion in this event" << std::endl;
+	}
+
+	try{
+		_PFOWoPhoton_ConversionCol= evt->getCollection( _inputPFOWoPhoton_ConversionCollection);
+	}
+	catch(...){
+		std::cout << "no PFO wo Photon conversion in this event" << std::endl;
+	}
+
+	try{
+		_PFOPhoton_OnlyCol= evt->getCollection( _inputPFOPhoton_OnlyCollection);
+	}
+	catch(...){
+		std::cout << "no PFO Photon only instead in this event" << std::endl;
+	}
+
+	try{
+		_PFOWoPhoton_OnlyCol= evt->getCollection( _inputPFOWoPhoton_onlyCollection);
+	}
+	catch(...){
+		std::cout << "no PFO Photon only instead in this event" << std::endl;
+	}
+
+
+	//isolated lepton
 	try{
 		_PFOMuonCol = evt->getCollection( _inputPFOMuonCollection );
 	}
 	catch(...){
-		std::cout << "no isolated leptons in this event" << std::endl;
+		std::cout << "no pandora isolated leptons in this event" << std::endl;
 	}
 
 	try{
 		_PFOWoMuonCol = evt->getCollection( _inputPFOWoMuonCollection );
 	}
 	catch(...){
-		std::cout << "no pfos after isolated lepton tagging in this event" << std::endl;
+		std::cout << "no pandora pfos after isolated lepton tagging in this event" << std::endl;
 	}
 
 
+	//isolated photon 
 	try{
 		_PFOPhotonCol= evt->getCollection( _inputPFOPhotonCollection);
 	}
@@ -313,60 +526,6 @@ void Extra_Scalar::Init(LCEvent* evt){
 	}
 	catch(...){
 		std::cout << "no pfos after Pandora isolated photon tagging in this event" << std::endl;
-	}
-
-
-	try{
-		_MCsMuonCol = evt->getCollection( _inputMCsMuonCollection );
-	}
-	catch(...){
-		std::cout << "no isolated leptons in this event" << std::endl;
-	}
-
-	try{
-		_MCsWoMuonCol = evt->getCollection( _inputMCsWoMuonCollection );
-	}
-	catch(...){
-		std::cout << "no pfos after isolated lepton tagging in this event" << std::endl;
-	}
-
-	try{
-		_MCsPhotonCol= evt->getCollection( _inputMCsPhotonCollection);
-	}
-	catch(...){
-		std::cout << "no MC photon pythia in this event" << std::endl;
-	}
-
-
-	try{
-		_MCsWoMuonPhotonCol= evt->getCollection( _inputMCsWoMuonPhotonCollection );
-	}
-	catch(...){
-		std::cout << "no MCs without photon pythia in this event" << std::endl;
-	}
-
-
-	try{
-		_MCsPhotonConversionCol = evt->getCollection( _inputMCsPhotonConversionCollection );
-	}
-	catch(...){
-		std::cout << "no MC conversion photon in this event" << std::endl;
-	}
-
-
-	try{
-		_MCsWoPhotonConversionCol = evt->getCollection( _inputMCsWoPhotonConversionCollection );
-	}
-	catch(...){
-		std::cout << "no MCs without photon conversion in this event" << std::endl;
-	}
-
-
-	try{
-		_MCsPFOWoPhotonCol = evt->getCollection( _inputMCsPFOWoPhotonCollection );
-	}
-	catch(...){
-		std::cout << "no PFOs without Photon conversion in this event" << std::endl;
 	}
 
     _chain.Set_Nav(_navmcspfo,_navpfomcs);

@@ -329,7 +329,9 @@ class MCLevelClassify_Output_Collection{
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
@@ -337,7 +339,9 @@ class MCLevelClassify_Output_Collection{
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}

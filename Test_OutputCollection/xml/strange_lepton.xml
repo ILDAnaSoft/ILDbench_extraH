@@ -1,0 +1,119 @@
+<marlin>
+	<execute>
+		<processor name="MyMCLevelClassify"/>
+		<processor name="MyMCLeptonTagging"/>
+		<processor name="My_Strange_Lepton"/>
+		<processor name="My_Test_OutputCollection"/>
+	</execute>
+
+
+	<global>
+		<parameter name="LCIOInputFiles">
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_0.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_1.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_2.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_3.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_4.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_5.slcio
+		</parameter>
+		<parameter name="MaxRecordNumber" value="1000" />  
+		<parameter name="SkipNEvents" value="0" />
+		<parameter name="SupressCheck" value="false" />  
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
+		<parameter name="AllowToModifyEvent" value="true" />
+	</global>
+
+
+	<processor name="MyMCLevelClassify" type="MCLevelClassify">
+		<!--Classify MCs for different levels Processor-->
+
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputCollection" type="string" lcioInType="MCParticle">MCParticle</parameter>
+
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true</parameter>
+		<!--Output collection of hard scattering level-->
+		<parameter name="OutputCollectionHardScattering" type="string" lcioOutType="MCParticle">MCHS</parameter>
+		<!--Output collection of pythia stable level-->
+		<parameter name="OutputCollectionPythiaStable" type="string" lcioOutType="MCParticle">MCPS</parameter>
+		<!--Output collection of detector simulation level -->
+		<parameter name="OutputCollectionDetectorSimulation" type="string" lcioOutType="MCParticle">MCDS</parameter>
+
+		<!--Input collection of Link from Reco to MC-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+		<!--Input collection of Link from MC to Reco-->
+		<parameter name="InputMCTruthRecoLink" type="string" lcioInType="LCRELATION">MCTruthRecoLink</parameter>
+
+		<!--Output root file-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> ../results/output_level.root </parameter>
+	</processor>
+
+
+	<processor name="MyMCLeptonTagging" type="MCLeptonTagging">
+		<!--Classify MCs for different levels Processor-->
+
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputCollection" type="string" lcioInType="MCParticle">MCPS</parameter>
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true </parameter>
+		<!--Output collection of hard scattering level-->
+		<parameter name="OutputCollectionWoLepton" type="string" lcioOutType="MCParticle">MCPS_WoLepton</parameter>
+		<!--Output collection of pythia stable level-->
+		<parameter name="OutputCollectionLepton" type="string" lcioOutType="MCParticle">MCPS_Lepton</parameter>
+
+		<!--Input parameter-->
+		 <parameter name="lep_type" type="int"> 13  </parameter>
+		<!--Maximum cos cone angle size-->
+		<parameter name="MinimalLeptonEnergy" type="float">5</parameter>
+		<parameter name="MaximalCosConeAngle" type="float">0.99 </parameter>
+		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
+
+		<!--Output root file-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> ../results/output_PS.root </parameter>
+	</processor>
+
+
+
+	<processor name="My_Strange_Lepton" type="Strange_Lepton">
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCsPhotonCollection" type="string" lcioInType="MCParticles">MCPS_Lepton</parameter>
+
+		<!--Output collection-->
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true </parameter>
+
+		<!--Output collection of PFO related from MC photon-->
+		<parameter name="OutputPFOLeptonCollection" type="string" lcioOutType="ReconstructedParticle">PFOIsoLeptonConversion</parameter>
+
+		<!--Output root file name-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> $PWD/../results/2f_l_eL.pR_test.root </parameter>
+
+
+		<!--Input parameters -->
+		<!--Minimum energy difference between mc photon and reconstructed constituents-->
+		<parameter name="MinEnergyDifferenceRario" type="float">0.05 </parameter>
+	</processor>
+
+
+
+
+
+
+	<processor name="My_Test_OutputCollection" type="Test_OutputCollection">
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCParticleCollection1" type="string" lcioInType="MCParticles">MCs</parameter>
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCParticleCollection2" type="string" lcioInType="MCParticles">MCs</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPOParticleCollection1" type="string" lcioInType="ReconstructedParticle">PFOIsoLeptonConversion</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPOParticleCollection2" type="string" lcioInType="ReconstructedParticle">PFO</parameter>
+		<!--Output root file name-->
+		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
+		<parameter name="RootFileName"> $PWD/../results/strange_lepton.root </parameter>
+	</processor>
+</marlin>
+

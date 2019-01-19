@@ -10,19 +10,31 @@ Strange_Photon::Strange_Photon()
 
 		// register steering parameters: name, description, class-variable, default value
 		registerInputCollection( LCIO::MCPARTICLE,
-				"InputMCParticleCollection", 
-				"Name of the MC particle collection",
-				_inputMCsCollection,
-				std::string("MCParticle") );
+				"InputMCsPhotonCollection", 
+				"Name of the MC photon collection",
+				_inputMCsPhotonCollection,
+				std::string("MCPS_Photon") );
+
+		registerInputCollection( LCIO::MCPARTICLE,
+				"InputMCsWoPhotonCollection", 
+				"Name of the MC particle Wo photon collection",
+				_inputMCsWoPhotonCollection,
+				std::string("MCPS_WoPhoton") );
 
 		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-				"InputPOParticleCollection" ,
-				"Input collection of ReconstructedParticles",
-				_inputPFOsCollection,
-				std::string("PandoraPFOs"));
+				"InputPFOPhotonCollection" ,
+				"Input collection of Reconstructed Photon",
+				_inputPFOPhotonCollection,
+				std::string("PFO_Photon"));
+
+		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"InputPFOWoPhotonCollection" ,
+				"Input collection of ReconstructedParticles Wo Photon",
+				_inputPFOWoPhotonCollection,
+				std::string("PFO_WoPhoton"));
 
 		registerInputCollection( LCIO::LCRELATION,
-				"InputMCRecoTruthLink",
+				"InputMCTruthRecoLink",
 				"Relation between MC and PFO particles",
 				_mcpfoRelation,
 				std::string("MCTruthRecoLink"));
@@ -33,6 +45,69 @@ Strange_Photon::Strange_Photon()
 				_pfomcRelation,
 				std::string("RecoMCTruthLink"));
 
+
+
+		//output collection
+		registerProcessorParameter( "SwitchOutputCollection",
+				"whether to write a Marlin collection for further Marlin",
+				_output_switch_collection,
+				bool(true) );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOPhoton_ConversionCollection",
+				"The output for New corrected PFO PhotonCollection",
+				_outputPFOPhoton_ConversionCollection,
+				std::string("PFOIsoPhotonConversion") );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOWoPhoton_ConversionCollection",
+				"The output for PFO Type Collection",
+				_outputPFOWoPhoton_ConversionCollection,
+				std::string("PFORemovedIsoPhotonConversion") );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOLostEnergyPhoton_CombinedCollection",
+				"The output for PFOs which lost energy and contain all particles coming from mc photon Collection",
+				_outputPFOLostEnergyPhoton_CombinedCollection,
+				std::string("PFOLostEnergyPhoton_CombinedConversion") );
+
+
+
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOPhoton_OnlyCollection",
+				"The output for New corrected PFO PhotonCollection",
+				_outputPFOPhoton_OnlyCollection,
+				std::string("PFOIsoPhotonOnly") );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOWoPhoton_OnlyCollection",
+				"The output for PFO Type Collection",
+				_outputPFOWoPhoton_OnlyCollection,
+				std::string("PFORemovedIsoPhotonOnly") );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOLostEnergyPhoton_RCOnlyCollection",
+				"The output for PFOs which lost energy and contain all particles coming from mc photon Collection",
+				_outputPFOLostEnergyPhoton_RCOnlyCollection,
+				std::string("PFOLostEnergyPhoton_RCOnly") );
+
+
+
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOLostEnergyPhotonCollection",
+				"The output for PFO which lost energy and is a photon Collection",
+				_outputPFOLostEnergyPhotonCollection,
+				std::string("PFOLostEnergyPhotonConversion") );
+
+		registerOutputCollection( LCIO::MCPARTICLE,
+				"OutputMCsLostEnergyPhotonCollection",
+				"The output for MCs PDG Collection",
+				_outputMCsLostEnergyPhotonCollection,
+				std::string("MCsLostEnergyPhotonConversion") );
+
+		//output root
 		registerProcessorParameter( "SwitchOutputRoot",
 				"whether to write a root tree for observables",
 				_output_switch_root,
@@ -43,45 +118,11 @@ Strange_Photon::Strange_Photon()
 				_rootfilename, 
 				std::string("../result/output.root") );
 
-		registerProcessorParameter( "SwitchOutputCollection",
-				"whether to write a Marlin collection for further Marlin",
-				_output_switch_collection,
-				bool(true) );
-
-		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-				"OutputPFOsRemovedIsoPhotonCollection",
-				"The output for PFO Type Collection",
-				_outputPFOsRemovedIsoPhotonCollection,
-				std::string("outputPFOsRemovedIsoPhotonCollection") );
-
-		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-				"OutputIsoPhotonConversionCollection",
-				"The output for PFO Type Collection",
-				_outputIsoPhotonConversionCollection,
-				std::string("outputIsoPhotonConversionCollection") );
-
-		registerOutputCollection( LCIO::MCPARTICLE,
-				"OutputMCsRemovedIsoPhotonConversionCollection",
-				"The output for PFO Type Collection",
-				_outputMCsRemovedIsoPhotonConversionCollection,
-				std::string("outputMCsRemovedIsoPhotonConversionCollection") );
-
-		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-				"OutputIsoPhotonCollection",
-				"The output for PFO Type Collection",
-				_outputIsoPhotonCollection,
-				std::string("outputIsoPhotonCollection") );
-
 		//Input parameters 
-		registerProcessorParameter( "ConeEnergyRatio",
-				"cone energy ratio cut",
-				_ConeEnergyRatio,
-				float(0.95) );
-
-		registerProcessorParameter( "MaxCosConeAngle",
-				"max cone angle",
-				_maxCosConeAngle,
-				float(0.95) );
+		registerProcessorParameter( "MinEnergyDifferenceRario",
+				"min energy difference between mc photon and reconstructed constituents",
+				_minEnergyDifferenceRatio,
+				float(0.05) );
 
 	}
 
@@ -98,14 +139,24 @@ void Strange_Photon::init() {
 	_single_counter.Init();
 	_counter.Init();
 
-	_outputPFORemovedIsoPhotonCol          .Set_Switch(_output_switch_collection);
-	_outputIsoPhotonCol                    .Set_Switch(_output_switch_collection);
-	_outputIsoPhotonConversionCol          .Set_Switch(_output_switch_collection);
-	_outputMCsRemovedIsoPhotonConversionCol.Set_Switch(_output_switch_collection);
-	_outputPFORemovedIsoPhotonCol          .Set_Name(_outputPFOsRemovedIsoPhotonCollection);
-	_outputIsoPhotonCol                    .Set_Name(_outputIsoPhotonCollection);
-	_outputIsoPhotonConversionCol          .Set_Name(_outputIsoPhotonConversionCollection);
-	_outputMCsRemovedIsoPhotonConversionCol.Set_Name(_outputMCsRemovedIsoPhotonConversionCollection);
+	_outputPFOPhoton_ConversionCol           .Set_Switch(_output_switch_collection);
+	_outputPFOWoPhoton_ConversionCol         .Set_Switch(_output_switch_collection);
+	_outputPFOLostEnergyPhoton_CombinedCol   .Set_Switch(_output_switch_collection);
+	_outputPFOPhoton_OnlyCol                 .Set_Switch(_output_switch_collection);
+	_outputPFOWoPhoton_OnlyCol               .Set_Switch(_output_switch_collection);
+	_outputPFOLostEnergyPhoton_RCOnlyCol     .Set_Switch(_output_switch_collection);
+	_outputPFOLostEnergyPhotonCol            .Set_Switch(_output_switch_collection);
+	_outputMCsLostEnergyPhotonCol            .Set_Switch(_output_switch_collection);
+
+	_outputPFOPhoton_ConversionCol           .Set_Name(_outputPFOPhoton_ConversionCollection);
+	_outputPFOWoPhoton_ConversionCol         .Set_Name(_outputPFOWoPhoton_ConversionCollection);
+	_outputPFOLostEnergyPhoton_CombinedCol   .Set_Name(_outputPFOLostEnergyPhoton_CombinedCollection);
+	_outputPFOPhoton_OnlyCol                 .Set_Name(_outputPFOPhoton_OnlyCollection);
+	_outputPFOWoPhoton_OnlyCol               .Set_Name(_outputPFOWoPhoton_OnlyCollection);
+	_outputPFOLostEnergyPhoton_RCOnlyCol     .Set_Name(_outputPFOLostEnergyPhoton_RCOnlyCollection);
+	_outputPFOLostEnergyPhotonCol            .Set_Name(_outputPFOLostEnergyPhotonCollection);
+	_outputMCsLostEnergyPhotonCol            .Set_Name(_outputMCsLostEnergyPhotonCollection);
+
 	// make Ntuple
 	if(_output_switch_root){
 		makeNTuple();
@@ -121,37 +172,33 @@ void Strange_Photon::processEvent( LCEvent * evt ) {
 
 	Init(evt);
 
-	int JMC =analyseMCParticle(_mcCol, _navmcpfo, _info.mc,_info.mc2, _info.pfo, _counter.MCs);
+	int JMC1 =analyseMCParticle_Conversion(_mcsPhotonCol, _mcsWoPhotonCol, _pfoPhotonCol, _pfoWoPhotonCol, _outputPFOLostEnergyPhotonCol, _outputPFOLostEnergyPhoton_CombinedCol, _outputMCsLostEnergyPhotonCol, _outputPFOPhoton_ConversionCol, _outputPFOWoPhoton_ConversionCol, _navmcpfo, _navpfomc,_info, _counter.MCs1);
 
-	int JPFO=analysePFOParticle(_pfoCol, _navpfomc, _info.pfo, _counter.PFO);
+	int JMC2 =analyseMCParticle_OnlyPhoton(_mcsPhotonCol, _mcsWoPhotonCol, _pfoPhotonCol, _pfoWoPhotonCol, _outputPFOLostEnergyPhoton_RCOnlyCol, _outputPFOPhoton_OnlyCol, _outputPFOWoPhoton_OnlyCol, _navmcpfo, _navpfomc,_info, _counter.MCs2);
 
-	Counter(JMC, JPFO, evt);
+	Counter(JMC1, JMC2,  evt);
 
 	Finish(evt);
 }
 
-void Strange_Photon::Counter(int JMC, int JPFO,LCEvent* evt){
-	if(JMC==1){
-		_global_counter.pass_MCs++;
-		_single_counter.pass_MCs++;
-	}
-	else if(JMC==0){
-		_global_counter.pass_MCs++;
-		_single_counter.pass_MCs++;
+void Strange_Photon::Counter(int JMC1, int JMC2, LCEvent* evt){
+	if(JMC1>=0){
+		_global_counter.pass_MCs1++;
+		_single_counter.pass_MCs1++;
 	}
 	else{
 		//	ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
 	}
 
-	if(JPFO){
-		_global_counter.pass_PFO++;
-		_single_counter.pass_PFO++;
+	if(JMC2>=0){
+		_global_counter.pass_MCs2++;
+		_single_counter.pass_MCs2++;
 	}
 	else{
-		ToolSet::ShowMessage(1,1,"in processEvent: not pass analysePFOParticle ");
+		//	ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
 	}
 
-	if(JMC&&JPFO){
+	if(JMC1&&JMC2){
 		_global_counter.pass_all++;
 		_single_counter.pass_all++;
 	}
@@ -164,7 +211,13 @@ void Strange_Photon::Init(LCEvent* evt) {
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
 	_global_counter.gweight=1;
-	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
+	if( _nEvt % 50 == 0 ){
+		if(_output_switch_collection&&!_output_switch_root){
+		}
+		else{
+			ToolSet::ShowMessage(1,"processing event",_nEvt);
+		}
+	} 
 
 	_info.Init();
 	_counter.Init();
@@ -176,15 +229,22 @@ void Strange_Photon::Init(LCEvent* evt) {
 
 
 	// PFO loop
-	_mcCol = evt->getCollection( _inputMCsCollection  ) ;
-	_pfoCol = evt->getCollection( _inputPFOsCollection ) ;
+	_mcsPhotonCol   = evt->getCollection( _inputMCsPhotonCollection  ) ;
+	_mcsWoPhotonCol = evt->getCollection( _inputMCsWoPhotonCollection) ;
+	_pfoPhotonCol   = evt->getCollection( _inputPFOPhotonCollection  ) ;
+	_pfoWoPhotonCol = evt->getCollection( _inputPFOWoPhotonCollection) ;
+
 	_navmcpfo = new LCRelationNavigator( evt->getCollection( _mcpfoRelation ) );
 	_navpfomc = new LCRelationNavigator( evt->getCollection( _pfomcRelation ) );
 
-	_outputPFORemovedIsoPhotonCol          .Set_Collection_RCParticle();
-	_outputIsoPhotonCol                    .Set_Collection_MCParticle();
-	_outputIsoPhotonConversionCol          .Set_Collection_MCParticle();
-	_outputMCsRemovedIsoPhotonConversionCol.Set_Collection_MCParticle();
+	_outputPFOPhoton_ConversionCol           .Set_Collection_RCParticle();
+	_outputPFOWoPhoton_ConversionCol         .Set_Collection_RCParticle();
+	_outputPFOLostEnergyPhoton_CombinedCol   .Set_Collection_RCParticle();
+	_outputPFOPhoton_OnlyCol                 .Set_Collection_RCParticle();
+	_outputPFOWoPhoton_OnlyCol               .Set_Collection_RCParticle();
+	_outputPFOLostEnergyPhoton_RCOnlyCol     .Set_Collection_RCParticle();
+	_outputPFOLostEnergyPhotonCol            .Set_Collection_RCParticle();
+	_outputMCsLostEnergyPhotonCol            .Set_Collection_MCParticle();
 
 
 }
@@ -194,11 +254,14 @@ void Strange_Photon::Finish(LCEvent* evt) {
 		_datatrain->Fill();
 	}
 
-	_outputPFORemovedIsoPhotonCol          .Add_Collection(evt);
-	_outputIsoPhotonCol                    .Add_Collection(evt);
-	_outputIsoPhotonConversionCol          .Add_Collection(evt);
-	_outputMCsRemovedIsoPhotonConversionCol.Add_Collection(evt);
-
+	_outputPFOPhoton_ConversionCol           .Add_Collection(evt);
+	_outputPFOWoPhoton_ConversionCol         .Add_Collection(evt);
+	_outputPFOLostEnergyPhoton_CombinedCol   .Add_Collection(evt);
+	_outputPFOPhoton_OnlyCol                 .Add_Collection(evt);
+	_outputPFOWoPhoton_OnlyCol               .Add_Collection(evt);
+	_outputPFOLostEnergyPhoton_RCOnlyCol     .Add_Collection(evt);
+	_outputPFOLostEnergyPhotonCol            .Add_Collection(evt);
+	_outputMCsLostEnergyPhotonCol            .Add_Collection(evt);
 	// delete
 	delete _navmcpfo;
 	delete _navpfomc;

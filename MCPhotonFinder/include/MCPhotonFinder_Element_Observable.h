@@ -238,16 +238,14 @@ class MCPhotonFinder_Number{
 class MCPhotonFinder_Information_Single{
 	public:
 		MCPhotonFinder_Observable                      obv;
-		MCPhotonFinder_Variable_Vec                    photon;
-		MCPhotonFinder_Number                          num_photon;
-		MCPhotonFinder_Number                          num_MCs;
+		MCPhotonFinder_Variable_Vec                    particle;
+		MCPhotonFinder_Number                          num;
 
 
 		void Init(){
 			obv        .Init();
-			photon     .Init();
-			num_photon .Init();
-			num_MCs    .Init();
+			particle   .Init();
+			num        .Init();
 		}
 
 
@@ -261,14 +259,17 @@ class MCPhotonFinder_Information_Single{
 class MCPhotonFinder_Information{
 	public:
 		MCPhotonFinder_Information_Single isophoton;
+		MCPhotonFinder_Information_Single wophoton;
 
 		void Init(){
 			isophoton.Init();
+			wophoton.Init();
 		}
 
 
 		void Fill_Data(TTree* tree){
 			isophoton.Fill_Data(tree,"isophoton");
+			wophoton.Fill_Data(tree,"wophoton");
 		}
 
 }; 
@@ -314,7 +315,9 @@ class MCPhotonFinder_Output_Collection{
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
@@ -322,7 +325,9 @@ class MCPhotonFinder_Output_Collection{
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}

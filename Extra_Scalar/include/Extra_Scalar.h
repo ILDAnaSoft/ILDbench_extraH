@@ -50,7 +50,7 @@ class Extra_Scalar : public Processor{
 
 		//Prepare NTuple to check the data
 		void makeNTuple();
-		void Counter(bool JMC, bool JPFO, bool JPFO_MC_Cheating_Muon, bool JPFO_MC_Cheating_ISR, LCEvent* evt);
+		void Counter(int JMC_HS,int JMC_PS, int JMC_DS,  int JPFO, int JPFO_MC_Cheating_Muon, int JPFO_MC_Cheating_ISR, LCEvent* evt);
 		void Init(LCEvent* evt);
 		void Finish(LCEvent* evt); 
 
@@ -58,12 +58,11 @@ class Extra_Scalar : public Processor{
 		template<typename TOBVRECOIL>
 			bool obvRecoil(std::vector<TOBVRECOIL> in, std::vector<TOBVRECOIL> &out) ;
 
-		bool analyseMCParticle( LCCollection* Allmc, Extra_Scalar_Information &info) ;
-		void Get_All_Level_FS(LCCollection* allMC, std::vector<MCParticle*> &hard_scattering, std::vector<MCParticle*> &pythia_explicit, std::vector<MCParticle*> &pythia_stable, std::vector<MCParticle*> &detector);
-		bool Get_MC_Observables( std::vector<MCParticle*> FS,   Extra_Scalar_Information_Single &info_single) ;
+		int  analyseMCParticle( LCCollection* MuonCol, LCCollection* PhotonCol, LCCollection* WoPhotonCol,  Extra_Scalar_Information_Single &info) ;
+		int  Get_MC_Observables( std::vector<MCParticle*> muon,  std::vector<MCParticle*> photon, std::vector<MCParticle*> wophoton,  Extra_Scalar_Information_Single &info_single) ;
 
-		bool MCCutMuon( std::vector<MCParticle*> MCs, Extra_Scalar_Number &num, Extra_Scalar_Variable_Vec& vari) ;
-        void MCCutPhoton(std::vector<MCParticle*> &MCsPhoton,  Extra_Scalar_Number& num, Extra_Scalar_Variable_Vec &vari);
+		bool MCCutMuon( std::vector<MCParticle*> &MCs, Extra_Scalar_Number &num, Extra_Scalar_Variable& vari_plus, Extra_Scalar_Variable& vari_minus) ;
+        void MCCutPhoton(std::vector<MCParticle*> &MCsPhoton,  Extra_Scalar_Number& num, Extra_Scalar_Variable &vari_central, Extra_Scalar_Variable &vari_forward);
 		bool MCCutDetail(std::vector<MCParticle*> &choosed_lep, std::vector<MCParticle*> &photon, std::vector<MCParticle*> &MCsWoMuonPhoton, Extra_Scalar_Observable &obv);
 
 
@@ -72,9 +71,9 @@ class Extra_Scalar : public Processor{
 
 		//		bool analysePhysicalObject( LCCollection* PFOWithoutIsoleps, LCCollection* Isoleps,Information &info) ;
 //		bool analysePhysicalObject(LCCollection* PFO_col, LCCollection* PFOWithoutIsoleps, LCCollection* Isoleps,Information &info);
-		bool analysePhysicalObject(LCCollection* Leps,LCCollection* ISR,LCCollection* PFOWoMuonPhoton, Extra_Scalar_Information_Single &info) ;
-		bool POCutMuon  (std::vector<ReconstructedParticle*> &muon  , Extra_Scalar_Number& num, Extra_Scalar_Variable_Vec& vari) ;
-        void POCutPhoton(std::vector<ReconstructedParticle*> &Photon, Extra_Scalar_Number&num,  Extra_Scalar_Variable_Vec& vari);
+		int  analysePhysicalObject(LCCollection* Leps,LCCollection* ISR,LCCollection* PFOWoMuonPhoton, Extra_Scalar_Information_Single &info, int label) ;
+		bool POCutMuon  (std::vector<ReconstructedParticle*> &muon  , Extra_Scalar_Number& num, Extra_Scalar_Variable& vari_plus, Extra_Scalar_Variable& vari_minus) ;
+        void POCutPhoton(std::vector<ReconstructedParticle*> &Photon, Extra_Scalar_Number&num,  Extra_Scalar_Variable& vari_central,  Extra_Scalar_Variable& vari_forward);
 		bool POCutDetail(std::vector<ReconstructedParticle*> &choosed_lep, std::vector<ReconstructedParticle*> &photon,  std::vector<ReconstructedParticle*> &PFOWoMuonPhoton, Extra_Scalar_Observable &obv);
 
 
@@ -88,7 +87,7 @@ class Extra_Scalar : public Processor{
 
 
 		bool analysePO_MC_Cheating_Muon(LCCollection* Muon,LCCollection* Photon,LCCollection* PFOWoMuonPhoton,LCRelationNavigator* navmc, Extra_Scalar_Information_Single &info) ;
-		bool analysePO_MC_Cheating_ISR (LCCollection* Muon,LCCollection* Photon,LCCollection* PFOWoMuonPhoton,LCRelationNavigator* navmc, Extra_Scalar_Information_Single &info) ;
+		bool analysePO_MC_Cheating_ISR (LCCollection* PFOlep,LCCollection* PFOPhoton,LCCollection* MCPhoton, LCCollection* PFOWoMuonPhoton,LCCollection* PFOWoMuonPhotonConversion, LCRelationNavigator* navmc, Extra_Scalar_Information_Single &info) ;
 
 
 
@@ -98,15 +97,48 @@ class Extra_Scalar : public Processor{
 		std::string _inputMCsCollection;
 		LCCollection* _MCsCol;
 
-		std::string _pfomcsRelation;
-		LCRelationNavigator* _navpfomcs;
-		std::string _mcspfoRelation;
-		LCRelationNavigator* _navmcspfo;
-
 		std::string _inputPFOWoOverlayCollection;
 		LCCollection* _PFOWoOverlayCol;
-		std::string _inputMCsWoOverlayCollection;
-		LCCollection* _MCsWoOverlayCol;
+
+		std::string _inputMCHS_Collection;
+		LCCollection* _MCHS_Col;
+		std::string _inputMCHS_MuonCollection;
+		LCCollection* _MCHS_MuonCol;
+		std::string _inputMCHS_PhotonCollection;
+		LCCollection* _MCHS_PhotonCol;
+		std::string _inputMCHS_WoMuonPhotonCollection;
+		LCCollection* _MCHS_WoMuonPhotonCol;
+
+		std::string _inputMCPS_Collection;
+		LCCollection* _MCPS_Col;
+		std::string _inputMCPS_MuonCollection;
+		LCCollection* _MCPS_MuonCol;
+		std::string _inputMCPS_PhotonCollection;
+		LCCollection* _MCPS_PhotonCol;
+		std::string _inputMCPS_WoMuonPhotonCollection;
+		LCCollection* _MCPS_WoMuonPhotonCol;
+
+		std::string _inputMCDS_Collection;
+		LCCollection* _MCDS_Col;
+		std::string _inputMCDS_MuonCollection;
+		LCCollection* _MCDS_MuonCol;
+		std::string _inputMCDS_PhotonCollection;
+		LCCollection* _MCDS_PhotonCol;
+		std::string _inputMCDS_WoMuonPhotonCollection;
+		LCCollection* _MCDS_WoMuonPhotonCol;
+
+		std::string _inputPFOLepton_ConversionCollection;
+		LCCollection* _PFOLepton_ConversionCol;
+
+		std::string _inputPFOPhoton_ConversionCollection;
+		LCCollection* _PFOPhoton_ConversionCol;
+		std::string _inputPFOWoPhoton_ConversionCollection;
+		LCCollection* _PFOWoPhoton_ConversionCol;
+		std::string _inputPFOPhoton_OnlyCollection;
+		LCCollection* _PFOPhoton_OnlyCol;
+		std::string _inputPFOWoPhoton_onlyCollection;
+		LCCollection* _PFOWoPhoton_OnlyCol;
+
 
 		std::string _inputPFOMuonCollection;
 		LCCollection* _PFOMuonCol;
@@ -117,22 +149,11 @@ class Extra_Scalar : public Processor{
 		std::string _inputPFOWoMuonPhotonCollection;
 		LCCollection* _PFOWoMuonPhotonCol;
 
-		std::string _inputMCsMuonCollection;
-		LCCollection* _MCsMuonCol;
-		std::string _inputMCsWoMuonCollection;
-		LCCollection* _MCsWoMuonCol;
-		std::string _inputMCsPhotonCollection;
-		LCCollection* _MCsPhotonCol;
-		std::string _inputMCsWoMuonPhotonCollection;
-		LCCollection* _MCsWoMuonPhotonCol;
 
-		std::string _inputMCsPhotonConversionCollection;
-		LCCollection* _MCsPhotonConversionCol;
-		std::string _inputMCsWoPhotonConversionCollection;
-		LCCollection* _MCsWoPhotonConversionCol;
-		std::string _inputMCsPFOWoPhotonCollection;
-		LCCollection* _MCsPFOWoPhotonCol;
-
+		std::string _pfomcsRelation;
+		LCRelationNavigator* _navpfomcs;
+		std::string _mcspfoRelation;
+		LCRelationNavigator* _navmcspfo;
 
 
 

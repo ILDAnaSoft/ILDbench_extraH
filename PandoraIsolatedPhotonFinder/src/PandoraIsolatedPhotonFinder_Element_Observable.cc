@@ -43,6 +43,7 @@ void PandoraIsolatedPhotonFinder_Observable::Fill_Data(TTree* tree, std::string 
 	tree->Branch( (prefix+"_visible_energy").c_str()     , &visible_energy,(prefix+"_visible_energy").c_str()     );
 	tree->Branch( (prefix+"_invisible_energy").c_str()   , &invisible_energy,(prefix+"_invisible_energy").c_str()   );
 }
+
 void PandoraIsolatedPhotonFinder_Variable::Get_MCParticle_Information( MCParticle* input) {
 	pdg      =input->getPDG();
 	p        =ToolSet::CMC::Cal_P(input);
@@ -187,18 +188,17 @@ void PandoraIsolatedPhotonFinder_Number::Fill_Data(TTree* tree, std::string pref
 
 
 void PandoraIsolatedPhotonFinder_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
-	photon.Get_MCParticles_Information(input);
-	num_photon.Get_MCParticles_Number(input);
+	particle.Get_MCParticles_Information(input);
+	num.Get_MCParticles_Number(input);
 }
 
 void PandoraIsolatedPhotonFinder_Information_Single::Get_PFOParticles( std::vector<ReconstructedParticle*> input) {
-	photon.Get_PFOParticles_Information(input);
-	num_photon.Get_PFOParticles_Number(input);
+	particle.Get_PFOParticles_Information(input);
+	num.Get_PFOParticles_Number(input);
 }
 
 void PandoraIsolatedPhotonFinder_Information_Single::Fill_Data(TTree* tree, std::string prefix){
 	obv              .Fill_Data(tree,prefix+"_obv");
-	photon           .Fill_Data(tree,prefix+"_photon");
-	num_photon       .Fill_Data(tree,prefix+"_num_photon");
-	num_PFO          .Fill_Data(tree,prefix+"_num_PFO" );
+	particle         .Fill_Data(tree,prefix+"_particle");
+	num              .Fill_Data(tree,prefix+"_num");
 }

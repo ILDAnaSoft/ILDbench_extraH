@@ -94,7 +94,7 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		void  Counter(bool JPFO, LCEvent* evt);
 
 
-		bool  analysePFOParticle( LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhoton, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information_Single& info, PandoraIsolatedPhotonFinder_Function_Counter& counter);
+		bool  analysePFOParticle( LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhoton, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information_Single& info_photon, PandoraIsolatedPhotonFinder_Information_Single& info_wophoton, PandoraIsolatedPhotonFinder_Function_Counter& counter);
 
 
 		/** Calculates the cone energy */

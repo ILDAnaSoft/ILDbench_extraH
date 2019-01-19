@@ -3,7 +3,7 @@ void Overlay_Removal_Global_Counter::Fill_Data(TTree* tree){
 	tree->Branch( "total_event_number"             , &nevt                     ,"total_event_number"              );
 	tree->Branch( "total_run_number"               , &nrun                     ,"total_run_number"                );
 	tree->Branch( "total_scale_factor"             , &gweight                  ,"total_scale_factor"              );
-	tree->Branch( "total_pass_MCs"                 , &pass_MCs                 ,"total_pass_MCs"                  );
+	tree->Branch( "total_pass_PFO"                 , &pass_PFO                 ,"total_pass_PFO"                  );
 	tree->Branch( "total_pass_all"                 , &pass_all                 ,"total_pass_all"                  );
 }
 
@@ -11,7 +11,7 @@ void Overlay_Removal_Single_Counter::Fill_Data(TTree* tree){
 	tree->Branch( "event_number"             , &evt                      ,"event_number"              );
 	tree->Branch( "run_number"               , &run                      ,"run_number"                );
 	tree->Branch( "scale_factor"             , &weight                   ,"scale_factor"              );
-	tree->Branch( "pass_MCs"                 , &pass_MCs                 ,"pass_MCs"                  );
+	tree->Branch( "pass_PFO"                 , &pass_PFO                 ,"pass_PFO"                  );
 	tree->Branch( "pass_all"                 , &pass_all                 ,"pass_all"                  );
 }
 
@@ -184,17 +184,17 @@ void Overlay_Removal_Number::Fill_Data(TTree* tree, std::string prefix){
 
 
 void Overlay_Removal_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
-	wo_overlay.Get_MCParticles_Information(input);
-	num_wo_overlay.Get_MCParticles_Number(input);
+	particle.Get_MCParticles_Information(input);
+	num.Get_MCParticles_Number(input);
 }
 
 void Overlay_Removal_Information_Single::Get_PFOParticles( std::vector<ReconstructedParticle*> input) {
-	wo_overlay.Get_PFOParticles_Information(input);
-	num_wo_overlay.Get_PFOParticles_Number(input);
+	particle.Get_PFOParticles_Information(input);
+	num.Get_PFOParticles_Number(input);
 }
 
 void Overlay_Removal_Information_Single::Fill_Data(TTree* tree, std::string prefix){
 	obv.Fill_Data(tree,prefix+"_obv");
-	wo_overlay.Fill_Data(tree,prefix+"_wo_overlay");
-	num_wo_overlay.Fill_Data(tree,prefix+"_wo_overlay_num");
+	particle.Fill_Data(tree,prefix+"_particle");
+	num.Fill_Data(tree,prefix+"_num");
 }

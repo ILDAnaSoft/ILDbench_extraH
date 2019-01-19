@@ -12,7 +12,7 @@
 			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_4.slcio
 			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_5.slcio
 		</parameter>
-		<parameter name="MaxRecordNumber" value="1000" />  
+		<parameter name="MaxRecordNumber" value="0" />  
 		<parameter name="SkipNEvents" value="0" />  
 		<parameter name="SupressCheck" value="false" />  
 		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
@@ -28,9 +28,11 @@
 		<!--Output collection of whether need output collection-->
 		<parameter name="SwitchOutputCollection" type="bool"> false </parameter>
 		<!--Output collection of isolated photons-->
-		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PandoraPFOWoIsoPhoton</parameter>
+		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PFO_IsoPhoton</parameter>
 		<!--Output collection of without isolated photons-->
-		<parameter name="OutputCollectionWithoutIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PandoraIsoPhoton</parameter>
+		<parameter name="OutputCollectionWoIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PFO_WoIsoPhoton</parameter>
+
+
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
@@ -43,14 +45,14 @@
 		<!--Use energy cuts-->
 		<parameter name="UseEnergy" type="bool">true </parameter>
 		<!--Minimum energy cut for isolation requirement-->
-		<parameter name="MinimalEnergyCut" type="float">30 </parameter>
+		<parameter name="MinimalEnergyCut" type="float">10 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
 		<parameter name="MaximalEnergyCut" type="float">-1 </parameter>
 
 		<!--Use polar angle cuts-->
 		<parameter name="UsePolarAngle" type="bool">true </parameter>
 		<!--Minimum energy cut for isolation requirement-->
-		<parameter name="MinimalPolarAngle" type="float">0.85 </parameter>
+		<parameter name="MinimalPolarAngle" type="float">0.0 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
 		<parameter name="MaximalPollarAngle" type="float">0.95 </parameter>
 
@@ -59,7 +61,7 @@
 		<!--Use energy cuts in forward region-->
 		<parameter name="UseForwardEnergy" type="bool">true </parameter>
 		<!--Minimum energy cut for isolation requirement-->
-		<parameter name="MinimalForwardEnergyCut" type="float">3 </parameter>
+		<parameter name="MinimalForwardEnergyCut" type="float">5 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
 		<parameter name="MaximalForwardEnergyCut" type="float">-1 </parameter>
 
@@ -68,7 +70,7 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPollarAngle" type="float">0.98 </parameter>
+		<parameter name="MaximalForwardPollarAngle" type="float">1.0</parameter>
 
 
 
@@ -76,7 +78,7 @@
 		<!--Use Isolation Cone-->
 		<parameter name="UseIsolationCone" type="bool">true</parameter>
 		<!--Maximum cos cone angle size-->
-		<parameter name="MaximalCosConeAngle" type="float">0.95 </parameter>
+		<parameter name="MaximalCosConeAngle" type="float">0.90 </parameter>
 		<!--photon energy over cone energy ratio should larger than this value-->
 		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
 	</processor>

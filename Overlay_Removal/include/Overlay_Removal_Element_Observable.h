@@ -44,26 +44,20 @@ class Overlay_Removal_Global_Counter{
 		float nevt        ;
 		float nrun        ;
 		float gweight     ;
-		float pass_MCs    ;
 		float pass_PFO    ;
-		float pass_jet    ;
 		float pass_all    ;
 
 		void Init(){
 			nevt          = 0;
 			nrun          = 0;
 			gweight       = 0;
-			pass_MCs      = 0;
 			pass_PFO      = 0;
-			pass_jet      = 0;
 			pass_all      = 0;
 		}
 
 		void Print(){
 			std::cout << "In the Global Event Counter, Till now, there are totally " << nevt << " events and within " << nrun <<" runs " << " the global scale weight is " << gweight << std::endl; 
-			std::cout << "There are " << pass_MCs << " events pass MCs;" << std::endl;
 			std::cout << "There are " << pass_PFO << " events pass PFO;" << std::endl;
-			std::cout << "There are " << pass_jet << " events pass jet;" << std::endl;
 			std::cout << "  totally " << pass_all << " events pass all criterion." << std::endl; 
 		}
 
@@ -79,26 +73,20 @@ class Overlay_Removal_Single_Counter{
 		float evt        ;
 		float weight     ;
 		float run        ;
-		float pass_MCs   ;
 		float pass_PFO   ;
-		float pass_jet   ;
 		float pass_all   ;
 
 		void Init(){
 			evt          = 0;
 			run          = 0;
 			weight       = 0;
-	        pass_MCs     = 0;
 	        pass_PFO     = 0;
-	        pass_jet     = 0;
 			pass_all     = 0;
 		}
 
 		void Print(){
 			std::cout << "In the Single Event Counter, this is the " << evt << "th event, in the " << run << "th run." << std::endl;
-			std::cout << " and " << pass_MCs << " events pass MCs;" << std::endl;
 			std::cout << " and " << pass_PFO << " events pass PFO;" << std::endl;
-			std::cout << " and " << pass_jet << " events pass jet;" << std::endl;
 			std::cout << "in this event it has " << pass_all << " pass all criterion." << std::endl; 
 		}
 
@@ -128,19 +116,13 @@ class Overlay_Removal_Function_Counter   {
 
 class Overlay_Removal_Counter{
 	public:
-		Overlay_Removal_Function_Counter MCs;
-		Overlay_Removal_Function_Counter PFO;
 		Overlay_Removal_Function_Counter jet;
 
 		void Init(){
-	        MCs.Init();
-	        PFO.Init();
 	        jet.Init();
 		}
 
 		void Fill_Data(TTree* tree){
-			MCs                 .Fill_Data(tree,"MCs");
-			PFO                 .Fill_Data(tree,"PFO");
 			jet                 .Fill_Data(tree,"jet");
 		}
 };
@@ -266,14 +248,14 @@ class Overlay_Removal_Number{
 class Overlay_Removal_Information_Single{
 	public:
 		Overlay_Removal_Observable                      obv;
-		Overlay_Removal_Variable_Vec                    wo_overlay;
-		Overlay_Removal_Number                          num_wo_overlay;
+		Overlay_Removal_Variable_Vec                    particle;
+		Overlay_Removal_Number                          num;
 
 
 		void Init(){
 			obv           .Init();
-			wo_overlay    .Init();
-			num_wo_overlay.Init();
+			particle      .Init();
+			num           .Init();
 		}
 
 
@@ -286,18 +268,18 @@ class Overlay_Removal_Information_Single{
 
 class Overlay_Removal_Information{
 	public:
-		Overlay_Removal_Information_Single mcs;
-		Overlay_Removal_Information_Single jet;
+		Overlay_Removal_Information_Single overlay;
+		Overlay_Removal_Information_Single wooverlay;
 
 		void Init(){
-			mcs.Init();
-			jet.Init();
+			overlay.Init();
+			wooverlay.Init();
 		}
 
 
 		void Fill_Data(TTree* tree){
-			mcs.Fill_Data(tree,"_mcs");
-			jet.Fill_Data(tree,"_jet");
+			overlay.Fill_Data(tree,"_overlay");
+			wooverlay.Fill_Data(tree,"_wooverlay");
 		}
 
 }; 
@@ -343,7 +325,9 @@ class Overlay_Removal_Output_Collection{
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
@@ -351,7 +335,9 @@ class Overlay_Removal_Output_Collection{
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
