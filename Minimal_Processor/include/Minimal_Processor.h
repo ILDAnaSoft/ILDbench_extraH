@@ -14,37 +14,18 @@
 #include <map>
 
 #include <marlin/Processor.h>
+#include <marlin/VerbosityLevels.h>
 #include <lcio.h>
 
-#include <EVENT/ReconstructedParticle.h>
 #include <EVENT/LCCollection.h>
-#include <EVENT/MCParticle.h>
+#include <EVENT/LCParameters.h>
 #include <UTIL/LCRelationNavigator.h>
-#include <IMPL/LCCollectionVec.h>
-#include <marlin/VerbosityLevels.h>
-
-
-#include "TTree.h"
-#include "TFile.h"
-#include <TMath.h>
-#include <TVector3.h>
-#include <TLorentzVector.h>
-
-
-//header in the ToolSet
-#include "CPrint.h"
-#include "CFormat.h"
-#include "CVector.h"
-
-class TFile;
-class TTree;
 
 using namespace lcio ;
 using namespace marlin ;
-using namespace std;
-using ToolSet::operator<<;
-using ToolSet::operator+;
-using ToolSet::operator-;
+
+
+
 
 class Minimal_Processor : public Processor {
 
@@ -71,49 +52,55 @@ class Minimal_Processor : public Processor {
 		std::string _mctrkRelation;
 		std::string _trkmcRelation;
 
-		std::string _rootfilename;
 
-		bool _output_switch_root;
-		bool _output_switch_collection;
-
-		std::string _outputPFOCollection;
 
 
 		// input collection 
 		LCCollection* _pfoCol;
 		LCCollection* _mcCol;
+
 		LCRelationNavigator* _navpfomc;
 		LCRelationNavigator* _navmcpfo;
 		LCRelationNavigator* _navtrkmc;
 		LCRelationNavigator* _navmctrk;
 
-		// output 
+		// input para
+		// none
+
+
+
+		// output collection 
+		bool _output_switch_collection;
+		std::string _outputPFOCollection;
+		Minimal_Processor_Output_Collection _outputPFOCol;
+
+		// output root 
+		bool _output_switch_root;
+		std::string _rootfilename;
 		TFile* _outfile;
 		TTree* _datatrain;
-		LCCollectionVec* _outPFOCol;
-
-		//function
-		void  Init  (LCEvent* evt); 
-		void  Finish(LCEvent* evt);
-
-		/** Calculates the cone energy */
-		bool analyseMCParticle( LCCollection* MCs_col, LCRelationNavigator* navMCToPFO, Minimal_Processor_Information &info, Minimal_Processor_Counter& counter);
-		bool analysePFOParticle( LCCollection* PFOs_col, LCRelationNavigator* navPFOToMC, Minimal_Processor_Information &info, Minimal_Processor_Counter& counter);
-
-
 		void makeNTuple();
 
+		//internal function
+		void  Init  (LCEvent* evt); 
+		void  Finish(LCEvent* evt);
+		void Counter(bool JMC, bool JPFO, LCEvent* evt);
 
-		//para for recording information
+		/** Calculates the cone energy */
+		bool analyseMCParticle( LCCollection* MCs_col, LCRelationNavigator* navMCToPFO, Minimal_Processor_Information_Single &info, Minimal_Processor_Function_Counter& counter);
+		bool analysePFOParticle( LCCollection* PFOs_col, Minimal_Processor_Output_Collection& outputPFOCol, LCRelationNavigator* navPFOToMC, Minimal_Processor_Information_Single &info, Minimal_Processor_Function_Counter& counter);
+
+
+
+
+		//internal para 
 		int  _nEvt; 
 		int _nRun;
 
-		Minimal_Processor_Counter              _mc_counter;
-		Minimal_Processor_Counter              _pfo_counter;
+		Minimal_Processor_Counter              _counter;
 		Minimal_Processor_Global_Counter       _global_counter;
-
-		Minimal_Processor_Information          _mc_info;
-		Minimal_Processor_Information          _pfo_info;
+		Minimal_Processor_Single_Counter       _single_counter;
+		Minimal_Processor_Information          _info;
 
 } ;
 

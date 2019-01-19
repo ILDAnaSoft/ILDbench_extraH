@@ -58,6 +58,9 @@ class MCLeptonTagging : public Processor {
 
 		// input para
 		int   _lep_type;
+    	float _MinEnergy;
+    	float _maxCosConeAngle;
+    	float _ConeEnergyRatio;
 
 		// output
 		std::string _rootfilename;
@@ -78,7 +81,7 @@ class MCLeptonTagging : public Processor {
 
 		bool analyseMCParticle( LCCollection* inputmcCol, MCLeptonTagging_Output_Collection &outputLeptonCol,MCLeptonTagging_Output_Collection &outputWoleptonCol, MCLeptonTagging_Information_Single &info, MCLeptonTagging_Function_Counter &counter);
 		void checkIsoLeptons(std::vector<MCParticle*> input, std::vector<MCParticle*> &IsoLep, std::vector<MCParticle*> &mcs_WO_IsoLep );
-		bool IsIsoLep( MCParticle* mcs, std::vector<MCParticle*> allmcs) ;
+		bool IsIsoLep( MCParticle* mcs, std::vector<MCParticle*> allmcs, MCParticle* &new_mcs, std::vector<MCParticle*> &new_all_others) ;
 		bool IsCharged( MCParticle* mcs ) ;
 		int  IsLepton( MCParticle* mcs ) ;
 
@@ -88,7 +91,6 @@ class MCLeptonTagging : public Processor {
 		MCLeptonTagging_Global_Counter       _global_counter;
 		MCLeptonTagging_Counter              _counter;
 		MCLeptonTagging_Information          _info;
-		CLEPTON_CUT                          _cut;
 } ;
 
 #endif

@@ -28,7 +28,7 @@ MCPhotonFinder::MCPhotonFinder()
     			std::string("MCsIsoPhoton") );
 
     	registerOutputCollection( LCIO::MCPARTICLE,
-    			"OutputCollectionWithoutIsolatedPhoton",
+    			"OutputCollectionWoIsolatedPhoton",
     			"Copy of input collection but without the isolated photon",
     			_outputWoIsoPhotonCollection,
     			std::string("MCsWoIsoPhoton") );
@@ -155,7 +155,7 @@ void MCPhotonFinder::processRunHeader( LCRunHeader* run) {
 void MCPhotonFinder::processEvent( LCEvent * evt ) { 
 	Init(evt);
 
-	bool JMC=analyseMCParticle( _MCsCol, _outputIsoPhotonCol, _outputWoIsoPhotonCol, _info.isophoton, _counter.MCs) ;
+	bool JMC=analyseMCParticle( _MCsCol, _outputIsoPhotonCol, _outputWoIsoPhotonCol, _info.isophoton, _info.wophoton,_counter.MCs) ;
 
 	Counter(JMC, evt);
 
@@ -180,7 +180,13 @@ void MCPhotonFinder::Init(LCEvent* evt) {
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
 	_global_counter.gweight=1;
-	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
+	if( _nEvt % 50 == 0 ){
+		if(_output_switch_collection&&!_output_switch_root){
+		}
+		else{
+			ToolSet::ShowMessage(1,"processing event",_nEvt);
+		}
+	} 
 
 	_info.Init();
 	_counter.Init();

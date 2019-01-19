@@ -305,9 +305,13 @@ class Extra_Scalar_Information_Single{
 	public:
 		Extra_Scalar_Observable                      obv;
 
-		Extra_Scalar_Variable_Vec                    vari_muon;
+		Extra_Scalar_Variable                        vari_muon_plus;
 
-		Extra_Scalar_Variable_Vec                    vari_photon;
+		Extra_Scalar_Variable                        vari_muon_minus;
+
+		Extra_Scalar_Variable                        vari_photon_central;
+
+		Extra_Scalar_Variable                        vari_photon_forward;
 
 		Extra_Scalar_Number                          num_muon  ;
 
@@ -319,8 +323,10 @@ class Extra_Scalar_Information_Single{
 
 		void Init(){
 			obv        .Init();
-			vari_muon  .Init();
-			vari_photon.Init();
+			vari_muon_plus .Init();
+			vari_muon_minus.Init();
+			vari_photon_central.Init();
+			vari_photon_forward.Init();
 			num_muon   .Init();
 			num_photon .Init();
 			num_PFO    .Init();
@@ -331,8 +337,10 @@ class Extra_Scalar_Information_Single{
 		void Get_PFOParticles( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix){
 			obv        .Fill_Data(tree,prefix+"_obv"        );
-			vari_muon  .Fill_Data(tree,prefix+"_vari_muon"  );
-			vari_photon.Fill_Data(tree,prefix+"_vari_photon");
+			vari_muon_plus  .Fill_Data(tree,prefix+"_vari_muon_plus"  );
+			vari_muon_minus .Fill_Data(tree,prefix+"_vari_muon_minus"  );
+			vari_photon_central.Fill_Data(tree,prefix+"_vari_photon_central");
+			vari_photon_forward.Fill_Data(tree,prefix+"_vari_photon_forward");
 			num_muon   .Fill_Data(tree,prefix+"_num_muon"   );
 			num_photon .Fill_Data(tree,prefix+"_num_photon" );
 			num_PFO    .Fill_Data(tree,prefix+"_num_PFO"    );
@@ -344,8 +352,7 @@ class Extra_Scalar_Information_Single{
 class Extra_Scalar_Information{
 	public:
 		Extra_Scalar_Information_Single               hs;
-		Extra_Scalar_Information_Single               py_ex;
-		Extra_Scalar_Information_Single               py_im;
+		Extra_Scalar_Information_Single               py;
 		Extra_Scalar_Information_Single               de;
 		Extra_Scalar_Information_Single               po;
 		Extra_Scalar_Information_Single               po_wo_overlay;
@@ -354,8 +361,7 @@ class Extra_Scalar_Information{
 
 		void Init(){
 			hs           .Init();
-			py_ex        .Init();
-			py_im        .Init();
+			py           .Init();
 			de           .Init();
 			po           .Init();
 			po_wo_overlay.Init();
@@ -366,8 +372,7 @@ class Extra_Scalar_Information{
 
 		void Fill_Data(TTree* tree){
 			hs           .Fill_Data(tree,"hs"           );
-			py_ex        .Fill_Data(tree,"py_ex"        );
-			py_im        .Fill_Data(tree,"py_im"        );
+			py           .Fill_Data(tree,"py"           );
 			de           .Fill_Data(tree,"de"           );
 			po           .Fill_Data(tree,"po"           );
 			po_wo_overlay.Fill_Data(tree,"po_wo_overlay");
@@ -418,7 +423,9 @@ class Extra_Scalar_Output_Collection{
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
@@ -426,7 +433,9 @@ class Extra_Scalar_Output_Collection{
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}

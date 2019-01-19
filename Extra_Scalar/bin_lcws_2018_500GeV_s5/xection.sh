@@ -15,7 +15,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
 for (( k=0; k<$(( $mass_length)); k++ )) 
 do
 	mass=${mass_profile[k]}
-	data_direction=/afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5/results_${mass};
+	data_direction=/afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5_2019_01/results_${mass};
 
 	if [[ ${mass} != 125 ]]; then
 		class_names=("nh" "higgs" "4f_ww" "4f_zz" "4f_zzww" "4f_szee" "4f_sznn" "4f_szsw" "4f_sw" "2f_z" "aa_2f" "6f_eeww" "6f_llww" "6f_ttbar" "6f_vvww" "6f_xxww" "6f_xxxxz" "6f_yyyyz")

@@ -12,7 +12,7 @@ mass=${4,,}
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
 
-data_direction=/afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5/results_${mass};
+data_direction=/afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5_2019_01/results_${mass};
 xml_direction=${DIR}/../xml_500_lcws_s5
 
 

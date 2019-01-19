@@ -1,53 +1,133 @@
 #ifndef Minimal_Processor_ELEMENT_DATATYPE_H
 #define Minimal_Processor_ELEMENT_DATATYPE_H  
-#include "TTree.h"
-#include <string>
 #include <iostream>
-#include <marlin/Processor.h>
-#include <lcio.h>
-#include <EVENT/ReconstructedParticle.h>
-#include <EVENT/MCParticle.h>
-#include <UTIL/LCRelationNavigator.h>
+#include <string>
+#include <map>
+#include <sstream>
+#include <fstream>
+#include <utility>
+#include <cmath>
+
+
+#include "TTree.h"
+#include "TFile.h"
+#include <TMath.h>
+#include <TVector3.h>
+#include <TLorentzVector.h>
+
+class TFile;
+class TTree;
+
+//header in the ToolSet
 #include "CMC.h"
 #include "CRC.h"
+#include "CPrint.h"
+#include "CFormat.h"
+#include "CVector.h"
+#include "CChain.h"
 
-using namespace lcio ;
-using namespace marlin ;
+#include <IMPL/LCCollectionVec.h>
+#include <EVENT/MCParticle.h>
+#include <EVENT/ReconstructedParticle.h>
+
+using ToolSet::operator<<;
+using ToolSet::operator+;
+using ToolSet::operator-;
+using ToolSet::operator+=;
+
 class Minimal_Processor_Global_Counter{
 	public:
 		//***********
 		//event number
 		//***********
-		float evt         ;
-		float pass_mc     ;
-		float pass_pfo    ;
+		float nevt        ;
+		float nrun        ;
+		float gweight     ;
+		float pass_MCs    ;
+		float pass_PFO    ;
 		float pass_all    ;
 
 		void Init(){
-			evt           =0;
-			pass_all      =0;
-			pass_mc       =0;
-			pass_pfo      =0;
+			nevt          = 0;
+			nrun          = 0;
+			gweight       = 0;
+	        pass_MCs      = 0;
+	        pass_PFO      = 0;
+			pass_all      = 0;
 		}
 
 		void Print(){
-			std::cout << "in the Global counter, there are " << pass_mc << " pass MC, and " << pass_pfo << " pass PFO, and " <<pass_all << " pass all criterion." << std::endl; 
+			std::cout << "In the Global Event Counter, Till now, there are totally " << nevt << " events and within " << nrun <<" runs " << " the global scale weight is " << gweight << std::endl; 
+			std::cout << "There are " << pass_MCs << " events pass MCs;" << std::endl;
+			std::cout << "There are " << pass_PFO << " events pass PFO;" << std::endl;
+			std::cout << "  totally " << pass_all << " events pass all criterion." << std::endl; 
 		}
+
+
+		void Fill_Data(TTree* tree);
 };
 
-class Minimal_Processor_Counter{
+class Minimal_Processor_Single_Counter{
 	public:
 		//***********
 		//event number
 		//***********
-		float evt         ;
+		float evt        ;
+		float weight     ;
+		float run        ;
+		float pass_MCs   ;
+		float pass_PFO   ;
+		float pass_all   ;
+
+		void Init(){
+			evt         = 0;
+			run         = 0;
+			weight      = 0;
+	        pass_MCs    = 0;
+	        pass_PFO    = 0;
+			pass_all    = 0;
+		}
+
+		void Print(){
+			std::cout << "In the Single Event Counter, this is the " << evt << "th event, in the " << run << "th run." << std::endl;
+			std::cout << " and " << pass_MCs << " events pass MCs;" << std::endl;
+			std::cout << " and " << pass_PFO << " events pass PFO;" << std::endl;
+			std::cout << "in this event it has " << pass_all << " pass all criterion." << std::endl; 
+		}
+
+		void Fill_Data(TTree* tree);
+
+};
+
+class Minimal_Processor_Function_Counter   {
+	public:
 		float pass_all    ;
 
 		void Init(){
-			evt           =0;
-			pass_all      =0;
+	        pass_all    = 0;
+		}
+
+		void Fill_Data(TTree* tree, std::string prefix);
+};
+
+
+
+class Minimal_Processor_Counter{
+	public:
+		Minimal_Processor_Function_Counter MCs;
+		Minimal_Processor_Function_Counter PFO;
+
+		void Init(){
+	        MCs.Init();
+	        PFO.Init();
+		}
+
+		void Fill_Data(TTree* tree){
+			MCs                 .Fill_Data(tree,"MCs");
+			PFO                 .Fill_Data(tree,"PFO");
 		}
 };
+
 
 class Minimal_Processor_Observable{
 	public:
@@ -55,11 +135,15 @@ class Minimal_Processor_Observable{
 		//inserted by process file
 		//************************
 		float visible_energy   ;        
+		float invisible_energy   ;        
 
 		void Init(){
 		    visible_energy =-10000.1;        
+		    invisible_energy =-10000.1;        
 		}
 
+		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
@@ -105,6 +189,14 @@ class Minimal_Processor_Variable_Vec{
 		std::vector<float> phi                  ;        
 		std::vector<float> e                    ;        
 		std::vector<float> mass                 ;        
+		std::vector<float> endpointx            ;        
+		std::vector<float> endpointy            ;        
+		std::vector<float> endpointz            ;        
+		std::vector<float> endpointr            ;        
+		std::vector<float> vertexx              ;        
+		std::vector<float> vertexy              ;        
+		std::vector<float> vertexz              ;        
+		std::vector<float> vertexr              ;        
 
 		void Init(){
 		    pdg              .clear();        
@@ -114,6 +206,14 @@ class Minimal_Processor_Variable_Vec{
 		    phi              .clear();        
 		    e                .clear();        
 		    mass             .clear();        
+			endpointx        .clear();
+			endpointy        .clear();
+			endpointz        .clear();
+			endpointr        .clear();
+			vertexx          .clear();
+			vertexy          .clear();
+			vertexz          .clear();
+			vertexr          .clear();
 		}
 
 		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
@@ -121,32 +221,126 @@ class Minimal_Processor_Variable_Vec{
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
-class Minimal_Processor_Information{
+class Minimal_Processor_Number{
 	public:
-		Minimal_Processor_Variable                        data_variable;
-		Minimal_Processor_Variable_Vec                    data_variable_vec;
-		Minimal_Processor_Observable                      data_observable;
+		float num                        ;
+		float num_plus                   ;
+		float num_minus                  ;
+		float num_neutral                ;
+		float num_central                ;
+		float num_forward                ;
 
-
-		Minimal_Processor_Information(){
+		void Init(){
+		    num                = 0;
+		    num_plus           = 0;
+		    num_minus          = 0;
+			num_neutral        = 0;
+			num_central        = 0;
+			num_forward        = 0;
 		}
+
+		void Get_MCParticles_Number ( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles_Number( std::vector<ReconstructedParticle*> input) ;
+		void Fill_Data(TTree* tree, std::string prefix);
+};
+
+
+
+class Minimal_Processor_Information_Single{
+	public:
+		Minimal_Processor_Observable                      obv;
+		Minimal_Processor_Variable_Vec                    particle;
+		Minimal_Processor_Number                          num_particle;
 
 
 		void Init(){
-			data_variable.Init();
-			data_variable_vec.Init();
-			data_observable.Init();
+			obv         .Init();
+			particle    .Init();
+			num_particle.Init();
 		}
 
 
-		void Fill_Data(TTree* tree, std::string prefix){
-			data_observable  .Fill_Data(tree,prefix+"_observable");
-			data_variable    .Fill_Data(tree,prefix+"_variable");
-			data_variable_vec.Fill_Data(tree,prefix+"_variable_vec");
-		}
+		void Get_MCParticles ( std::vector<MCParticle*> input) ;
+		void Get_PFOParticles( std::vector<ReconstructedParticle*> input) ;
+		void Fill_Data(TTree* tree, std::string prefix);
 
-		~Minimal_Processor_Information(){
-		}
 }; 
 
+class Minimal_Processor_Information{
+	public:
+		Minimal_Processor_Information_Single MCs;
+		Minimal_Processor_Information_Single PFO;
+
+		void Init(){
+			MCs.Init();
+			PFO.Init();
+		}
+
+
+		void Fill_Data(TTree* tree){
+			MCs.Fill_Data(tree,"MCs");
+			PFO.Fill_Data(tree,"PFO");
+		}
+
+}; 
+
+class Minimal_Processor_Output_Collection{
+	public:
+    	std::string      name;
+		LCCollectionVec* col;
+		bool             Jopen;
+	
+		void Init(){
+			Jopen=false;
+		}
+
+		void Set_Switch(bool open){
+			Jopen=open;
+		}
+
+		void Set_Name(std::string in_name){
+			name=in_name;
+		}
+
+		void Set_Collection_MCParticle(){
+			if(Jopen){
+				col= new LCCollectionVec( LCIO::MCPARTICLE ) ;
+			    col->setSubset(true) ;
+			}
+		}
+
+		void Set_Collection_RCParticle(){
+			if(Jopen){
+				col= new LCCollectionVec( LCIO::RECONSTRUCTEDPARTICLE) ;
+			    col->setSubset(true) ;
+			}
+		}
+
+		void Add_Collection(LCEvent* evt){
+			if(Jopen){
+				evt->addCollection(col, name.c_str() );
+			}
+		}
+
+		void Add_Element_MCParticle(std::vector<MCParticle*> input){
+			if(Jopen){
+			    for (int i = 0; i < input.size(); i++ ) {
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
+			    }
+			}
+		}
+
+		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
+			if(Jopen){
+			    for (int i = 0; i < input.size(); i++ ) {
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
+			    }
+			}
+		}
+};
 #endif
+

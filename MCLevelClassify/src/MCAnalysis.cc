@@ -7,9 +7,13 @@ bool MCLevelClassify::analyseMCParticle( LCCollection* inputmcCol, MCLevelClassi
 	std::vector<MCParticle*> PS  =ToolSet::CMC::Get_MC_PythiaShowering_FS(MCs);
 	std::vector<MCParticle*> DS  =ToolSet::CMC::Get_MC_DetectorSimulating_FS(MCs);
 
-	outputHSCol.Add_Element_MCParticle(HS);
-	outputPSCol.Add_Element_MCParticle(PS);
-	outputDSCol.Add_Element_MCParticle(DS);
+    std::vector<MCParticle*> HS_wo_overlay=ToolSet::CMC::Get_Visible(HS);
+    std::vector<MCParticle*> PS_wo_overlay=ToolSet::CMC::Get_Visible(PS);
+    std::vector<MCParticle*> DS_wo_overlay=ToolSet::CMC::Get_Visible(DS);
+
+	outputHSCol.Add_Element_MCParticle(HS_wo_overlay);
+	outputPSCol.Add_Element_MCParticle(PS_wo_overlay);
+	outputDSCol.Add_Element_MCParticle(DS_wo_overlay);
 
 	if(_output_switch_root){
 		info.HS_info.Get_MCParticles(HS);

@@ -29,8 +29,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
 cd ${DIR}
 echo "-------- enter ${DIR} -------"
 
-if [[ ! -d  /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5 ]]; then
-    mkdir /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5;
+if [[ ! -d  /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5_2019_01 ]]; then
+    mkdir /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5_2019_01 ;
 fi
 
 
@@ -43,8 +43,8 @@ do
 		wait
 	fi
 
-	if [[ ! -d  /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5/results_${mass} ]]; then
-	    mkdir /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5/results_${mass};
+	if [[ ! -d  /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5_2019_01/results_${mass} ]]; then
+	    mkdir /afs/desy.de/user/y/ywang/dust/light_higgs_10_410_e500_lcws_s5_2019_01/results_${mass};
 	fi
 
 

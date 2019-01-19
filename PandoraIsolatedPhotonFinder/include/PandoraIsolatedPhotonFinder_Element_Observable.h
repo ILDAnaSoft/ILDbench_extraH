@@ -214,9 +214,9 @@ class PandoraIsolatedPhotonFinder_Variable_Vec{
 class PandoraIsolatedPhotonFinder_Number{
 	public:
 		float num                ;
-		float num_plus                   ;
-		float num_minus                  ;
-		float num_neutral                ;
+		float num_plus           ;
+		float num_minus          ;
+		float num_neutral        ;
 		float num_central        ;
 		float num_forward        ;
 
@@ -237,16 +237,14 @@ class PandoraIsolatedPhotonFinder_Number{
 class PandoraIsolatedPhotonFinder_Information_Single{
 	public:
 		PandoraIsolatedPhotonFinder_Observable                      obv;
-		PandoraIsolatedPhotonFinder_Variable_Vec                    photon;
-		PandoraIsolatedPhotonFinder_Number                          num_photon;
-		PandoraIsolatedPhotonFinder_Number                          num_PFO;
+		PandoraIsolatedPhotonFinder_Variable_Vec                    particle;
+		PandoraIsolatedPhotonFinder_Number                          num;
 
 
 		void Init(){
 			obv        .Init();
-			photon     .Init();
-			num_photon .Init();
-			num_PFO    .Init();
+			particle   .Init();
+			num        .Init();
 		}
 
 
@@ -259,14 +257,17 @@ class PandoraIsolatedPhotonFinder_Information_Single{
 class PandoraIsolatedPhotonFinder_Information{
 	public:
 		PandoraIsolatedPhotonFinder_Information_Single isophoton;
+		PandoraIsolatedPhotonFinder_Information_Single wophoton;
 
 		void Init(){
 			isophoton.Init();
+			wophoton.Init();
 		}
 
 
 		void Fill_Data(TTree* tree){
 			isophoton.Fill_Data(tree,"isophoton");
+			wophoton.Fill_Data(tree,"wophoton");
 		}
 
 }; 
@@ -312,7 +313,9 @@ class PandoraIsolatedPhotonFinder_Output_Collection{
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}
@@ -320,7 +323,9 @@ class PandoraIsolatedPhotonFinder_Output_Collection{
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
 			    for (int i = 0; i < input.size(); i++ ) {
-			    	col->addElement(input[i]);
+					if(input[i]!=NULL){
+						col->addElement(input[i]);
+					}
 			    }
 			}
 		}

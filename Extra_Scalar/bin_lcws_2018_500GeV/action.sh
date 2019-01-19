@@ -70,7 +70,7 @@ fi
 
 echo 
 
-if [ -d ${home_folder}/xml ] ; then
+if [ -d "${home_folder}/xml" ] ; then
 	echo "Already have  --xml-- folder with the steering file"
 else
 	echo "no steering folder"

@@ -43,16 +43,16 @@ PandoraIsolatedPhotonFinder::PandoraIsolatedPhotonFinder()
 				bool(true) );
 
 		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-				"OutputCollectionWithoutIsolatedPhoton",
-				"Copy of input collection but without the isolated photon",
-				_outputWoIsoPhotonCollection,
-				std::string("PandoraPFOsWoIsoPhoton") );
-
-		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
 				"OutputCollectionIsolatedPhoton",
 				"Output collection of isolated photon in non-forward region",
 				_outputIsoPhotonCollection,
-				std::string("PandoraIsoPhoton") );
+				std::string("PFO_IsoPhoton") );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputCollectionWoIsolatedPhoton",
+				"Copy of input collection but without the isolated photon",
+				_outputWoIsoPhotonCollection,
+				std::string("PFO_WoIsoPhoton") );
 
 		//Output root 
 		registerProcessorParameter( "SwitchOutputRoot",
@@ -187,7 +187,7 @@ void PandoraIsolatedPhotonFinder::processRunHeader( LCRunHeader* run) {
 void PandoraIsolatedPhotonFinder::processEvent( LCEvent * evt ) { 
 	Init(evt);
 
-	bool JPFO=analysePFOParticle( _PFOCol, _outputIsoPhotonCol, _outputWoIsoPhotonCol,_info.isophoton,_counter.PFO) ;
+	bool JPFO=analysePFOParticle( _PFOCol, _outputIsoPhotonCol, _outputWoIsoPhotonCol,_info.isophoton,_info.wophoton,_counter.PFO) ;
 
 	Counter(JPFO, evt);
 
@@ -219,7 +219,13 @@ void PandoraIsolatedPhotonFinder::Init(LCEvent* evt) {
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
 	_global_counter.gweight=1;
-	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
+	if( _nEvt % 50 == 0 ){
+		if(_output_switch_collection&&!_output_switch_root){
+		}
+		else{
+			ToolSet::ShowMessage(1,"processing event",_nEvt);
+		}
+	} 
 
 	_info.Init();
 	_counter.Init();
@@ -237,8 +243,8 @@ void PandoraIsolatedPhotonFinder::Init(LCEvent* evt) {
 	}
 
 
-	_outputWoIsoPhotonCol .Set_Collection_RCParticle();
-	_outputIsoPhotonCol.Set_Collection_RCParticle();
+	_outputWoIsoPhotonCol.Set_Collection_RCParticle();
+	_outputIsoPhotonCol  .Set_Collection_RCParticle();
 
 }
 
@@ -249,7 +255,7 @@ void PandoraIsolatedPhotonFinder::Finish(LCEvent* evt) {
 	}
 // Add mcs to new collection
 	_outputWoIsoPhotonCol.Add_Collection(evt);
-	_outputIsoPhotonCol.Add_Collection(evt);
+	_outputIsoPhotonCol  .Add_Collection(evt);
 }
 
 void PandoraIsolatedPhotonFinder::check( LCEvent * evt ) { 

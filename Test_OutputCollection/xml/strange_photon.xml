@@ -1,0 +1,233 @@
+<marlin>
+	<execute>
+		<processor name="MyMCLevelClassify"/>
+		<processor name="MyMCPhotonFinder_PS"/>
+		<processor name="MyIsolatedPhotonFinderProcessor"/>
+		<processor name="My_Strange_Photon"/>
+		<processor name="My_Test_OutputCollection"/>
+	</execute>
+
+
+	<global>
+		<parameter name="LCIOInputFiles">
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_0.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_1.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_2.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_3.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_4.slcio
+			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_5.slcio
+		</parameter>
+		<parameter name="MaxRecordNumber" value="50000" />  
+		<parameter name="SkipNEvents" value="0" />
+		<parameter name="SupressCheck" value="false" />  
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
+		<parameter name="AllowToModifyEvent" value="true" />
+	</global>
+
+
+	<processor name="MyMCLevelClassify" type="MCLevelClassify">
+		<!--Classify MCs for different levels Processor-->
+
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputCollection" type="string" lcioInType="MCParticle">MCParticle</parameter>
+
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true</parameter>
+		<!--Output collection of hard scattering level-->
+		<parameter name="OutputCollectionHardScattering" type="string" lcioOutType="MCParticle">MCHS</parameter>
+		<!--Output collection of pythia stable level-->
+		<parameter name="OutputCollectionPythiaStable" type="string" lcioOutType="MCParticle">MCPS</parameter>
+		<!--Output collection of detector simulation level -->
+		<parameter name="OutputCollectionDetectorSimulation" type="string" lcioOutType="MCParticle">MCDS</parameter>
+
+		<!--Input collection of Link from Reco to MC-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+		<!--Input collection of Link from MC to Reco-->
+		<parameter name="InputMCTruthRecoLink" type="string" lcioInType="LCRELATION">MCTruthRecoLink</parameter>
+
+		<!--Output root file-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> ../results/output_level.root </parameter>
+	</processor>
+
+	<processor name="MyMCPhotonFinder_PS" type="MCPhotonFinder">
+		<!--Isolated Lepton Finder Processor-->
+
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputMCCollection" type="string" lcioInType="MCParticle">MCPS</parameter>
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true </parameter>
+		<!--Output collection of isolated photons-->
+		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="MCParticle">MCPS_Photon</parameter>
+		<!--Output collection of without isolated photons-->
+		<parameter name="OutputCollectionWoIsolatedPhoton" type="string" lcioOutType="MCParticle">MCPS_WoPhoton</parameter>
+
+		<!--Output root file-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> ../results/output_PS.root </parameter>
+
+		<!---------------------------->
+		<!-- Isolation requirements -->
+		<!---------------------------->
+
+		<!--Use energy cuts-->
+		<parameter name="UseEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalEnergyCut" type="float">10 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts-->
+		<parameter name="UsePolarAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalPolarAngle" type="float">0.0 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalPolarAngle" type="float">0.95 </parameter>
+
+
+		<!--Use energy cuts in forward region-->
+		<parameter name="UseForwardEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardEnergyCut" type="float">5 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts in forward region-->
+		<parameter name="UseForwardAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardPolarAngle" type="float">0.98</parameter>
+
+
+		<!--Use Isolation Cone-->
+		<parameter name="UseIsolationCone" type="bool">false</parameter>
+		<!--Maximum cos cone angle size-->
+		<parameter name="MaximalCosConeAngle" type="float">0.90 </parameter>
+		<!--photon energy over cone energy ratio should larger than this value-->
+		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
+	</processor>
+
+
+	<processor name="MyIsolatedPhotonFinderProcessor" type="PandoraIsolatedPhotonFinder">
+		<!--Isolated Lepton Finder Processor-->
+
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs </parameter>
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true </parameter>
+		<!--Output collection of isolated photons-->
+		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PFO_Photon</parameter>
+		<!--Output collection of without isolated photons-->
+		<parameter name="OutputCollectionWoIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PFO_WoPhoton</parameter>
+
+		<!--Output root file-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> ../results/output_PFO.root </parameter>
+
+		<!---------------------------->
+		<!-- Isolation requirements -->
+		<!---------------------------->
+
+		<!--Use energy cuts-->
+		<parameter name="UseEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalEnergyCut" type="float">10 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts-->
+		<parameter name="UsePolarAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalPolarAngle" type="float">0.0 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalPollarAngle" type="float">0.95 </parameter>
+
+
+
+		<!--Use energy cuts in forward region-->
+		<parameter name="UseForwardEnergy" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardEnergyCut" type="float">5 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardEnergyCut" type="float">-1 </parameter>
+
+		<!--Use polar angle cuts in forward region-->
+		<parameter name="UseForwardPolarAngle" type="bool">true </parameter>
+		<!--Minimum energy cut for isolation requirement-->
+		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
+		<!--Maximum energy cut for isolation requirement-->
+		<parameter name="MaximalForwardPollarAngle" type="float">1.0</parameter>
+
+
+
+
+		<!--Use Isolation Cone-->
+		<parameter name="UseIsolationCone" type="bool">true</parameter>
+		<!--Maximum cos cone angle size-->
+		<parameter name="MaximalCosConeAngle" type="float">0.90 </parameter>
+		<!--photon energy over cone energy ratio should larger than this value-->
+		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
+	</processor>
+
+
+
+
+	<processor name="My_Strange_Photon" type="Strange_Photon">
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCsPhotonCollection" type="string" lcioInType="MCParticles">MCPS_Photon</parameter>
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCsWoPhotonCollection" type="string" lcioInType="MCParticles">MCPS_WoPhoton</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPFOPhotonCollection" type="string" lcioInType="ReconstructedParticle">PFO_Photon </parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPFOWoPhotonCollection" type="string" lcioInType="ReconstructedParticle">PFO_WoPhoton </parameter>
+
+
+		<!--Input collection of Link from MC to Reco-->
+		<parameter name="InputMCTruthRecoLink" type="string" lcioInType="LCRELATION">MCTruthRecoLink</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+
+		<!--Output collection-->
+		<!--Output collection of whether need output collection-->
+		<parameter name="SwitchOutputCollection" type="bool"> true </parameter>
+		<!--Output collection of PFO related from MC photon-->
+		<parameter name="OutputNewPFOIsoPhotonCollection" type="string" lcioOutType="ReconstructedParticle">PFOIsoPhotonConversion</parameter>
+		<!--Output collection of PFO remove the particle from MC photon-->
+		<parameter name="OutputNewPFORemovedIsoPhotonCollection" type="string" lcioOutType="ReconstructedParticle">PFORemovedIsoPhotonConversion</parameter>
+		<!--Output collection of PFO remove the particle from MC photon-->
+		<parameter name="OutputPFOLostEnergyPhotonCollection" type="string" lcioOutType="ReconstructedParticle">PFOLostEnergyPhotonConversion</parameter>
+		<!--Output collection of PFO remove the particle from MC photon-->
+		<parameter name="OutputPFOLostEnergyPhoton_CombinedCollection" type="string" lcioOutType="ReconstructedParticle">PFOLostEnergyPhoton_CombinedConversion</parameter>
+		<!--Output collection of MC photon-->
+		<parameter name="OutputMCsIsoPhotonCollection" type="string" lcioOutType="MCParticle">MCsLostEnergyPhotonConversion</parameter>
+
+		<!--Output root file name-->
+		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
+		<parameter name="RootFileName"> $PWD/../results/2f_l_eL.pR_test.root </parameter>
+
+
+		<!--Input parameters -->
+		<!--Minimum energy difference between mc photon and reconstructed constituents-->
+		<parameter name="MinEnergyDifferenceRario" type="float">0.05 </parameter>
+	</processor>
+
+
+
+
+	<processor name="My_Test_OutputCollection" type="Test_OutputCollection">
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCParticleCollection1" type="string" lcioInType="MCParticles">MCsLostEnergyPhotonConversion</parameter>
+		<!--Input collection of MCParticles-->
+		<parameter name="InputMCParticleCollection2" type="string" lcioInType="MCParticles">MCsRemovedIsoPhotonConversion</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPOParticleCollection1" type="string" lcioInType="ReconstructedParticle">PFOIsoPhotonConversion</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputPOParticleCollection2" type="string" lcioInType="ReconstructedParticle">PFORemovedIsoPhotonConversion</parameter>
+		<!--Output root file name-->
+		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
+		<parameter name="RootFileName"> $PWD/../results/strange_photon.root </parameter>
+	</processor>
+</marlin>
+

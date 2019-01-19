@@ -8,24 +8,18 @@ Overlay_Removal::Overlay_Removal()
 		// Processor description
 		_description = "Isolated Photon Finder Processor" ;
 
-		// register steering parameters: name, description, class-variable, default value
-		registerInputCollection( LCIO::MCPARTICLE,
-				"InputMCParticleCollection", 
-				"Name of the MC particle collection",
-				_inputMCsCollection,
-				std::string("MCParticle") );
-
-	    registerInputCollection( LCIO::LCRELATION,
-	    		"InputMCRecoTruthLink",
-	    		"Relation between MC and PFO particles",
-	    		_input_mcpfoRelation,
-	    		std::string("MCTruthRecoLink"));
+		registerInputCollection( 
+				LCIO::RECONSTRUCTEDPARTICLE,         
+				"InputPandoraPFOCollection",                     
+				"The collection name for PFOs ",   
+				_inputPFOCollection,                 
+				std::string("PandoraPFOs") );        
 
 		registerInputCollection( 
 				LCIO::RECONSTRUCTEDPARTICLE,         
-				"PFOsFromClusteredJets",                     
+				"InputPFOFromClusteredJets",                     
 				"The collection name for PFOs from clustered jets",   
-				_inputJetPOsCollection,                 
+				_inputJetPFOCollection,                 
 				std::string("PFOsFromFastJet") );        
 
 		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
@@ -40,16 +34,16 @@ Overlay_Removal::Overlay_Removal()
 				bool(true) );
 
 		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-				"OutputPFOwoOverlayCollection",
+				"OutputPFOOverlayCollection",
+				"The output of the overlay",
+				_outputPFOOverlayCollection,
+				std::string("PFOOverlay") );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOWoOverlayCollection",
 				"The output after removing the overlay",
 				_outputPFOWoOverlayCollection,
-				std::string("PFOwoOverlay") );
-
-		registerOutputCollection( LCIO::MCPARTICLE,
-				"OutputMCwoOverlayCollection",
-				"The output after removing the overlay",
-				_outputMCsWoOverlayCollection,
-				std::string("MCwoOverlay") );
+				std::string("PFOWoOverlay") );
 
 		registerProcessorParameter( "SwitchOutputRoot",
 				"whether to write a root tree for observables",
@@ -77,8 +71,8 @@ void Overlay_Removal::init() {
 
 	_outputPFOWoOverlayCol.Set_Switch(_output_switch_collection);
 	_outputPFOWoOverlayCol.Set_Name(_outputPFOWoOverlayCollection);
-	_outputMCsWoOverlayCol.Set_Switch(_output_switch_collection);
-	_outputMCsWoOverlayCol.Set_Name(_outputMCsWoOverlayCollection);
+	_outputPFOOverlayCol  .Set_Switch(_output_switch_collection);
+	_outputPFOOverlayCol  .Set_Name(_outputPFOOverlayCollection);
 
 	if(_output_switch_root){
 		makeNTuple();
@@ -95,28 +89,22 @@ void Overlay_Removal::processEvent( LCEvent * evt ) {
 	//init
 	Init(evt);
 
-	std::vector<MCParticle*> MCwoOverlay=analyseMCParticle(_in_mcCol, _info.mcs);
+	bool JPFO=analyseJet(_in_pfoCol, _in_islCol, _in_jetpoCol, _outputPFOWoOverlayCol,_outputPFOOverlayCol, _info.wooverlay, _info.overlay);
 
-	std::vector<ReconstructedParticle*> JetPFOwoOverlay=analyseJet(_in_islCol, _in_jetpoCol, _info.jet);
-
-	_outputMCsWoOverlayCol.Add_Element_MCParticle(MCwoOverlay);
-	_outputPFOWoOverlayCol.Add_Element_RCParticle(JetPFOwoOverlay);
-
-	bool JMC=true;
-	Counter(JMC, evt);
+	Counter(JPFO, evt);
 
 	Finish(evt);
 }
 
-void Overlay_Removal::Counter(bool JMC, LCEvent* evt){
-	if(JMC){
-		_global_counter.pass_MCs++;
+void Overlay_Removal::Counter(bool JPFO, LCEvent* evt){
+	if(JPFO){
+		_global_counter.pass_PFO++;
 		_global_counter.pass_all++;
-		_single_counter.pass_MCs++;
+		_single_counter.pass_PFO++;
 		_single_counter.pass_all++;
 	}
 	else{
-		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
+		ToolSet::ShowMessage(1,"in processEvent: not pass analysePFOParticle ");
 	}
 }
 
@@ -126,7 +114,13 @@ void Overlay_Removal::Init(LCEvent* evt) {
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
 	_global_counter.gweight=1;
-	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
+	if( _nEvt % 50 == 0 ){
+		if(_output_switch_collection&&!_output_switch_root){
+		}
+		else{
+			ToolSet::ShowMessage(1,"processing event",_nEvt);
+		}
+	} 
 
 	_info.Init();
 	_counter.Init();
@@ -136,19 +130,16 @@ void Overlay_Removal::Init(LCEvent* evt) {
 	_single_counter.weight=evt->getWeight();
 	_single_counter.run   =evt->getRunNumber();
 
-	_outputPFOWoOverlayCol.Set_Collection_MCParticle();
-	_outputMCsWoOverlayCol.Set_Collection_MCParticle();
+	_outputPFOWoOverlayCol.Set_Collection_RCParticle();
+	_outputPFOOverlayCol  .Set_Collection_RCParticle();
 
 	// PFO loop
-	_in_mcCol   = evt->getCollection( _inputMCsCollection   ) ;
+	_in_pfoCol= evt->getCollection( _inputPFOCollection) ;
 
-	_in_jetpoCol= evt->getCollection( _inputJetPOsCollection) ;
+	_in_jetpoCol= evt->getCollection( _inputJetPFOCollection) ;
 
 	_in_islCol  = evt->getCollection( _inputIsolepsCollection);
 
-    _nav_MC_to_PFO = new LCRelationNavigator( evt->getCollection( _input_mcpfoRelation ) );
-
-	ToolSet::CMC::Set_Nav_From_MC_To_RC(_nav_MC_to_PFO);
 }
 
 void Overlay_Removal::Finish(LCEvent* evt) { 
@@ -157,10 +148,8 @@ void Overlay_Removal::Finish(LCEvent* evt) {
 	}
 
 	_outputPFOWoOverlayCol.Add_Collection(evt);
-	_outputMCsWoOverlayCol.Add_Collection(evt);
+	_outputPFOOverlayCol  .Add_Collection(evt);
 
-	ToolSet::CMC::Clear();
-	ToolSet::CRC::Clear();
 	streamlog_out(DEBUG) << "   processing event: " << evt->getEventNumber() 
 		<< "   in run:  " << evt->getRunNumber() 
 		<< std::endl ;

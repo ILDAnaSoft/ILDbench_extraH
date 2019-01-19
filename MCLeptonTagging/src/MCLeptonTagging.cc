@@ -55,10 +55,25 @@ MCLeptonTagging::MCLeptonTagging()
 				std::string("MCLepton") );
 
 		//Input parameters 
-		registerProcessorParameter( "",
+		registerProcessorParameter( "lep_type",
 				"wants to output which type particle elec/muon (11/13), default are both",
 				_lep_type,
-				int(0) );
+				int(13) );
+
+    	registerProcessorParameter( "MinimalLeptonEnergy",
+    			"The Minimal lepton energy", 
+    			_MinEnergy,
+    			float(5));
+
+    	registerProcessorParameter( "MaximalCosConeAngle",
+    			"The maximal cone size",
+    			_maxCosConeAngle,
+    			float(0.98));
+
+    	registerProcessorParameter( "ConeEnergyRatio",
+    			"The minimal ratio of the lepton over cone energy",
+    			_ConeEnergyRatio,
+    			float(0.95));
 
 		//Output root 
 		registerProcessorParameter( "SwitchOutputRoot",
@@ -131,7 +146,7 @@ void MCLeptonTagging::Counter(bool JMC, LCEvent* evt){
 		_single_counter.pass_all++;
 	}
 	else{
-		ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
+		ToolSet::ShowMessage(2,"in processEvent: not pass analyseMCParticle ");
 	}
 }
 
@@ -141,7 +156,13 @@ void MCLeptonTagging::Init(LCEvent* evt) {
 	_global_counter.nevt=_nEvt;
 	_global_counter.nrun=_nRun;
 	_global_counter.gweight=1;
-	if( _nEvt % 50 == 0 ) std::cout << "processing event "<< _nEvt << std::endl;
+	if( _nEvt % 50 == 0 ){
+		if(_output_switch_collection&&!_output_switch_root){
+		}
+		else{
+			ToolSet::ShowMessage(1,"processing event",_nEvt);
+		}
+	} 
 
 	_info.Init();
 	_counter.Init();

@@ -1,11 +1,12 @@
 #include "MCPhotonFinder.h"
 
 
-bool MCPhotonFinder::analyseMCParticle( LCCollection* inputmcCol, MCPhotonFinder_Output_Collection& outputPhotonCol,MCPhotonFinder_Output_Collection &outputWoPhotonCol, MCPhotonFinder_Information_Single & info, MCPhotonFinder_Function_Counter  &counter){
+bool MCPhotonFinder::analyseMCParticle( LCCollection* inputmcCol, MCPhotonFinder_Output_Collection& outputPhotonCol,MCPhotonFinder_Output_Collection &outputWoPhotonCol, MCPhotonFinder_Information_Single & info_photon, MCPhotonFinder_Information_Single & info_wophoton, MCPhotonFinder_Function_Counter  &counter){
 	std::vector<MCParticle*> FS        =ToolSet::CMC::Get_MCParticle(inputmcCol);
 	std::vector<MCParticle*> all_photon=ToolSet::CMC::Get_MCParticleType(FS,22);
 	std::vector<MCParticle*> photon;
 	std::vector<MCParticle*> wophoton;
+
 
 	for (int i = 0; i < all_photon.size(); i++ ) {
 		MCParticle* mc = all_photon[i];
@@ -14,15 +15,14 @@ bool MCPhotonFinder::analyseMCParticle( LCCollection* inputmcCol, MCPhotonFinder
 		if ((output_iso  == 1) || (output_iso == 2) ){
 			photon.push_back(mc);
 		} 
-		else{
-			wophoton.push_back(mc);
-		}
 	}
+	wophoton = FS-photon; 
 
 	outputPhotonCol.Add_Element_MCParticle(photon);
 	outputWoPhotonCol.Add_Element_MCParticle(wophoton);
 
-	info.Get_MCParticles(photon);
+	info_photon.Get_MCParticles(photon);
+	info_wophoton.Get_MCParticles(wophoton);
 
 	return(true);
 
@@ -54,9 +54,13 @@ bool MCPhotonFinder::IsIsoPhoton( MCParticle* mc, std::vector<MCParticle*> all )
 		return false;
 	}
 
-	float cone_energy=getConeEnergy(mc,all);
+	std::vector<MCParticle*> incone=ToolSet::CMC::Get_InCone(mc, all, _maxCosConeAngle);
+	TLorentzVector sum_incone=ToolSet::CMC::Get_Sum_To_Lorentz(incone);
+
+	float cone_energy=sum_incone.E();
 	float mc_energy =mc->getEnergy();
 	float energy_ratio = mc_energy/cone_energy;
+
 	if(energy_ratio< _ConeEnergyRatio){
 		return false;
 	}
@@ -85,8 +89,8 @@ float MCPhotonFinder::getConeEnergy( MCParticle* mc, std::vector<MCParticle*> al
 
 bool MCPhotonFinder::IsCentralPhoton( MCParticle* mc) {
 	float  energy = mc->getEnergy();
-	float  p      = TVector3( mc->getMomentum() ).Mag();
-	float  angle  = abs(TVector3( mc->getMomentum() ).CosTheta());
+	float  p      = ToolSet::CMC::Cal_P(mc);
+	float  angle  = std::abs(ToolSet::CMC::Cal_CosTheta(mc));
 	// set cut
 	if (_useEnergy){
 		if(_maxEnergyCut > 0 && energy > _maxEnergyCut){
@@ -104,11 +108,7 @@ bool MCPhotonFinder::IsCentralPhoton( MCParticle* mc) {
 			//			ShowMessage(2,"not min angle cut, 0",angle);
 			return false;
 		}
-		if(_maxCosTheta >0 && _useForwardPolarAngle && angle> _minForwardCosTheta){
-			//			ShowMessage(2,"not max angle cut with forward, 0",angle);
-			return false;
-		}
-		if(_maxCosTheta >0 && !_useForwardPolarAngle && angle> _maxCosTheta){
+		if(_maxCosTheta >0 && angle> _maxCosTheta){
 			//			ShowMessage(2,"not max angle cut no forward, 0",angle);
 			return false;
 		}
@@ -121,8 +121,8 @@ bool MCPhotonFinder::IsCentralPhoton( MCParticle* mc) {
 
 bool MCPhotonFinder::IsForwardPhoton( MCParticle* mc) {
 	float energy = mc->getEnergy();
-	float  p      = TVector3( mc->getMomentum() ).Mag();
-	float  angle  = abs(TVector3( mc->getMomentum() ).CosTheta());
+	float  p      = ToolSet::CMC::Cal_P(mc);
+	float  angle  = std::abs(ToolSet::CMC::Cal_CosTheta(mc));
 	// set cut
 	if (_useForwardEnergy){
 		if(_maxForwardEnergyCut > 0 && energy > _maxForwardEnergyCut){
@@ -141,7 +141,7 @@ bool MCPhotonFinder::IsForwardPhoton( MCParticle* mc) {
 			return false;
 		}
 		if(_maxForwardCosTheta >0 && angle> _maxForwardCosTheta){
-			//			ShowMessage(2,"not max angle cut forward, 0",angle);
+			//ToolSet::ShowMessage(1,"not max angle cut forward, 0",angle,_maxForwardCosTheta);
 			return false;
 		}
 	} 

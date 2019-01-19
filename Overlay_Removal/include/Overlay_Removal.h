@@ -38,14 +38,10 @@ class Overlay_Removal : public Processor {
 
 	protected:
 
-		// input 
-		std::string _inputMCsCollection;
-		LCCollection* _in_mcCol;
+		std::string _inputPFOCollection;
+		LCCollection* _in_pfoCol;
 
-		std::string _input_mcpfoRelation;
-		LCRelationNavigator* _nav_MC_to_PFO;
-
-		std::string _inputJetPOsCollection;
+		std::string _inputJetPFOCollection;
 		LCCollection* _in_jetpoCol;
 
 		std::string _inputIsolepsCollection;
@@ -53,17 +49,15 @@ class Overlay_Removal : public Processor {
 
 
 
+		bool _output_switch_collection;
 		std::string _outputPFOWoOverlayCollection;
 		Overlay_Removal_Output_Collection _outputPFOWoOverlayCol;
+		std::string _outputPFOOverlayCollection;
+		Overlay_Removal_Output_Collection _outputPFOOverlayCol;
 
-		std::string _outputMCsWoOverlayCollection;
-		Overlay_Removal_Output_Collection _outputMCsWoOverlayCol;
-
-
-		bool _output_switch_collection;
-		bool _output_switch_root;
 
 		// output 
+		bool _output_switch_root;
 		std::string _rootfilename;
 		TFile*      _outfile;
 		TTree*      _datatrain;
@@ -80,12 +74,11 @@ class Overlay_Removal : public Processor {
 		//function
 		void  Init  (LCEvent* evt); 
 		void  Finish(LCEvent* evt);
-		void  Counter(bool JMC, LCEvent* evt);
+		void  Counter(bool JPFO, LCEvent* evt);
 
 
 		/** Calculates the cone energy */
-		std::vector<MCParticle*>            analyseMCParticle( LCCollection* MCs_col, Overlay_Removal_Information_Single &info);
-		std::vector<ReconstructedParticle*> analyseJet       ( LCCollection* Isolep, LCCollection* Jet_POs_col, Overlay_Removal_Information_Single &info);
+		bool analyseJet( LCCollection* PFOCol, LCCollection* IsolepCol, LCCollection* Jet_POs_col, Overlay_Removal_Output_Collection& PFOWoOverlayCol, Overlay_Removal_Output_Collection& PFOOverlayCol,  Overlay_Removal_Information_Single &info_wo_overlay,  Overlay_Removal_Information_Single &info_overlay);
 
 
 
