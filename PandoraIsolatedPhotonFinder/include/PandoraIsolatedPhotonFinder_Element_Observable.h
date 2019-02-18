@@ -50,7 +50,7 @@ class PandoraIsolatedPhotonFinder_Global_Counter{
 			nevt          = 0;
 			nrun          = 0;
 			gweight       = 0;
-	        pass_PFO      = 0;
+			pass_PFO      = 0;
 			pass_all      = 0;
 		}
 
@@ -79,7 +79,7 @@ class PandoraIsolatedPhotonFinder_Single_Counter{
 			evt         = 0;
 			run         = 0;
 			weight      = 0;
-	        pass_PFO    = 0;
+			pass_PFO    = 0;
 			pass_all    = 0;
 		}
 
@@ -98,7 +98,7 @@ class PandoraIsolatedPhotonFinder_Function_Counter   {
 		float pass_all    ;
 
 		void Init(){
-	        pass_all    = 0;
+			pass_all    = 0;
 		}
 
 		void Fill_Data(TTree* tree, std::string prefix);
@@ -111,7 +111,7 @@ class PandoraIsolatedPhotonFinder_Counter{
 		PandoraIsolatedPhotonFinder_Function_Counter PFO;
 
 		void Init(){
-	        PFO.Init();
+			PFO.Init();
 		}
 
 		void Fill_Data(TTree* tree){
@@ -124,16 +124,57 @@ class PandoraIsolatedPhotonFinder_Observable{
 		//************************
 		//inserted by process file
 		//************************
-		float visible_energy   ;        
-		float invisible_energy   ;        
+
+		float num_incone_total   ;
+		float num_incone_charge  ;
+		float num_incone_neutral ;
+		float num_incone_photon  ;
+		float num_incone_lepton  ;
+		float num_incone_hadron  ;
+
+		float input_energy;
+		float cone_energy_total;
+		float cone_energy_charge;
+		float cone_energy_neutral;
+		float cone_energy_photon;
+		float cone_energy_lepton;
+		float cone_energy_hadron;
+
+		float cone_energy_ratio_total;
+		float cone_energy_ratio_charge;
+		float cone_energy_ratio_neutral;
+		float cone_energy_ratio_photon;
+		float cone_energy_ratio_lepton;
+		float cone_energy_ratio_hadron;
+		float cone_costheta;
+		float mva_output;
 
 		void Init(){
-		    visible_energy =-10000.1;        
-		    invisible_energy =-10000.1;        
+			num_incone_total    =-10000.1;
+			num_incone_charge   =-10000.1;
+			num_incone_neutral  =-10000.1;
+			num_incone_photon   =-10000.1;
+			num_incone_lepton   =-10000.1;
+			num_incone_hadron   =-10000.1;
+
+			input_energy        =-10000.1;
+			cone_energy_total   =-10000.1;
+			cone_energy_charge  =-10000.1;
+			cone_energy_neutral =-10000.1;
+			cone_energy_photon  =-10000.1;
+			cone_energy_lepton  =-10000.1;
+			cone_energy_hadron  =-10000.1;
+
+			cone_energy_ratio_total  =-10000.1;
+			cone_energy_ratio_charge =-10000.1;
+			cone_energy_ratio_neutral=-10000.1;
+			cone_energy_ratio_photon =-10000.1;
+			cone_energy_ratio_lepton =-10000.1;
+			cone_energy_ratio_hadron =-10000.1;
+			cone_costheta            =-10000.1;
+			mva_output               =-10000.1;
 		}
 
-		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
-		void Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
@@ -153,13 +194,13 @@ class PandoraIsolatedPhotonFinder_Variable{
 		float mass                 ;        
 
 		void Init(){
-		    pdg              =-10000.1;        
-		    p                =-10000.1;        
-		    pt               =-10000.1;        
-		    costheta         =-10000.1;        
-		    phi              =-10000.1;        
-		    e                =-10000.1;        
-		    mass             =-10000.1;        
+			pdg              =-10000.1;        
+			p                =-10000.1;        
+			pt               =-10000.1;        
+			costheta         =-10000.1;        
+			phi              =-10000.1;        
+			e                =-10000.1;        
+			mass             =-10000.1;        
 		}
 
 		void Get_MCParticle_Information( MCParticle* input) ;
@@ -189,13 +230,13 @@ class PandoraIsolatedPhotonFinder_Variable_Vec{
 		std::vector<float> vertexr              ;        
 
 		void Init(){
-		    pdg              .clear();        
-		    p                .clear();        
-		    pt               .clear();        
-		    costheta         .clear();        
-		    phi              .clear();        
-		    e                .clear();        
-		    mass             .clear();        
+			pdg              .clear();        
+			p                .clear();        
+			pt               .clear();        
+			costheta         .clear();        
+			phi              .clear();        
+			e                .clear();        
+			mass             .clear();        
 			endpointx        .clear();
 			endpointy        .clear();
 			endpointz        .clear();
@@ -221,12 +262,12 @@ class PandoraIsolatedPhotonFinder_Number{
 		float num_forward        ;
 
 		void Init(){
-		    num                = 0;
-		    num_plus           = 0;
-		    num_minus          = 0;
+			num                = 0;
+			num_plus           = 0;
+			num_minus          = 0;
 			num_neutral        = 0;
-		    num_central        = 0;
-		    num_forward        = 0;
+			num_central        = 0;
+			num_forward        = 0;
 		}
 
 		void Get_MCParticles_Number ( std::vector<MCParticle*> input) ;
@@ -236,13 +277,15 @@ class PandoraIsolatedPhotonFinder_Number{
 
 class PandoraIsolatedPhotonFinder_Information_Single{
 	public:
-		PandoraIsolatedPhotonFinder_Observable                      obv;
+		PandoraIsolatedPhotonFinder_Observable                      obv_small;
+		PandoraIsolatedPhotonFinder_Observable                      obv_large;
 		PandoraIsolatedPhotonFinder_Variable_Vec                    particle;
 		PandoraIsolatedPhotonFinder_Number                          num;
 
 
 		void Init(){
-			obv        .Init();
+			obv_small  .Init();
+			obv_large  .Init();
 			particle   .Init();
 			num        .Init();
 		}
@@ -274,10 +317,10 @@ class PandoraIsolatedPhotonFinder_Information{
 
 class PandoraIsolatedPhotonFinder_Output_Collection{
 	public:
-    	std::string      name;
+		std::string      name;
 		LCCollectionVec* col;
 		bool             Jopen;
-	
+
 		void Init(){
 			Jopen=false;
 		}
@@ -293,14 +336,14 @@ class PandoraIsolatedPhotonFinder_Output_Collection{
 		void Set_Collection_MCParticle(){
 			if(Jopen){
 				col= new LCCollectionVec( LCIO::MCPARTICLE ) ;
-			    col->setSubset(true) ;
+				col->setSubset(true) ;
 			}
 		}
 
 		void Set_Collection_RCParticle(){
 			if(Jopen){
 				col= new LCCollectionVec( LCIO::RECONSTRUCTEDPARTICLE) ;
-			    col->setSubset(true) ;
+				col->setSubset(true) ;
 			}
 		}
 
@@ -312,21 +355,21 @@ class PandoraIsolatedPhotonFinder_Output_Collection{
 
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
-			    for (int i = 0; i < input.size(); i++ ) {
+				for (int i = 0; i < input.size(); i++ ) {
 					if(input[i]!=NULL){
 						col->addElement(input[i]);
 					}
-			    }
+				}
 			}
 		}
 
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
-			    for (int i = 0; i < input.size(); i++ ) {
+				for (int i = 0; i < input.size(); i++ ) {
 					if(input[i]!=NULL){
 						col->addElement(input[i]);
 					}
-			    }
+				}
 			}
 		}
 };

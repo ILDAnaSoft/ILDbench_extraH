@@ -16,10 +16,12 @@
 #include <TMath.h>
 #include <TVector3.h>
 #include <TLorentzVector.h>
+#include "TMVA/Reader.h"
 
 using namespace lcio ;
 using namespace marlin ;
 using namespace std;
+using namespace TMVA;
 
 PandoraIsolatedPhotonFinder aPandoraIsolatedPhotonFinder ;
 
@@ -30,11 +32,39 @@ PandoraIsolatedPhotonFinder::PandoraIsolatedPhotonFinder()
 		_description = "Isolated Photon Finder Processor" ;
 
 		// register steering parameters: name, description, class-variable, default value
+		registerInputCollection( LCIO::MCPARTICLE,
+				"InputMCCollection" ,
+				"Input collection of MCParticle",
+				_inputMCsCollection,
+				std::string("MCParticle"));
+
 		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
-				"InputCollection" ,
+				"InputPFOCollection" ,
 				"Input collection of ReconstructedParticles",
 				_inputPFOsCollection,
 				std::string("PandoraPFOs"));
+
+		registerInputCollection( LCIO::LCRELATION,
+				"InputMCTruthRecoLink",
+				"Relation between MC and PFO particles",
+				_mcpfoRelation,
+				std::string("MCTruthRecoLink"));
+
+		registerInputCollection( LCIO::LCRELATION,
+				"InputRecoMCTruthLink",
+				"Relation between MC and PFO particles",
+				_pfomcRelation,
+				std::string("RecoMCTruthLink"));
+
+		registerProcessorParameter( "MVACut",
+				"MVA cut for ISO photon",
+				_mvaCut,
+				float(0.8) );
+
+		registerProcessorParameter("DirOfWeights",
+				"Directory of Weights for the Isolated photon MVA Classification"  ,
+				_mva_weights ,
+				std::string("isolated_photon_weights") ) ;
 
 		//Output Collection 
 		registerProcessorParameter( "SwitchOutputCollection",
@@ -134,12 +164,12 @@ PandoraIsolatedPhotonFinder::PandoraIsolatedPhotonFinder()
 		registerProcessorParameter( "MinimalCosConeAngle",
 				"The minimal cone size",
 				_minCosConeAngle,
-				float(-1));
+				float(0.98));
 
 		registerProcessorParameter( "MaximalCosConeAngle",
 				"The maximal cone size",
 				_maxCosConeAngle,
-				float(0.9));
+				float(0.95));
 
 		registerProcessorParameter( "ConeEnergyRatio",
 				"The maximal cone size",
@@ -155,6 +185,7 @@ void PandoraIsolatedPhotonFinder::init() {
 
 	_nEvt = 0;
 	_nRun = 0;
+	_pnum = 0;
 	_global_counter.Init();
 	_single_counter.Init();
 	_counter.Init();
@@ -166,6 +197,61 @@ void PandoraIsolatedPhotonFinder::init() {
 
 	if(_output_switch_root){
 		makeNTuple();
+	}
+
+	if(_output_switch_root&&!_output_switch_collection){
+	}
+	else{
+		_reader = new TMVA::Reader( "Color:Silent" );    
+		// add input variables
+		_reader->AddVariable( "isophoton_obv_small_num_incone_total"  ,        &_info_isr.isophoton.obv_small.num_incone_total    );
+		_reader->AddVariable( "isophoton_obv_small_num_incone_charge" ,        &_info_isr.isophoton.obv_small.num_incone_charge   );
+		_reader->AddVariable( "isophoton_obv_small_num_incone_photon" ,        &_info_isr.isophoton.obv_small.num_incone_photon   );
+		_reader->AddVariable( "isophoton_obv_small_num_incone_lepton" ,        &_info_isr.isophoton.obv_small.num_incone_lepton   );
+
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_total"  ,       &_info_isr.isophoton.obv_small.cone_energy_total  );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_charge" ,       &_info_isr.isophoton.obv_small.cone_energy_charge );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_neutral",       &_info_isr.isophoton.obv_small.cone_energy_neutral);
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_photon" ,       &_info_isr.isophoton.obv_small.cone_energy_photon );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_lepton" ,       &_info_isr.isophoton.obv_small.cone_energy_lepton );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_hadron" ,       &_info_isr.isophoton.obv_small.cone_energy_hadron );
+
+		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_total"  , &_info_isr.isophoton.obv_small.cone_energy_ratio_total  );
+		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_charge" , &_info_isr.isophoton.obv_small.cone_energy_ratio_charge );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_neutral", &_info_isr.isophoton.obv_small.cone_energy_ratio_neutral);
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_photon" , &_info_isr.isophoton.obv_small.cone_energy_ratio_photon );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_lepton" , &_info_isr.isophoton.obv_small.cone_energy_ratio_lepton );
+		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_hadron" , &_info_isr.isophoton.obv_small.cone_energy_ratio_hadron );
+//		_reader->AddVariable( "isophoton_obv_small_cone_costheta"            , &_info_isr.isophoton.obv_small.cone_costheta            );
+
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_total"  ,        &_info_isr.isophoton.obv_large.num_incone_total    );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_charge" ,        &_info_isr.isophoton.obv_large.num_incone_charge   );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_neutral",        &_info_isr.isophoton.obv_large.num_incone_neutral  );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_photon" ,        &_info_isr.isophoton.obv_large.num_incone_photon   );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_lepton" ,        &_info_isr.isophoton.obv_large.num_incone_lepton   );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_hadron" ,        &_info_isr.isophoton.obv_large.num_incone_hadron   );
+
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_total"  ,       &_info_isr.isophoton.obv_large.cone_energy_total  );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_charge" ,       &_info_isr.isophoton.obv_large.cone_energy_charge );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_neutral",       &_info_isr.isophoton.obv_large.cone_energy_neutral);
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_photon" ,       &_info_isr.isophoton.obv_large.cone_energy_photon );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_lepton" ,       &_info_isr.isophoton.obv_large.cone_energy_lepton );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_hadron" ,       &_info_isr.isophoton.obv_large.cone_energy_hadron );
+
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_total"  , &_info_isr.isophoton.obv_large.cone_energy_ratio_total  );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_charge" , &_info_isr.isophoton.obv_large.cone_energy_ratio_charge );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_neutral", &_info_isr.isophoton.obv_large.cone_energy_ratio_neutral);
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_photon" , &_info_isr.isophoton.obv_large.cone_energy_ratio_photon );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_lepton" , &_info_isr.isophoton.obv_large.cone_energy_ratio_lepton );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_hadron" , &_info_isr.isophoton.obv_large.cone_energy_ratio_hadron );
+		_reader->AddVariable( "isophoton_obv_large_cone_costheta"            , &_info_isr.isophoton.obv_large.cone_costheta            );
+
+		// book the reader (method, weights)
+		TString dir    = _mva_weights;
+		TString prefix = "TMVAClassification";
+		TString methodName = "BDTGmethod";
+		TString weightfile = dir + "/" + prefix + "_" + "BDTG.weights.xml";
+		_reader->BookMVA( methodName, weightfile ); 
 	}
 }
 
@@ -187,7 +273,7 @@ void PandoraIsolatedPhotonFinder::processRunHeader( LCRunHeader* run) {
 void PandoraIsolatedPhotonFinder::processEvent( LCEvent * evt ) { 
 	Init(evt);
 
-	bool JPFO=analysePFOParticle( _PFOCol, _outputIsoPhotonCol, _outputWoIsoPhotonCol,_info.isophoton,_info.wophoton,_counter.PFO) ;
+	bool JPFO=analysePFOParticle(_MCsCol, _PFOCol, _outputIsoPhotonCol, _outputWoIsoPhotonCol,_info_isr,_info_normal,_counter.PFO) ;
 
 	Counter(JPFO, evt);
 
@@ -227,7 +313,8 @@ void PandoraIsolatedPhotonFinder::Init(LCEvent* evt) {
 		}
 	} 
 
-	_info.Init();
+	_info_isr.Init();
+	_info_normal.Init();
 	_counter.Init();
 	_single_counter.Init();
 
@@ -242,6 +329,11 @@ void PandoraIsolatedPhotonFinder::Init(LCEvent* evt) {
 		std::cout << "no PFO without overlay in this event" << std::endl;
 	}
 
+	_MCsCol= evt->getCollection( _inputMCsCollection  ) ;
+	_navmcpfo = new LCRelationNavigator( evt->getCollection( _mcpfoRelation ) );
+	_navpfomc = new LCRelationNavigator( evt->getCollection( _pfomcRelation ) );
+
+
 
 	_outputWoIsoPhotonCol.Set_Collection_RCParticle();
 	_outputIsoPhotonCol  .Set_Collection_RCParticle();
@@ -251,7 +343,8 @@ void PandoraIsolatedPhotonFinder::Init(LCEvent* evt) {
 
 void PandoraIsolatedPhotonFinder::Finish(LCEvent* evt) { 
 	if(_output_switch_root){
-		_datatrain->Fill();
+		_datatrain_sig->Fill();
+		_datatrain_bkg->Fill();
 	}
 // Add mcs to new collection
 	_outputWoIsoPhotonCol.Add_Collection(evt);
@@ -264,9 +357,17 @@ void PandoraIsolatedPhotonFinder::check( LCEvent * evt ) {
 void PandoraIsolatedPhotonFinder::end() { 
 	if(_output_switch_root){
 		_outfile->cd();
-		_datatrain->Write();
+		_datatrain_sig->Write();
+		_datatrain_bkg->Write();
 		_outfile->Close();
 	}
+
+	if(_output_switch_root&&!_output_switch_collection){
+	}
+	else{
+		delete _reader;
+	}
+	std::cout << "total photon number " << _pnum << std::endl;
 	_global_counter.Print();
 
 }
@@ -279,13 +380,16 @@ void PandoraIsolatedPhotonFinder::makeNTuple() {
 	//Output root file
 	std::cout << _rootfilename << std::endl;
 	_outfile = new TFile( _rootfilename.c_str() , "RECREATE" );
-	_datatrain= new TTree( "datatrain" , "events" );
+	_datatrain_sig= new TTree( "datatrain_sig" , "events" );
+	_datatrain_bkg= new TTree( "datatrain_bkg" , "events" );
 
 	//Define root tree
-	_global_counter.Fill_Data(_datatrain);
-	_single_counter.Fill_Data(_datatrain);
-	_counter       .Fill_Data(_datatrain);
-	_info          .Fill_Data(_datatrain);
+	_global_counter.Fill_Data(_datatrain_sig);
+	_single_counter.Fill_Data(_datatrain_sig);
+	_counter       .Fill_Data(_datatrain_sig);
+
+	_info_isr.Fill_Data(_datatrain_sig);
+	_info_normal.Fill_Data(_datatrain_bkg);
 	return;
 
 }

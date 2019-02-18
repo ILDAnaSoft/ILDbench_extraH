@@ -19,6 +19,8 @@
 #include <EVENT/LCParameters.h>
 #include <UTIL/LCRelationNavigator.h>
 
+#include "TMVA/Reader.h" 
+
 using namespace lcio ;
 using namespace marlin ;
 
@@ -39,17 +41,28 @@ class PandoraIsolatedPhotonFinder : public Processor {
 	protected:
 
 		/** Input collection */
+		std::string _inputMCsCollection;
+		LCCollection*    _MCsCol;
+
 		std::string _inputPFOsCollection;
+		LCCollection*    _PFOCol;
+
+		std::string _mcpfoRelation;
+		std::string _pfomcRelation;
+		LCRelationNavigator* _navmcpfo;
+		LCRelationNavigator* _navpfomc;
+
 
 		/** Output collection of isolated photons */
 		std::string _outputIsoPhotonCollection;
+		PandoraIsolatedPhotonFinder_Output_Collection _outputWoIsoPhotonCol;
 
 		/** Output collection (all input with isolated photons removed) */
 		std::string _outputWoIsoPhotonCollection;
+		PandoraIsolatedPhotonFinder_Output_Collection _outputIsoPhotonCol;
 
-		LCCollection*    _PFOCol;
-		PandoraIsolatedPhotonFinder_Output_Collection _outputWoIsoPhotonCol;
-	    PandoraIsolatedPhotonFinder_Output_Collection _outputIsoPhotonCol;
+		std::string _mva_weights;
+		float       _mvaCut;
 
 		bool _output_switch_root;
 		bool _output_switch_collection;
@@ -57,7 +70,8 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		// output
 		std::string _rootfilename;
 		TFile*      _outfile;
-		TTree*      _datatrain;
+		TTree*      _datatrain_sig;
+		TTree*      _datatrain_bkg;
 		void makeNTuple();
 
 		/** If set to true, uses Energy cuts in the central region*/
@@ -87,6 +101,7 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		//internal para
 		int   _nEvt;
 		int   _nRun; 
+		int   _pnum; 
 
 		// internal function 
 		void  Init  (LCEvent* evt); 
@@ -94,17 +109,13 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		void  Counter(bool JPFO, LCEvent* evt);
 
 
-		bool  analysePFOParticle( LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhoton, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information_Single& info_photon, PandoraIsolatedPhotonFinder_Information_Single& info_wophoton, PandoraIsolatedPhotonFinder_Function_Counter& counter);
-
-
-		/** Calculates the cone energy */
-		float getConeEnergy( ReconstructedParticle* pfo, std::vector<ReconstructedParticle*> all) ;
+		bool  analysePFOParticle( LCCollection* input_mc, LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhoton, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information& info_isr, PandoraIsolatedPhotonFinder_Information& info_normal, PandoraIsolatedPhotonFinder_Function_Counter& counter);
 
 		/** Returns true if pfo is an isolated photon */
-		int IsIsolatedPhoton( ReconstructedParticle* pfo, std::vector<ReconstructedParticle*> all) ;
+		int IsIsolatedPhoton( ReconstructedParticle* pfo, std::vector<ReconstructedParticle*> all, PandoraIsolatedPhotonFinder_Information_Single& info) ;
 
 		/** Returns true if it passes photon ID cuts */
-		bool IsIsoPhoton( ReconstructedParticle* pfo, std::vector<ReconstructedParticle*> all) ;
+		void Get_IsoPhoton_Observable( ReconstructedParticle* pfo, std::vector<ReconstructedParticle*> all, float cone_cut, PandoraIsolatedPhotonFinder_Observable& obv) ;
 
 		/** Returns true if it passes photon ID cuts */
 		bool IsForwardPhoton( ReconstructedParticle* pfo ) ;
@@ -115,7 +126,15 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		PandoraIsolatedPhotonFinder_Global_Counter       _global_counter;
 		PandoraIsolatedPhotonFinder_Single_Counter       _single_counter;
 		PandoraIsolatedPhotonFinder_Counter              _counter;
-		PandoraIsolatedPhotonFinder_Information          _info;
+		PandoraIsolatedPhotonFinder_Information          _info_isr;
+		PandoraIsolatedPhotonFinder_Information          _info_normal;
+
+
+		//MVA input
+		TMVA::Reader*     _reader;
+		Float_t _coneec{}, _coneen{}, _momentum{}, _coslarcon{}, _energyratio{};
+		Float_t _ratioecal{}, _ratiototcal{}, _nsigd0{}, _nsigz0{}, _yokeenergy{}, _totalcalenergy{};
+
 } ;
 
 #endif
