@@ -15,6 +15,24 @@ Strange_Lepton::Strange_Lepton()
 				_inputMCsLeptonCollection,
 				std::string("MCPS_Lepton") );
 
+		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"InputPFOLeptonCollection", 
+				"Name of the PFO lepton collection",
+				_inputPFOLeptonCollection,
+				std::string("PFO_Lepton") );
+
+		registerInputCollection( LCIO::LCRELATION,
+				"InputMCTruthRecoLink",
+				"Relation between MC and PFO particles",
+				_mcpfoRelation,
+				std::string("MCTruthRecoLink"));
+
+		registerInputCollection( LCIO::LCRELATION,
+				"InputRecoMCTruthLink",
+				"Relation between MC and PFO particles",
+				_pfomcRelation,
+				std::string("RecoMCTruthLink"));
+
 		//output collection
 		registerProcessorParameter( "SwitchOutputCollection",
 				"whether to write a Marlin collection for further Marlin",
@@ -72,7 +90,7 @@ void Strange_Lepton::processEvent( LCEvent * evt ) {
 
 	Init(evt);
 
-	int JMC1 =analyseMCParticle(_mcsLeptonCol, _outputPFOLeptonCol,_info, _counter.MCs1);
+	int JMC1 =analyseMCParticle(_mcsLeptonCol, _pfoLeptonCol, _outputPFOLeptonCol, _navmcpfo, _navpfomc,_info, _counter.MCs1);
 
 	Counter(JMC1,  evt);
 
@@ -120,10 +138,15 @@ void Strange_Lepton::Init(LCEvent* evt) {
 
 	// PFO loop
 	_mcsLeptonCol   = evt->getCollection( _inputMCsLeptonCollection  ) ;
+	_pfoLeptonCol   = evt->getCollection( _inputPFOLeptonCollection  ) ;
+
+	_navmcpfo = new LCRelationNavigator( evt->getCollection( _mcpfoRelation ) );
+	_navpfomc = new LCRelationNavigator( evt->getCollection( _pfomcRelation ) );
 
 	_outputPFOLeptonCol           .Set_Collection_RCParticle();
 
 
+	ToolSet::CMC::Set_Nav_From_MC_To_RC(_navmcpfo);
 }
 
 void Strange_Lepton::Finish(LCEvent* evt) { 
@@ -132,7 +155,10 @@ void Strange_Lepton::Finish(LCEvent* evt) {
 	}
 
 	_outputPFOLeptonCol           .Add_Collection(evt);
+
 	// delete
+    delete _navpfomc;
+    delete _navmcpfo;
 
 }
 

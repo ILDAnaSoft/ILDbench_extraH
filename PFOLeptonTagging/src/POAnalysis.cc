@@ -2,230 +2,195 @@
 #include "CMC.h"
 using namespace lcio;
 
-int PFOLeptonTagging::analysePOParticle( LCCollection* Input_PFOLeptonCol, LCCollection* Input_OtherCol, 
-		PFOLeptonTagging_Output_Collection& NewPFOIsoLeptonCol, 
-		PFOLeptonTagging_Information&info, PFOLeptonTagging_Function_Counter& counter) {
-
+int PFOLeptonTagging::analysePOParticle( LCCollection* Input_PFOLeptonCol, LCCollection* Input_PFOWoLeptonCol, 
+		PFOLeptonTagging_Output_Collection &NewPFOIsoLeptonCol,
+		PFOLeptonTagging_Output_Collection &NewPFOWoIsoLeptonCol, 
+		PFOLeptonTagging_Information &info, PFOLeptonTagging_Function_Counter& counter){
 
 	std::vector<ReconstructedParticle*> input_lepton =ToolSet::CRC::Get_POParticle(Input_PFOLeptonCol);
-	std::vector<ReconstructedParticle*> input_other  =ToolSet::CRC::Get_POParticle(Input_OtherCol);
-	std::vector<ReconstructedParticle*> leps,woleps;
+	std::vector<ReconstructedParticle*> input_other  =ToolSet::CRC::Get_POParticle(Input_PFOWoLeptonCol);
+	std::vector<ReconstructedParticle*> choosed_leps, others;
 
-	checkIsoLeptons(input_lepton,input_other,leps,woleps);
+
+	POCut_Detail(input_lepton, input_other, choosed_leps, others, info);
+
+	counter.pass_all++;
+
 
 	//add into output collections
-	NewPFOIsoLeptonCol              .Add_Element_RCParticle(leps);
-	NewPFOWoIsoLeptonCol            .Add_Element_RCParticle(woleps);
-
-
-	if(_output_switch_root){
-		info.Get_PFOParticles(leps);
-		TLorentzVector combined_leps=ToolSet::CMC::Get_Sum_To_Lorentz(leps);
-		info.obv.visible_energy=combined_leps.M();
-		counter.pass_all++;
-	}
+	NewPFOIsoLeptonCol  .Add_Element_RCParticle(choosed_leps);
+	NewPFOWoIsoLeptonCol.Add_Element_RCParticle(others);
 
 	return(1);
-
 }
 
 
+bool PFOLeptonTagging::POCut_Detail(std::vector<ReconstructedParticle*> &input_leps,  std::vector<ReconstructedParticle*> &input_others, std::vector<ReconstructedParticle*> &out_leps, std::vector<ReconstructedParticle*> &out_others, PFOLeptonTagging_Information &info){
+
+	bool JMuon=POCut_Muon(input_leps,info.pfo_input_lepton);
+	if(!JMuon){
+		return(false);
+	}
+
+	info.pfo_input_other          .Get_PFOParticles(input_others);
 
 
-void PFOLeptonTagging::checkIsoLeptons(std::vector<ReconstructedParticle*> input_leps, std::vector<ReconstructedParticle*> input_other,  std::vector<ReconstructedParticle*> &IsoLep, std::vector<ReconstructedParticle*> &mcs_WO_IsoLep )
-{
-	std::vector<ReconstructedParticle*> leps      = ToolSet::CMC::Get_ReconstructedParticleType_Abs(input_leps,_lep_type);
-	std::vector<ReconstructedParticle*> leps_left = input_leps - leps;
-	std::vector<ReconstructedParticle*> all_other = leps_left + input_other;
-
-	TLorentzVector combined_leps=ToolSet::CMC::Get_Sum_To_Lorentz(leps);
-
-
-	std::vector<ReconstructedParticle*> leps_iso_origin, leps_not_iso;
-	ReconstructedParticle*              new_mcs  ;
-	std::vector<ReconstructedParticle*> new_other;
-
-
-//  ToolSet::ShowMessage(1,"begin");
-//  ToolSet::ShowMessage(1,"inpug leps",leps);
-	int nmcs = leps.size();
-    for( int i = 0; i < nmcs; i++ ){
-//  	ToolSet::ShowMessage(1,"loop i",i);
-    	if ( IsIsoLep( leps[i], all_other, new_mcs, new_other)){
-    		IsoLep.push_back(new_mcs);
-    		leps_iso_origin.push_back(input[i]);
-    		input = new_other;
-    	}
-    }
-    leps_not_iso=leps-leps_iso_origin;
-
-    mcs_WO_IsoLep=new_other+leps_not_iso;
-
-
-//  ToolSet::ShowMessage(2);
-//  ToolSet::ShowMessage(1,"IsoLep",IsoLep);
-//  ToolSet::ShowMessage(1,"Wo IsoLep",mcs_WO_IsoLep);
-//  ToolSet::ShowMessage(1,"end");
-	return;
-}
-
-
-
-bool PFOLeptonTagging::IsIsoLep( ReconstructedParticle* mcs, std::vector<ReconstructedParticle*> allmcs, ReconstructedParticle* &new_mcs, std::vector<ReconstructedParticle*> &new_all_others) {
-
-//    ToolSet::ShowMessage(1,"input mcs",mcs);
-    if ( !IsCharged(mcs) ){
-    	return false;
-    }
-//  ToolSet::ShowMessage(1,"is charged");
-
-    int leptype= IsLepton(mcs);
-
-//  ToolSet::ShowMessage(1,"is lepton", leptype);
-    if ( leptype==0 ){
-    	return false;
-    }
-
-//  ToolSet::ShowMessage(1,"lepton type",_lep_type);
-    if ( _lep_type!=0 ){
-    	if ( leptype!=_lep_type ){
-    		return false;
-    	}
-    }
-
-
-//  ToolSet::ShowMessage(1,"begin isolation ","");
-
-    // isolation condition
-    //
-    std::vector<ReconstructedParticle*> incone=ToolSet::CMC::Get_InCone(mcs, allmcs, _maxCosConeAngle);
-//    ToolSet::ShowMessage(1,"in cone",incone);
-	if(incone.size()==1){
-		//if only input particle -> isolated
-		new_mcs = mcs;
-		new_all_others=allmcs;
-		return true;
+	std::vector<ReconstructedParticle*> choosed_leps;
+	bool Jrecoil=POCut_Recoil(input_leps, choosed_leps);
+	if(!Jrecoil){
+		return(false);
 	}
 
 
-	std::vector<ReconstructedParticle*> leps  =ToolSet::CMC::Get_ReconstructedParticleType(incone,"lepton");
-	std::vector<ReconstructedParticle*> woleps=incone-leps;
-	std::vector<ReconstructedParticle*> photon=ToolSet::CMC::Get_ReconstructedParticleType(woleps,22);
-	std::vector<ReconstructedParticle*> wophoton=woleps-photon;
-	std::vector<ReconstructedParticle*> recovery_leps=leps+photon;
+	POCut_Observable(choosed_leps, info.pfo_input_lepton.obv);
 
 
-	if(wophoton.size()==0){
-		// in the cone, only has leptons, or leptons+photons
-		if(leps.size()==1){
-			// if only 1 lepton + n photons,  recover a new lepton, which = this lepton + photons
-			new_mcs=ToolSet::CMC::Get_Sum(recovery_leps);
-			new_all_others = allmcs;
-			return true;
+	std::vector<ReconstructedParticle*> others_with_left_lepton;
+	others_with_left_lepton = input_leps - choosed_leps + input_others;
+
+	//FSR recovery
+    out_leps = ToolSet::CRC::Get_Isolated(choosed_leps, others_with_left_lepton, out_others, 0.99);
+
+  	POCut_Observable(out_leps, info.pfo_output_lepton.obv);
+
+	POCut_Muon(out_leps,info.pfo_output_lepton);
+	info.pfo_output_other         .Get_PFOParticles(out_others);
+
+	return(true);
+}
+
+
+
+bool PFOLeptonTagging::POCut_Muon( std::vector<ReconstructedParticle*> &muon, PFOLeptonTagging_Information_Single& info) {
+	std::vector<ReconstructedParticle*> muonplus =ToolSet::CRC::Get_POParticleType(muon, 13);
+	std::vector<ReconstructedParticle*> muonminus=ToolSet::CRC::Get_POParticleType(muon,-13);
+	int numt = muon.size();
+	int nump = muonplus .size();
+	int numm = muonminus.size();
+	if(numt<2) {
+		return(false);
+	}
+	if(nump<1) {
+		return(false);
+	}
+	if(numm<1) {
+		return(false);
+	}
+
+	info.Get_PFOParticles(muon);
+
+	return(true);
+}
+
+bool PFOLeptonTagging::POCut_MuonPair( std::vector<ReconstructedParticle*> &muon, PFOLeptonTagging_Observable& obv) {
+	EVENT::Track* lep1=0,  *lep2=0; 
+	EVENT::TrackVec trkvec1 = muon[0]->getTracks();
+	EVENT::TrackVec trkvec2 = muon[1]->getTracks();
+
+	if((trkvec1.size()>0)&&(trkvec2.size()>0)){
+		lep1=trkvec1[0];
+		lep2=trkvec2[0];
+
+		VertexInfo vv;
+		vv.addTrack( lep1 );
+		vv.addTrack( lep2 );
+		//beam spot constraint
+		float xyz[3] = { 150e-6, 5e-6, 0.2  }; //mm
+		vv.setBeamSpotSize( xyz  );
+		vv.useIPcon( true  );
+
+		TVector3 vtxPos = vv.getVertexPosition();
+		float vtx = vtxPos[0];
+		float vty = vtxPos[1];
+		float vtz = vtxPos[2];
+		float chi2 = vv.getVertexChisq();
+		obv.Get_Vertex_Information(vv);
+	}
+
+	return(true);
+}
+
+
+bool PFOLeptonTagging::POCut_Recoil(std::vector<ReconstructedParticle*> in, std::vector<ReconstructedParticle*> &out) {
+	int num=in.size();
+	if(num<2){
+		return(false);
+	}
+
+	float chi_min= 1000000.0;
+	float chi_tmp=chi_min;
+	float recoil_mass_final = 999.99;
+	float pair_mass_final = 999.99;
+
+	int choosei=1000,choosej=1000;
+	for(int i=0;i<num-1;i++){
+		for(int j=1;j<num;j++){
+			std::vector<ReconstructedParticle*> test_pair;
+			test_pair.push_back(in[i]);
+			test_pair.push_back(in[j]);
+			TLorentzVector pair_mom = ToolSet::CRC::Get_Sum_To_Lorentz(test_pair);
+			TLorentzVector recoil_mom = ToolSet::CRC::Get_InVisible_To_Lorentz(test_pair);
+			float  recoil_mass=recoil_mom.M();
+			float  pair_mass=pair_mom.M();
+			if(std::abs(pair_mass-91.187)>40.0){
+				continue;
+			}
+			if((in[i]->getCharge())*(in[j]->getCharge())>0){//Should be different sign lepton
+				continue;
+			}
+			float  sigma_pair=1;
+			float  sigma_recoil=1;
+		
+			sigma_pair  = ToolSet::CRC::Get_Resolution_Invariant_Mass(in[i],in[j],91.187);
+			sigma_recoil= ToolSet::CRC::Get_Resolution_Invariant_Mass(in[i],in[j],_hmass);
+
+			chi_tmp = std::pow((pair_mass-91.187)/sigma_pair,2)+std::pow((recoil_mass-_hmass)/sigma_recoil,2);
+
+			if(chi_tmp<chi_min){
+				chi_min = chi_tmp;
+				choosei=i;
+				choosej=j;
+				recoil_mass_final=recoil_mass;
+				pair_mass_final=pair_mass;
+			}
+		}
+	}
+
+	if(choosei!=1000 && choosej!=1000){
+		if(in[choosei]->getCharge()>0){
+			out.push_back(in[choosei]);
+			out.push_back(in[choosej]);
 		}
 		else{
-			// if has 2 or more leptons + n photons,  
-			// find the energetic leading lepton and subleading lepton, if current lepton doesn't belongs to these two lepton, it may radiated from others
-			// if the current lepton is one of the two most energetic leptons, then set a new cone, whose radii = half of the leptons' angle distance, 
-			// recover the photon in this lepton cone.
-			std::sort(leps.begin(),leps.end(),ToolSet::CMC::Compare_as_E);
-			if(mcs!=leps[0]&&mcs!=leps[1]){
-				return false;
-			}
-
-			TVector3 P_1( leps[0]->getMomentum() );
-
-			TVector3 P_2( leps[1]->getMomentum() );
-
-			float new_coneangle= P_1.Dot( P_2)/(P_1.Mag()*P_2.Mag());
-			std::vector<ReconstructedParticle*> new_incone=ToolSet::CMC::Get_InCone(mcs, incone, new_coneangle);
-			new_mcs=ToolSet::CMC::Get_Sum(new_incone);
-
-			std::vector<ReconstructedParticle*> new_left=incone-new_incone;
-			new_all_others = allmcs+new_left;
-			return true;
+			out.push_back(in[choosej]);
+			out.push_back(in[choosei]);
 		}
+		return(true);
 	}
-
-	// in the cone, there are many other particles,  get the cone energy of cone
-	if(leps.size()==1){
-		// if only 1 lepton, lepton +photon energy is the domain -> isolated
-		TLorentzVector wophoton_incone=ToolSet::CMC::Get_Sum_To_Lorentz(wophoton);
-		TLorentzVector recoveryleps_incone=ToolSet::CMC::Get_Sum_To_Lorentz(recovery_leps);
-
-		float wophoton_energy    =wophoton_incone.E();
-		float recovery_energy=recoveryleps_incone.E();
-		if(recovery_energy/(recovery_energy+wophoton_energy)>_ConeEnergyRatio){
-			new_mcs = ToolSet::CMC::Get_Sum(incone); 
-			new_all_others= allmcs; 
-			return true;
-		}
-	}
-	else{
-		// if has 2 or more leptons   
-		// find the energetic leading lepton and subleading lepton, if current lepton doesn't belongs to these two lepton, it may radiated from others
-		// if the current lepton is one of the two most energetic leptons, then need the first two leptons+photons energy domain in the cone.
-		std::sort(leps.begin(),leps.end(),ToolSet::CMC::Compare_as_E);
-		if(mcs!=leps[0]&&mcs!=leps[1]){
-			return false;
-		}
-
-		leps.resize(2);
-		recovery_leps.clear();
-		recovery_leps=leps+photon;
-
-		TLorentzVector wophoton_incone=ToolSet::CMC::Get_Sum_To_Lorentz(wophoton);
-		TLorentzVector recoveryleps_incone=ToolSet::CMC::Get_Sum_To_Lorentz(recovery_leps);
-
-		float wophoton_energy    =wophoton_incone.E();
-		float recovery_energy=recoveryleps_incone.E();
-
-
-		if(recovery_energy/(recovery_energy+wophoton_energy)>_ConeEnergyRatio){
-		// set a new cone, whose radii = half of the leptons' angle distance, 
-		// recover the photon in this lepton cone.
-			TVector3 P_1( leps[0]->getMomentum() );
-
-			TVector3 P_2( leps[1]->getMomentum() );
-
-			float new_coneangle= P_1.Dot( P_2)/(P_1.Mag()*P_2.Mag());
-			std::vector<ReconstructedParticle*> new_incone=ToolSet::CMC::Get_InCone(mcs, incone, new_coneangle);
-			new_mcs=ToolSet::CMC::Get_Sum(new_incone);
-
-			std::vector<ReconstructedParticle*> new_left=incone-new_incone;
-			new_all_others = allmcs+new_left;
-			return true;
-		}
-	}
-
-	return false;
-
+	return(false);
 }
 
 
+bool PFOLeptonTagging::POCut_Observable(std::vector<ReconstructedParticle*> &choosed_leps,  PFOLeptonTagging_Observable &obv){
+	//default 2 muons.
 
-bool PFOLeptonTagging::IsCharged( ReconstructedParticle* mcs ) {
-	if ( mcs->getCharge() == 0 ) return false;
-	return true;
-}
+	TLorentzVector pair=ToolSet::CRC::Get_Sum_To_Lorentz(choosed_leps);
+	TLorentzVector recoil=ToolSet::CRC::Get_InVisible_To_Lorentz(choosed_leps);
 
-
-
-int PFOLeptonTagging::IsLepton( ReconstructedParticle* mcs) {
-
-	bool Jmin_E=false;
-	bool Jcostheta=false;
-	int pdg=std::abs(mcs->getPDG());
-	if(pdg!=11&&pdg!=13){
-		return(0);
-	}
-	if( mcs->getEnergy()> _MinEnergy){
-		return(pdg);
-	}
-	else{
-		return(0);
+	obv.combined_inm=pair.M();
+	obv.combined_pt=pair.Pt();
+	obv.recoil_mass=recoil.M();
+	if(obv.recoil_mass<0){
+		ToolSet::ShowMessage(1,"recoil",recoil);
 	}
 
+	obv.lepton_pair_costheta     =pair.CosTheta();
+	obv.lepton_pair_costheta_pair=ToolSet::CMC::Cal_CosTheta(choosed_leps[0],choosed_leps[1]);
+
+	obv.lepton_pair_azimuth      =pair.Phi();
+	obv.lepton_pair_azimuth_pair =ToolSet::CMC::Cal_Acoplanarity(choosed_leps[0],choosed_leps[1]);
+
+	return(true);
 }
 
 

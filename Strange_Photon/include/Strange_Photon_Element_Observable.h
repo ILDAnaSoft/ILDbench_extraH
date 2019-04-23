@@ -136,10 +136,14 @@ class Strange_Photon_Observable{
 		//************************
 		float visible_energy   ;        
 		float invisible_energy   ;        
+		std::vector<float> energy_difference;        
+		std::vector<float> photon_head;        
 
 		void Init(){
 		    visible_energy =-10000.1;        
 		    invisible_energy =-10000.1;        
+			energy_difference.clear();
+			photon_head.clear();
 		}
 
 		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
@@ -161,6 +165,12 @@ class Strange_Photon_Variable{
 		float phi                  ;        
 		float e                    ;        
 		float mass                 ;        
+		float ecal                 ;
+		float hcal                 ;
+		float yoke                 ;
+		float lumical              ;
+		float lhcal                ;
+		float beamcal              ;
 
 		void Init(){
 		    pdg              =-10000.1;        
@@ -170,6 +180,12 @@ class Strange_Photon_Variable{
 		    phi              =-10000.1;        
 		    e                =-10000.1;        
 		    mass             =-10000.1;        
+		    ecal             =-10000.1;
+		    hcal             =-10000.1;
+		    yoke             =-10000.1;
+		    lumical          =-10000.1;
+		    lhcal            =-10000.1;
+		    beamcal          =-10000.1;
 		}
 
 		void Get_MCParticle_Information( MCParticle* input) ;
@@ -189,6 +205,12 @@ class Strange_Photon_Variable_Vec{
 		std::vector<float> phi                  ;        
 		std::vector<float> e                    ;        
 		std::vector<float> mass                 ;        
+		std::vector<float> ecal                 ;
+		std::vector<float> hcal                 ;
+		std::vector<float> yoke                 ;
+		std::vector<float> lumical              ;
+		std::vector<float> lhcal                ;
+		std::vector<float> beamcal              ;
 		std::vector<float> endpointx            ;        
 		std::vector<float> endpointy            ;        
 		std::vector<float> endpointz            ;        
@@ -206,6 +228,12 @@ class Strange_Photon_Variable_Vec{
 		    phi              .clear();        
 		    e                .clear();        
 		    mass             .clear();        
+		    ecal             .clear();
+		    hcal             .clear();
+		    yoke             .clear();
+		    lumical          .clear();
+		    lhcal            .clear();
+		    beamcal          .clear();
 			endpointx        .clear();
 			endpointy        .clear();
 			endpointz        .clear();
@@ -239,6 +267,8 @@ class Strange_Photon_Number{
 			num_forward        = 0;
 		}
 
+		void Get_MCParticle_Number ( MCParticle*  input) ;
+		void Get_PFOParticle_Number( ReconstructedParticle*  input) ;
 		void Get_MCParticles_Number ( std::vector<MCParticle*> input) ;
 		void Get_PFOParticles_Number( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
@@ -278,6 +308,11 @@ class Strange_Photon_Information{
 		Strange_Photon_Information_Single pfo_photon_only;
 		Strange_Photon_Information_Single pfo_wophoton_only;
 		Strange_Photon_Information_Single pfo_lostenergy_photon_rconly;
+		Strange_Photon_Information_Single pfo_check;
+		Strange_Photon_Information_Single mcs_check_de;
+		Strange_Photon_Information_Single mcs_check_py;
+		Strange_Photon_Information_Single mcs_check_de_other;
+		Strange_Photon_Information_Single mcs_check_py_other;
 
 		void Init(){
 			mcs_lostenergy_photon.Init();
@@ -290,6 +325,11 @@ class Strange_Photon_Information{
 			pfo_photon_only      .Init();
 			pfo_wophoton_only    .Init();
 			pfo_lostenergy_photon_rconly.Init();
+			pfo_check            .Init();
+			mcs_check_de          .Init();
+			mcs_check_de_other   .Init();
+			mcs_check_py         .Init();
+			mcs_check_py_other   .Init();
 		}
 
 
@@ -304,6 +344,11 @@ class Strange_Photon_Information{
 			pfo_photon_only        .Fill_Data(tree,"pfo_photon_only");
 			pfo_wophoton_only      .Fill_Data(tree,"pfo_wophoton_only");
 			pfo_lostenergy_photon_rconly.Fill_Data(tree,"pfo_lostenergy_photon_rconly");
+			pfo_check              .Fill_Data(tree,"pfo_check");
+			mcs_check_de           .Fill_Data(tree,"mcs_check_de");
+			mcs_check_py           .Fill_Data(tree,"mcs_check_py");
+			mcs_check_de_other     .Fill_Data(tree,"mcs_check_de_other");
+			mcs_check_py_other     .Fill_Data(tree,"mcs_check_py_other");
 		}
 
 }; 

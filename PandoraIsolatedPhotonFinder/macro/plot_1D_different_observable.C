@@ -43,7 +43,7 @@
 void plot_1D_different_observable(std::vector<std::string> input_name,std::vector<std::string> title_name,std::vector<std::string> leg_name, std::vector<float> region,std::vector<string> axistype) {
 
 	if(region.size()!=3 || axistype.size()!=1){
-		std::cout << "wrong input, please use region[6] and axistype[2] for input";
+		std::cout << "wrong input, please use region[3] and axistype[2] for input";
 	}
 
 	if(input_name.size()!=title_name.size()){
@@ -78,7 +78,7 @@ void plot_1D_different_observable(std::vector<std::string> input_name,std::vecto
 	int colornum=0;
 	int stylenum=0;
     for(int i=0;i<filename.size();i++){
-    	TTree *MyLCTuple=(TTree*)in_file[i]->Get("datatrain");
+    	TTree *MyLCTuple=(TTree*)in_file[i]->Get("datatrain_sig");
 
     	int nevent = MyLCTuple->GetEntries();
     	float variable;

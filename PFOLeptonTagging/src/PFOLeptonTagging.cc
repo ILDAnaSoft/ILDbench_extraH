@@ -9,11 +9,17 @@ PFOLeptonTagging::PFOLeptonTagging()
 		_description = "Isolated Lepton Finder Processor" ;
 
 		// register steering parameters: name, description, class-variable, default value
-		registerInputCollection( LCIO::MCPARTICLE,
-				"InputMCsLeptonCollection", 
-				"Name of the MC lepton collection",
-				_inputMCsLeptonCollection,
-				std::string("MCPS_Lepton") );
+		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"InputPFOLeptonCollection", 
+				"Name of the PFO lepton collection",
+				_inputPFOLeptonCollection,
+				std::string("PFO_Lepton") );
+
+		registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"InputPFOWoLeptonCollection", 
+				"Name of the PFO wo lepton collection",
+				_inputPFOWoLeptonCollection,
+				std::string("PFO_Wo_Lepton") );
 
 		//output collection
 		registerProcessorParameter( "SwitchOutputCollection",
@@ -25,7 +31,13 @@ PFOLeptonTagging::PFOLeptonTagging()
 				"OutputPFOLeptonCollection",
 				"The output for New corrected PFO LeptonCollection",
 				_outputPFOLeptonCollection,
-				std::string("PFOIsoLeptonConversion") );
+				std::string("PFO_IsoLeptonRecovery") );
+
+		registerOutputCollection( LCIO::RECONSTRUCTEDPARTICLE,
+				"OutputPFOWoLeptonCollection",
+				"The output for New corrected PFO LeptonCollection",
+				_outputPFOWoLeptonCollection,
+				std::string("PFO_Wo_IsoLeptonRecovery") );
 
 		//output root
 		registerProcessorParameter( "SwitchOutputRoot",
@@ -38,6 +50,17 @@ PFOLeptonTagging::PFOLeptonTagging()
 				_rootfilename, 
 				std::string("../result/output.root") );
 
+		//Input parameters 
+		registerProcessorParameter( "hmass",
+				"hmass",
+				_hmass,
+				float(125) );
+
+    	registerProcessorParameter( "cms",
+    			"cms", 
+    			_center_energy,
+    			float(500));
+
 	}
 
 
@@ -49,18 +72,22 @@ void PFOLeptonTagging::init() {
 
 	_nEvt = 0;
 	_nRun = 0;
-	_global_counter.Init();
-	_single_counter.Init();
-	_counter.Init();
+	_global_counter.Init(_output_switch_root);
+	_single_counter.Init(_output_switch_root);
+	_counter.Init(_output_switch_root);
+	_info.Init(_output_switch_root);
 
 	_outputPFOLeptonCol           .Set_Switch(_output_switch_collection);
-
 	_outputPFOLeptonCol           .Set_Name(_outputPFOLeptonCollection);
+	_outputPFOWoLeptonCol         .Set_Switch(_output_switch_collection);
+	_outputPFOWoLeptonCol         .Set_Name(_outputPFOWoLeptonCollection);
 
 	// make Ntuple
 	if(_output_switch_root){
 		makeNTuple();
 	}
+
+	ToolSet::CMC::Set_Collider_Energy(_center_energy);
 
 }
 
@@ -72,23 +99,23 @@ void PFOLeptonTagging::processEvent( LCEvent * evt ) {
 
 	Init(evt);
 
-	int JMC1 =analyseMCParticle(_mcsLeptonCol, _outputPFOLeptonCol,_info, _counter.MCs1);
+	int JPFO=analysePOParticle(_PFOLeptonCol,_PFOWoLeptonCol,_outputPFOLeptonCol,_outputPFOWoLeptonCol,_info, _counter.PFO);
 
-	Counter(JMC1,  evt);
+	Counter(JPFO,  evt);
 
 	Finish(evt);
 }
 
-void PFOLeptonTagging::Counter(int JMC1, LCEvent* evt){
-	if(JMC1>=0){
-		_global_counter.pass_MCs1++;
-		_single_counter.pass_MCs1++;
+void PFOLeptonTagging::Counter(int JPFO, LCEvent* evt){
+	if(JPFO>0){
+		_global_counter.pass_PFO++;
+		_single_counter.pass_PFO++;
 	}
 	else{
 		//	ToolSet::ShowMessage(1,"in processEvent: not pass analyseMCParticle ");
 	}
 
-	if(JMC1){
+	if(JPFO>0){
 		_global_counter.pass_all++;
 		_single_counter.pass_all++;
 	}
@@ -109,9 +136,9 @@ void PFOLeptonTagging::Init(LCEvent* evt) {
 		}
 	} 
 
-	_info.Init();
-	_counter.Init();
-	_single_counter.Init();
+	_info.Init(_output_switch_root);
+	_counter.Init(_output_switch_root);
+	_single_counter.Init(_output_switch_root);
 
 	_single_counter.evt=evt->getEventNumber();
 	_single_counter.weight=evt->getWeight();
@@ -119,9 +146,11 @@ void PFOLeptonTagging::Init(LCEvent* evt) {
 
 
 	// PFO loop
-	_mcsLeptonCol   = evt->getCollection( _inputMCsLeptonCollection  ) ;
+	_PFOLeptonCol   = evt->getCollection( _inputPFOLeptonCollection  ) ;
+	_PFOWoLeptonCol = evt->getCollection( _inputPFOWoLeptonCollection) ;
 
-	_outputPFOLeptonCol           .Set_Collection_RCParticle();
+	_outputPFOLeptonCol  .Set_Collection_RCParticle();
+	_outputPFOWoLeptonCol.Set_Collection_RCParticle();
 
 
 }
@@ -131,7 +160,8 @@ void PFOLeptonTagging::Finish(LCEvent* evt) {
 		_datatrain->Fill();
 	}
 
-	_outputPFOLeptonCol           .Add_Collection(evt);
+	_outputPFOLeptonCol  .Add_Collection(evt);
+	_outputPFOWoLeptonCol.Add_Collection(evt);
 	// delete
 
 }

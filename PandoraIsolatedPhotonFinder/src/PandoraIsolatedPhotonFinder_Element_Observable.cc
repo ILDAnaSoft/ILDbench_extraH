@@ -22,30 +22,30 @@ void PandoraIsolatedPhotonFinder_Function_Counter::Fill_Data(TTree* tree, std::s
 
 
 void PandoraIsolatedPhotonFinder_Observable::Fill_Data(TTree* tree, std::string prefix){
-	tree->Branch( (prefix+"_input_energy"      ).c_str(),        &input_energy             ,(prefix+"_input_energy").c_str()          );
-	tree->Branch( (prefix+"_num_incone_total"  ).c_str(),        &num_incone_total         ,(prefix+"_num_incone_total").c_str()      );
-	tree->Branch( (prefix+"_num_incone_charge" ).c_str(),        &num_incone_charge        ,(prefix+"_num_incone_charge").c_str()     );
-	tree->Branch( (prefix+"_num_incone_neutral").c_str(),        &num_incone_neutral       ,(prefix+"_num_incone_neutral").c_str()    );
-	tree->Branch( (prefix+"_num_incone_photon" ).c_str(),        &num_incone_photon        ,(prefix+"_num_incone_photon").c_str()     );
-	tree->Branch( (prefix+"_num_incone_lepton" ).c_str(),        &num_incone_lepton        ,(prefix+"_num_incone_lepton").c_str()     );
-	tree->Branch( (prefix+"_num_incone_hadron" ).c_str(),        &num_incone_hadron        ,(prefix+"_num_incone_hadron").c_str()     );
+	tree->Branch( (prefix+"_input_energy"      ).c_str(),        &input_energy              );
+	tree->Branch( (prefix+"_num_incone_total"  ).c_str(),        &num_incone_total          );
+	tree->Branch( (prefix+"_num_incone_charge" ).c_str(),        &num_incone_charge         );
+	tree->Branch( (prefix+"_num_incone_neutral").c_str(),        &num_incone_neutral        );
+	tree->Branch( (prefix+"_num_incone_photon" ).c_str(),        &num_incone_photon         );
+	tree->Branch( (prefix+"_num_incone_lepton" ).c_str(),        &num_incone_lepton         );
+	tree->Branch( (prefix+"_num_incone_hadron" ).c_str(),        &num_incone_hadron         );
 
-	tree->Branch( (prefix+"_cone_energy_total"  ).c_str(),       &cone_energy_total        ,(prefix+"_cone_energy_total").c_str()      );
-	tree->Branch( (prefix+"_cone_energy_charge" ).c_str(),       &cone_energy_charge       ,(prefix+"_cone_energy_charge").c_str()     );
-	tree->Branch( (prefix+"_cone_energy_neutral").c_str(),       &cone_energy_neutral      ,(prefix+"_cone_energy_neutral").c_str()    );
-	tree->Branch( (prefix+"_cone_energy_photon" ).c_str(),       &cone_energy_photon       ,(prefix+"_cone_energy_photon").c_str()     );
-	tree->Branch( (prefix+"_cone_energy_lepton" ).c_str(),       &cone_energy_lepton       ,(prefix+"_cone_energy_lepton").c_str()     );
-	tree->Branch( (prefix+"_cone_energy_hadron" ).c_str(),       &cone_energy_hadron       ,(prefix+"_cone_energy_hadron").c_str()     );
+	tree->Branch( (prefix+"_cone_energy_total"  ).c_str(),       &cone_energy_total         );
+	tree->Branch( (prefix+"_cone_energy_charge" ).c_str(),       &cone_energy_charge        );
+	tree->Branch( (prefix+"_cone_energy_neutral").c_str(),       &cone_energy_neutral       );
+	tree->Branch( (prefix+"_cone_energy_photon" ).c_str(),       &cone_energy_photon        );
+	tree->Branch( (prefix+"_cone_energy_lepton" ).c_str(),       &cone_energy_lepton        );
+	tree->Branch( (prefix+"_cone_energy_hadron" ).c_str(),       &cone_energy_hadron        );
 
-	tree->Branch( (prefix+"_cone_energy_ratio_total"  ).c_str(), &cone_energy_ratio_total  ,(prefix+"_cone_energy_ratio_total").c_str()      );
-	tree->Branch( (prefix+"_cone_energy_ratio_charge" ).c_str(), &cone_energy_ratio_charge ,(prefix+"_cone_energy_ratio_charge").c_str()     );
-	tree->Branch( (prefix+"_cone_energy_ratio_neutral").c_str(), &cone_energy_ratio_neutral,(prefix+"_cone_energy_ratio_neutral").c_str()    );
-	tree->Branch( (prefix+"_cone_energy_ratio_photon" ).c_str(), &cone_energy_ratio_photon ,(prefix+"_cone_energy_ratio_photon").c_str()     );
-	tree->Branch( (prefix+"_cone_energy_ratio_lepton" ).c_str(), &cone_energy_ratio_lepton ,(prefix+"_cone_energy_ratio_lepton").c_str()     );
-	tree->Branch( (prefix+"_cone_energy_ratio_hadron" ).c_str(), &cone_energy_ratio_hadron ,(prefix+"_cone_energy_ratio_hadron").c_str()     );
+	tree->Branch( (prefix+"_cone_energy_ratio_total"  ).c_str(), &cone_energy_ratio_total   );
+	tree->Branch( (prefix+"_cone_energy_ratio_charge" ).c_str(), &cone_energy_ratio_charge  );
+	tree->Branch( (prefix+"_cone_energy_ratio_neutral").c_str(), &cone_energy_ratio_neutral );
+	tree->Branch( (prefix+"_cone_energy_ratio_photon" ).c_str(), &cone_energy_ratio_photon  );
+	tree->Branch( (prefix+"_cone_energy_ratio_lepton" ).c_str(), &cone_energy_ratio_lepton  );
+	tree->Branch( (prefix+"_cone_energy_ratio_hadron" ).c_str(), &cone_energy_ratio_hadron  );
 
-	tree->Branch( (prefix+"_cone_costheta" ).c_str(), &cone_costheta,(prefix+"_cone_costheta").c_str()     );
-	tree->Branch( (prefix+"_mva_output" ).c_str(), &mva_output,(prefix+"_mva_output").c_str()     );
+	tree->Branch( (prefix+"_cone_costheta" ).c_str(),            &cone_costheta             );
+	tree->Branch( (prefix+"_mva_output" ).c_str(),               &mva_output                );
 }
 
 void PandoraIsolatedPhotonFinder_Variable::Get_MCParticle_Information( MCParticle* input) {
@@ -119,21 +119,21 @@ void PandoraIsolatedPhotonFinder_Variable::Fill_Data(TTree* tree, std::string pr
 }
 
 void PandoraIsolatedPhotonFinder_Variable_Vec::Fill_Data(TTree* tree, std::string prefix){
-	tree->Branch( (prefix+"_pdg_vec")          .c_str()  , &pdg          );
-	tree->Branch( (prefix+"_p_vec")            .c_str()  , &p            );
-	tree->Branch( (prefix+"_pt_vec")           .c_str()  , &pt           );
-	tree->Branch( (prefix+"_costheta_vec")     .c_str()  , &costheta     );
-	tree->Branch( (prefix+"_phi_vec")          .c_str()  , &phi          );
-	tree->Branch( (prefix+"_e_vec")            .c_str()  , &e            );
-	tree->Branch( (prefix+"_mass_vec")         .c_str()  , &mass         );
-	tree->Branch( (prefix+"_endpointr"          ).c_str(), &endpointr            );
-	tree->Branch( (prefix+"_endpointx"          ).c_str(), &endpointx            );
-	tree->Branch( (prefix+"_endpointy"          ).c_str(), &endpointy            );
-	tree->Branch( (prefix+"_endpointz"          ).c_str(), &endpointz            );
-	tree->Branch( (prefix+"_vertexr"          ).c_str(), &vertexr            );
-	tree->Branch( (prefix+"_vertexx"          ).c_str(), &vertexx            );
-	tree->Branch( (prefix+"_vertexy"          ).c_str(), &vertexy            );
-	tree->Branch( (prefix+"_vertexz"          ).c_str(), &vertexz            );
+	tree->Branch( (prefix+"_pdg_vec")          .c_str(), &pdg          );
+	tree->Branch( (prefix+"_p_vec")            .c_str(), &p            );
+	tree->Branch( (prefix+"_pt_vec")           .c_str(), &pt           );
+	tree->Branch( (prefix+"_costheta_vec")     .c_str(), &costheta     );
+	tree->Branch( (prefix+"_phi_vec")          .c_str(), &phi          );
+	tree->Branch( (prefix+"_e_vec")            .c_str(), &e            );
+	tree->Branch( (prefix+"_mass_vec")         .c_str(), &mass         );
+	tree->Branch( (prefix+"_endpointr")        .c_str(), &endpointr            );
+	tree->Branch( (prefix+"_endpointx")        .c_str(), &endpointx            );
+	tree->Branch( (prefix+"_endpointy")        .c_str(), &endpointy            );
+	tree->Branch( (prefix+"_endpointz")        .c_str(), &endpointz            );
+	tree->Branch( (prefix+"_vertexr")          .c_str(), &vertexr            );
+	tree->Branch( (prefix+"_vertexx")          .c_str(), &vertexx            );
+	tree->Branch( (prefix+"_vertexy")          .c_str(), &vertexy            );
+	tree->Branch( (prefix+"_vertexz")          .c_str(), &vertexz            );
 }
 
 void PandoraIsolatedPhotonFinder_Number::Get_MCParticles_Number( std::vector<MCParticle*> input) {

@@ -127,7 +127,7 @@ void MCLeptonTagging::processRunHeader( LCRunHeader* run) {
 void MCLeptonTagging::processEvent( LCEvent * evt ) { 
 	Init(evt);
 
-	bool JMC=analyseMCParticle( _MCsCol, _outputLeptonCol, _outputWoLeptonCol, _info.isolep,_counter.MCs) ;
+	bool JMC=analyseMCParticle(_MCsCol, _outputLeptonCol, _outputWoLeptonCol, _info,_counter.MCs) ;
 
 	Counter(JMC, evt);
 
@@ -178,7 +178,6 @@ void MCLeptonTagging::Init(LCEvent* evt) {
 	catch(...){
 		std::cout << "no MCs without overlay in this event" << std::endl;
 	}
-
 
 	_outputLeptonCol  .Set_Collection_MCParticle() ;
 	_outputWoLeptonCol.Set_Collection_MCParticle() ;

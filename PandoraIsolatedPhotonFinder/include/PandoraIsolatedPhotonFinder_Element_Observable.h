@@ -125,54 +125,54 @@ class PandoraIsolatedPhotonFinder_Observable{
 		//inserted by process file
 		//************************
 
-		float num_incone_total   ;
-		float num_incone_charge  ;
-		float num_incone_neutral ;
-		float num_incone_photon  ;
-		float num_incone_lepton  ;
-		float num_incone_hadron  ;
+		std::vector<float> num_incone_total   ;
+		std::vector<float> num_incone_charge  ;
+		std::vector<float> num_incone_neutral ;
+		std::vector<float> num_incone_photon  ;
+		std::vector<float> num_incone_lepton  ;
+		std::vector<float> num_incone_hadron  ;
 
-		float input_energy;
-		float cone_energy_total;
-		float cone_energy_charge;
-		float cone_energy_neutral;
-		float cone_energy_photon;
-		float cone_energy_lepton;
-		float cone_energy_hadron;
+		std::vector<float> input_energy;
+		std::vector<float> cone_energy_total;
+		std::vector<float> cone_energy_charge;
+		std::vector<float> cone_energy_neutral;
+		std::vector<float> cone_energy_photon;
+		std::vector<float> cone_energy_lepton;
+		std::vector<float> cone_energy_hadron;
 
-		float cone_energy_ratio_total;
-		float cone_energy_ratio_charge;
-		float cone_energy_ratio_neutral;
-		float cone_energy_ratio_photon;
-		float cone_energy_ratio_lepton;
-		float cone_energy_ratio_hadron;
-		float cone_costheta;
-		float mva_output;
+		std::vector<float> cone_energy_ratio_total;
+		std::vector<float> cone_energy_ratio_charge;
+		std::vector<float> cone_energy_ratio_neutral;
+		std::vector<float> cone_energy_ratio_photon;
+		std::vector<float> cone_energy_ratio_lepton;
+		std::vector<float> cone_energy_ratio_hadron;
+		std::vector<float> cone_costheta;
+		std::vector<float> mva_output;
 
 		void Init(){
-			num_incone_total    =-10000.1;
-			num_incone_charge   =-10000.1;
-			num_incone_neutral  =-10000.1;
-			num_incone_photon   =-10000.1;
-			num_incone_lepton   =-10000.1;
-			num_incone_hadron   =-10000.1;
+			num_incone_total         .clear();
+			num_incone_charge        .clear();
+			num_incone_neutral       .clear();
+			num_incone_photon        .clear();
+			num_incone_lepton        .clear();
+			num_incone_hadron        .clear();
 
-			input_energy        =-10000.1;
-			cone_energy_total   =-10000.1;
-			cone_energy_charge  =-10000.1;
-			cone_energy_neutral =-10000.1;
-			cone_energy_photon  =-10000.1;
-			cone_energy_lepton  =-10000.1;
-			cone_energy_hadron  =-10000.1;
+			input_energy             .clear();
+			cone_energy_total        .clear();
+			cone_energy_charge       .clear();
+			cone_energy_neutral      .clear();
+			cone_energy_photon       .clear();
+			cone_energy_lepton       .clear();
+			cone_energy_hadron       .clear();
 
-			cone_energy_ratio_total  =-10000.1;
-			cone_energy_ratio_charge =-10000.1;
-			cone_energy_ratio_neutral=-10000.1;
-			cone_energy_ratio_photon =-10000.1;
-			cone_energy_ratio_lepton =-10000.1;
-			cone_energy_ratio_hadron =-10000.1;
-			cone_costheta            =-10000.1;
-			mva_output               =-10000.1;
+			cone_energy_ratio_total  .clear();
+			cone_energy_ratio_charge .clear();
+			cone_energy_ratio_neutral.clear();
+			cone_energy_ratio_photon .clear();
+			cone_energy_ratio_lepton .clear();
+			cone_energy_ratio_hadron .clear();
+			cone_costheta            .clear();
+			mva_output               .clear();
 		}
 
 		void Fill_Data(TTree* tree, std::string prefix);

@@ -1131,7 +1131,7 @@ elif [[ ${input_class_name} == "6f_vvww" ]] ; then
 		if [[ ${ILD_version} == "ILD_l5_o1_v02" ]]; then
 			file_postid=10354
 		elif [[ ${ILD_version} == "ILD_s5_o1_v02" ]]; then
-			file_postid=10354
+			file_postid=10353
 		fi
 	elif [[ ${input_final_states} == "vvxyev" ]] ; then
 		final_states=""

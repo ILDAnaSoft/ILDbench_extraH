@@ -97,12 +97,12 @@ void MCLevelClassify::init() {
 	_single_counter.Init();
 	_counter       .Init();
 
-	_outputHSCol.Set_Switch(_output_switch_collection);
-	_outputHSCol.Set_Name(_outputHardScatteringCollection);
-	_outputPSCol.Set_Switch(_output_switch_collection);
-	_outputPSCol.Set_Name(_outputPythiaStableCollection);
-	_outputDSCol.Set_Switch(_output_switch_collection);
-	_outputDSCol.Set_Name(_outputDetectorSimulationCollection);
+    _outputHSCol.Set_Switch(_output_switch_collection);
+    _outputHSCol.Set_Name(_outputHardScatteringCollection);
+    _outputPSCol.Set_Switch(_output_switch_collection);
+    _outputPSCol.Set_Name(_outputPythiaStableCollection);
+    _outputDSCol.Set_Switch(_output_switch_collection);
+    _outputDSCol.Set_Name(_outputDetectorSimulationCollection);
 
 	if(_output_switch_root){
 		makeNTuple();
@@ -127,7 +127,7 @@ void MCLevelClassify::processRunHeader( LCRunHeader* run) {
 void MCLevelClassify::processEvent( LCEvent * evt ) { 
 	Init(evt);
 
-	bool JMC=analyseMCParticle( _MCsCol, _outputHSCol, _outputPSCol, _outputDSCol, _info, _counter.MCs) ;
+  	bool JMC=analyseMCParticle( _MCsCol, _outputHSCol, _outputPSCol, _outputDSCol, _info, _counter.MCs) ;
 
 	Counter(JMC, evt);
 
@@ -181,9 +181,9 @@ void MCLevelClassify::Init(LCEvent* evt) {
 	_navpfomcs = new LCRelationNavigator( evt->getCollection( _pfomcsRelation ) );
 	_navmcspfo = new LCRelationNavigator( evt->getCollection( _mcspfoRelation ) );
 
-	_outputHSCol.Set_Collection_MCParticle() ;
-	_outputPSCol.Set_Collection_MCParticle() ;
-	_outputDSCol.Set_Collection_MCParticle() ;
+    _outputHSCol.Set_Collection_MCParticle() ;
+    _outputPSCol.Set_Collection_MCParticle() ;
+    _outputDSCol.Set_Collection_MCParticle() ;
 
 	ToolSet::CMC::Set_Nav_From_MC_To_RC(_navmcspfo);
 }
@@ -193,9 +193,11 @@ void MCLevelClassify::Finish(LCEvent* evt) {
 	if(_output_switch_root){
 		_datatrain->Fill();
 	}
-	_outputHSCol.Add_Collection(evt);
-	_outputPSCol.Add_Collection(evt);
-	_outputDSCol.Add_Collection(evt);
+    _outputHSCol.Add_Collection(evt);
+    _outputPSCol.Add_Collection(evt);
+    _outputDSCol.Add_Collection(evt);
+    delete _navpfomcs;
+    delete _navmcspfo;
 }
 
 void MCLevelClassify::check( LCEvent * evt ) { 

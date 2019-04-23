@@ -33,7 +33,7 @@ PandoraIsolatedPhotonFinder::PandoraIsolatedPhotonFinder()
 
 		// register steering parameters: name, description, class-variable, default value
 		registerInputCollection( LCIO::MCPARTICLE,
-				"InputMCCollection" ,
+				"InputMCsCollection" ,
 				"Input collection of MCParticle",
 				_inputMCsCollection,
 				std::string("MCParticle"));
@@ -204,47 +204,48 @@ void PandoraIsolatedPhotonFinder::init() {
 	else{
 		_reader = new TMVA::Reader( "Color:Silent" );    
 		// add input variables
-		_reader->AddVariable( "isophoton_obv_small_num_incone_total"  ,        &_info_isr.isophoton.obv_small.num_incone_total    );
-		_reader->AddVariable( "isophoton_obv_small_num_incone_charge" ,        &_info_isr.isophoton.obv_small.num_incone_charge   );
-		_reader->AddVariable( "isophoton_obv_small_num_incone_photon" ,        &_info_isr.isophoton.obv_small.num_incone_photon   );
-		_reader->AddVariable( "isophoton_obv_small_num_incone_lepton" ,        &_info_isr.isophoton.obv_small.num_incone_lepton   );
+		_reader->AddVariable( "isophoton_obv_small_input_energy"  ,            &_small_input_energy);
+		_reader->AddVariable( "isophoton_obv_small_num_incone_total"  ,        &_small_num_incone_total    );
+////	_reader->AddVariable( "isophoton_obv_small_num_incone_charge" ,        &_small_num_incone_charge   );
+////	_reader->AddVariable( "isophoton_obv_small_num_incone_photon" ,        &_small_num_incone_photon   );
+		_reader->AddVariable( "isophoton_obv_small_num_incone_lepton" ,        &_small_num_incone_lepton   );
 
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_total"  ,       &_info_isr.isophoton.obv_small.cone_energy_total  );
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_charge" ,       &_info_isr.isophoton.obv_small.cone_energy_charge );
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_neutral",       &_info_isr.isophoton.obv_small.cone_energy_neutral);
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_photon" ,       &_info_isr.isophoton.obv_small.cone_energy_photon );
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_lepton" ,       &_info_isr.isophoton.obv_small.cone_energy_lepton );
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_hadron" ,       &_info_isr.isophoton.obv_small.cone_energy_hadron );
+//		_reader->AddVariable( "isophoton_obv_small_cone_energy_total"  ,       &_small_cone_energy_total  );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_charge" ,       &_small_cone_energy_charge );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_neutral",       &_small_cone_energy_neutral);
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_photon" ,       &_small_cone_energy_photon );
+//		_reader->AddVariable( "isophoton_obv_small_cone_energy_lepton" ,       &_small_cone_energy_lepton );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_hadron" ,       &_small_cone_energy_hadron );
 
-		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_total"  , &_info_isr.isophoton.obv_small.cone_energy_ratio_total  );
-		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_charge" , &_info_isr.isophoton.obv_small.cone_energy_ratio_charge );
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_neutral", &_info_isr.isophoton.obv_small.cone_energy_ratio_neutral);
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_photon" , &_info_isr.isophoton.obv_small.cone_energy_ratio_photon );
-////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_lepton" , &_info_isr.isophoton.obv_small.cone_energy_ratio_lepton );
-		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_hadron" , &_info_isr.isophoton.obv_small.cone_energy_ratio_hadron );
-//		_reader->AddVariable( "isophoton_obv_small_cone_costheta"            , &_info_isr.isophoton.obv_small.cone_costheta            );
+		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_total"  , &_small_cone_energy_ratio_total  );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_charge" , &_small_cone_energy_ratio_charge );
+////	_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_neutral", &_small_cone_energy_ratio_neutral);
+		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_photon" , &_small_cone_energy_ratio_photon );
+		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_lepton" , &_small_cone_energy_ratio_lepton );
+//		_reader->AddVariable( "isophoton_obv_small_cone_energy_ratio_hadron" , &_small_cone_energy_ratio_hadron );
+		_reader->AddVariable( "isophoton_obv_small_cone_costheta"            , &_small_cone_costheta            );
 
-////	_reader->AddVariable( "isophoton_obv_large_num_incone_total"  ,        &_info_isr.isophoton.obv_large.num_incone_total    );
-////	_reader->AddVariable( "isophoton_obv_large_num_incone_charge" ,        &_info_isr.isophoton.obv_large.num_incone_charge   );
-////	_reader->AddVariable( "isophoton_obv_large_num_incone_neutral",        &_info_isr.isophoton.obv_large.num_incone_neutral  );
-////	_reader->AddVariable( "isophoton_obv_large_num_incone_photon" ,        &_info_isr.isophoton.obv_large.num_incone_photon   );
-////	_reader->AddVariable( "isophoton_obv_large_num_incone_lepton" ,        &_info_isr.isophoton.obv_large.num_incone_lepton   );
-////	_reader->AddVariable( "isophoton_obv_large_num_incone_hadron" ,        &_info_isr.isophoton.obv_large.num_incone_hadron   );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_total"  ,        &_large_num_incone_total    );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_charge" ,        &_large_num_incone_charge   );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_neutral",        &_large_num_incone_neutral  );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_photon" ,        &_large_num_incone_photon   );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_lepton" ,        &_large_num_incone_lepton   );
+////	_reader->AddVariable( "isophoton_obv_large_num_incone_hadron" ,        &_large_num_incone_hadron   );
 
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_total"  ,       &_info_isr.isophoton.obv_large.cone_energy_total  );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_charge" ,       &_info_isr.isophoton.obv_large.cone_energy_charge );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_neutral",       &_info_isr.isophoton.obv_large.cone_energy_neutral);
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_photon" ,       &_info_isr.isophoton.obv_large.cone_energy_photon );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_lepton" ,       &_info_isr.isophoton.obv_large.cone_energy_lepton );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_hadron" ,       &_info_isr.isophoton.obv_large.cone_energy_hadron );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_total"  ,       &_large_cone_energy_total  );
+//		_reader->AddVariable( "isophoton_obv_large_cone_energy_charge" ,       &_large_cone_energy_charge );
+//		_reader->AddVariable( "isophoton_obv_large_cone_energy_neutral",       &_large_cone_energy_neutral);
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_photon" ,       &_large_cone_energy_photon );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_lepton" ,       &_large_cone_energy_lepton );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_hadron" ,       &_large_cone_energy_hadron );
 
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_total"  , &_info_isr.isophoton.obv_large.cone_energy_ratio_total  );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_charge" , &_info_isr.isophoton.obv_large.cone_energy_ratio_charge );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_neutral", &_info_isr.isophoton.obv_large.cone_energy_ratio_neutral);
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_photon" , &_info_isr.isophoton.obv_large.cone_energy_ratio_photon );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_lepton" , &_info_isr.isophoton.obv_large.cone_energy_ratio_lepton );
-////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_hadron" , &_info_isr.isophoton.obv_large.cone_energy_ratio_hadron );
-		_reader->AddVariable( "isophoton_obv_large_cone_costheta"            , &_info_isr.isophoton.obv_large.cone_costheta            );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_total"  , &_large_cone_energy_ratio_total  );
+		_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_charge" , &_large_cone_energy_ratio_charge );
+		_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_neutral", &_large_cone_energy_ratio_neutral);
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_photon" , &_large_cone_energy_ratio_photon );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_lepton" , &_large_cone_energy_ratio_lepton );
+////	_reader->AddVariable( "isophoton_obv_large_cone_energy_ratio_hadron" , &_large_cone_energy_ratio_hadron );
+		_reader->AddVariable( "isophoton_obv_large_cone_costheta"            , &_large_cone_costheta            );
 
 		// book the reader (method, weights)
 		TString dir    = _mva_weights;
@@ -334,6 +335,7 @@ void PandoraIsolatedPhotonFinder::Init(LCEvent* evt) {
 	_navpfomc = new LCRelationNavigator( evt->getCollection( _pfomcRelation ) );
 
 
+	ToolSet::CMC::Set_Nav_From_MC_To_RC(_navmcpfo);
 
 	_outputWoIsoPhotonCol.Set_Collection_RCParticle();
 	_outputIsoPhotonCol  .Set_Collection_RCParticle();
@@ -349,6 +351,9 @@ void PandoraIsolatedPhotonFinder::Finish(LCEvent* evt) {
 // Add mcs to new collection
 	_outputWoIsoPhotonCol.Add_Collection(evt);
 	_outputIsoPhotonCol  .Add_Collection(evt);
+
+	delete _navmcpfo;
+	delete _navpfomc;
 }
 
 void PandoraIsolatedPhotonFinder::check( LCEvent * evt ) { 

@@ -1,0 +1,115 @@
+void test()
+{
+//=========Macro generated from canvas: c1/ 
+//=========  (Mon Feb 18 17:08:40 2019) by ROOT version6.08/06
+   TCanvas *c1 = new TCanvas("c1", " ",50,90,1000,700);
+   gStyle->SetOptStat(0);
+   c1->Range(-13615.38,-2502.36,1769.231,11399.64);
+   c1->SetFillColor(0);
+   c1->SetBorderMode(0);
+   c1->SetBorderSize(0);
+   c1->SetGridx();
+   c1->SetGridy();
+   c1->SetTickx(1);
+   c1->SetTicky(1);
+   c1->SetLeftMargin(0.17);
+   c1->SetRightMargin(0.05);
+   c1->SetTopMargin(0.07);
+   c1->SetBottomMargin(0.18);
+   c1->SetFrameFillStyle(0);
+   c1->SetFrameLineWidth(0);
+   c1->SetFrameBorderMode(0);
+   c1->SetFrameBorderSize(0);
+   c1->SetFrameFillStyle(0);
+   c1->SetFrameLineWidth(0);
+   c1->SetFrameBorderMode(0);
+   c1->SetFrameBorderSize(0);
+   
+   THStack * ss= new THStack();
+   ss->SetName("");
+   ss->SetTitle("");
+   
+   TH1F *_stack_1 = new TH1F("_stack_1","",100,-11000,1000);
+   _stack_1->SetMinimum(0);
+   _stack_1->SetMaximum(10426.5);
+   _stack_1->SetDirectory(0);
+   _stack_1->SetStats(0);
+   _stack_1->SetLineStyle(0);
+   _stack_1->SetMarkerStyle(7);
+   _stack_1->GetXaxis()->SetTitle("cos(#theta_{Z})");
+   _stack_1->GetXaxis()->SetNdivisions(505);
+   _stack_1->GetXaxis()->SetLabelFont(42);
+   _stack_1->GetXaxis()->SetLabelOffset(0.01);
+   _stack_1->GetXaxis()->SetLabelSize(0.07);
+   _stack_1->GetXaxis()->SetTitleSize(0.07);
+   _stack_1->GetXaxis()->SetTitleOffset(1.2);
+   _stack_1->GetXaxis()->SetTitleFont(42);
+   _stack_1->GetYaxis()->SetTitle("Events");
+   _stack_1->GetYaxis()->SetNdivisions(505);
+   _stack_1->GetYaxis()->SetLabelFont(42);
+   _stack_1->GetYaxis()->SetLabelOffset(0.01);
+   _stack_1->GetYaxis()->SetLabelSize(0.07);
+   _stack_1->GetYaxis()->SetTitleSize(0.07);
+   _stack_1->GetYaxis()->SetTitleOffset(1.2);
+   _stack_1->GetYaxis()->SetTitleFont(42);
+   _stack_1->GetZaxis()->SetNdivisions(505);
+   _stack_1->GetZaxis()->SetLabelFont(42);
+   _stack_1->GetZaxis()->SetLabelOffset(0.01);
+   _stack_1->GetZaxis()->SetLabelSize(0.06);
+   _stack_1->GetZaxis()->SetTitleSize(0.07);
+   _stack_1->GetZaxis()->SetTitleFont(42);
+   ->SetHistogram(_stack_1);
+   
+   
+   TH1F *isophoton_obv_small_mva_output0__1 = new TH1F("isophoton_obv_small_mva_output0__1","cos(#theta_{Z})Events",100,-11000,1000);
+   isophoton_obv_small_mva_output0__1->SetBinContent(9,70);
+   isophoton_obv_small_mva_output0__1->SetBinContent(92,9930);
+   isophoton_obv_small_mva_output0__1->SetEntries(10000);
+   isophoton_obv_small_mva_output0__1->SetStats(0);
+   isophoton_obv_small_mva_output0__1->SetLineWidth(4);
+   isophoton_obv_small_mva_output0__1->SetMarkerStyle(7);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetRange(1,100);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetNdivisions(505);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetLabelFont(42);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetLabelOffset(0.01);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetLabelSize(0.07);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetTitleSize(0.07);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetTitleOffset(1.2);
+   isophoton_obv_small_mva_output0__1->GetXaxis()->SetTitleFont(42);
+   isophoton_obv_small_mva_output0__1->GetYaxis()->SetNdivisions(505);
+   isophoton_obv_small_mva_output0__1->GetYaxis()->SetLabelFont(42);
+   isophoton_obv_small_mva_output0__1->GetYaxis()->SetLabelOffset(0.01);
+   isophoton_obv_small_mva_output0__1->GetYaxis()->SetLabelSize(0.07);
+   isophoton_obv_small_mva_output0__1->GetYaxis()->SetTitleSize(0.07);
+   isophoton_obv_small_mva_output0__1->GetYaxis()->SetTitleOffset(1.2);
+   isophoton_obv_small_mva_output0__1->GetYaxis()->SetTitleFont(42);
+   isophoton_obv_small_mva_output0__1->GetZaxis()->SetNdivisions(505);
+   isophoton_obv_small_mva_output0__1->GetZaxis()->SetLabelFont(42);
+   isophoton_obv_small_mva_output0__1->GetZaxis()->SetLabelOffset(0.01);
+   isophoton_obv_small_mva_output0__1->GetZaxis()->SetLabelSize(0.06);
+   isophoton_obv_small_mva_output0__1->GetZaxis()->SetTitleSize(0.07);
+   isophoton_obv_small_mva_output0__1->GetZaxis()->SetTitleFont(42);
+   ->Add(isophoton_obv_small_mva_output0,"");
+   ->Draw("nostack");
+   
+   TLegend *leg = new TLegend(0.4,0.6,0.6,0.9,NULL,"brNDC");
+   leg->SetBorderSize(1);
+   leg->SetTextFont(62);
+   leg->SetLineColor(1);
+   leg->SetLineStyle(1);
+   leg->SetLineWidth(1);
+   leg->SetFillColor(0);
+   leg->SetFillStyle(1001);
+   TLegendEntry *entry=leg->AddEntry("isophoton_obv_small_mva_output0","new PFO BDTG","l");
+   entry->SetLineColor(1);
+   entry->SetLineStyle(1);
+   entry->SetLineWidth(4);
+   entry->SetMarkerColor(1);
+   entry->SetMarkerStyle(21);
+   entry->SetMarkerSize(1);
+   entry->SetTextFont(62);
+   leg->Draw();
+   c1->Modified();
+   c1->cd();
+   c1->SetSelected(c1);
+}

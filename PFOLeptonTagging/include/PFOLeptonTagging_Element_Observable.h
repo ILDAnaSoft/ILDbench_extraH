@@ -25,6 +25,7 @@ class TTree;
 #include "CFormat.h"
 #include "CVector.h"
 #include "CChain.h"
+#include "CVertex.h"
 
 #include <IMPL/LCCollectionVec.h>
 #include <EVENT/MCParticle.h>
@@ -36,6 +37,8 @@ using ToolSet::operator-;
 using ToolSet::operator+=;
 
 class PFOLeptonTagging_Global_Counter{
+	private:
+		bool _switch_root;
 	public:
 		//***********
 		//event number
@@ -43,23 +46,23 @@ class PFOLeptonTagging_Global_Counter{
 		float nevt        ;
 		float nrun        ;
 		float gweight     ;
-		float pass_MCs1   ;
-		float pass_MCs2   ;
+		float pass_PFO    ;
 		float pass_all    ;
 
-		void Init(){
-			nevt          = 0;
-			nrun          = 0;
-			gweight       = 0;
-	        pass_MCs1     = 0;
-	        pass_MCs2     = 0;
-			pass_all      = 0;
+		void Init(bool switch_root){
+			_switch_root = switch_root;
+			if(_switch_root){
+				nevt          = 0;
+				nrun          = 0;
+				gweight       = 0;
+				pass_PFO      = 0;
+				pass_all      = 0;
+			}
 		}
 
 		void Print(){
 			std::cout << "In the Global Event Counter, Till now, there are totally " << nevt << " events and within " << nrun <<" runs " << " the global scale weight is " << gweight << std::endl; 
-			std::cout << "There are " << pass_MCs1 << " events pass MCs1;" << std::endl;
-			std::cout << "There are " << pass_MCs2 << " events pass MCs2;" << std::endl;
+			std::cout << "There are " << pass_PFO << " events pass PFO;" << std::endl;
 			std::cout << "  totally " << pass_all << " events pass all criterion." << std::endl; 
 		}
 
@@ -68,6 +71,8 @@ class PFOLeptonTagging_Global_Counter{
 };
 
 class PFOLeptonTagging_Single_Counter{
+	private:
+		bool _switch_root;
 	public:
 		//***********
 		//event number
@@ -75,23 +80,23 @@ class PFOLeptonTagging_Single_Counter{
 		float evt        ;
 		float weight     ;
 		float run        ;
-		float pass_MCs1   ;
-		float pass_MCs2   ;
+		float pass_PFO   ;
 		float pass_all   ;
 
-		void Init(){
-			evt         = 0;
-			run         = 0;
-			weight      = 0;
-	        pass_MCs1     = 0;
-	        pass_MCs2     = 0;
-			pass_all    = 0;
+		void Init(bool switch_root){
+			_switch_root = switch_root;
+			if(_switch_root){
+				evt         = 0;
+				run         = 0;
+				weight      = 0;
+				pass_PFO    = 0;
+				pass_all    = 0;
+			}
 		}
 
 		void Print(){
 			std::cout << "In the Single Event Counter, this is the " << evt << "th event, in the " << run << "th run." << std::endl;
-			std::cout << " and " << pass_MCs1 << " events pass MCs1;" << std::endl;
-			std::cout << " and " << pass_MCs2 << " events pass MCs2;" << std::endl;
+			std::cout << " and " << pass_PFO << " events pass PFO;" << std::endl;
 			std::cout << "in this event it has " << pass_all << " pass all criterion." << std::endl; 
 		}
 
@@ -104,7 +109,7 @@ class PFOLeptonTagging_Function_Counter   {
 		float pass_all    ;
 
 		void Init(){
-	        pass_all    = 0;
+			pass_all    = 0;
 		}
 
 		void Fill_Data(TTree* tree, std::string prefix);
@@ -113,18 +118,22 @@ class PFOLeptonTagging_Function_Counter   {
 
 
 class PFOLeptonTagging_Counter{
+	private:
+		bool _switch_root;
 	public:
-		PFOLeptonTagging_Function_Counter MCs1;
-		PFOLeptonTagging_Function_Counter MCs2;
+		PFOLeptonTagging_Function_Counter PFO;
 
-		void Init(){
-	        MCs1.Init();
-	        MCs2.Init();
+		void Init(bool switch_root){
+			_switch_root = switch_root;
+			if(_switch_root){
+				PFO.Init();
+			}
 		}
 
 		void Fill_Data(TTree* tree){
-			MCs1                .Fill_Data(tree,"MCs1");
-			MCs2                .Fill_Data(tree,"MCs2");
+			if(_switch_root){
+				PFO.Fill_Data(tree,"counter_PFO");
+			}
 		}
 };
 
@@ -134,16 +143,39 @@ class PFOLeptonTagging_Observable{
 		//************************
 		//inserted by process file
 		//************************
-		float visible_energy   ;        
-		float invisible_energy   ;        
+		float  combined_inm                ;
+		float  combined_pt                 ;
+		float  recoil_mass                 ;
+
+		float  lepton_pair_costheta;
+		float  lepton_pair_costheta_pair;
+		float  lepton_pair_azimuth;
+		float  lepton_pair_azimuth_pair;
+
+		float vtx;
+		float vty;
+		float vtz;
+		float chi2;        
 
 		void Init(){
-		    visible_energy =-10000.1;        
-		    invisible_energy =-10000.1;        
+			combined_inm             =-10000.1;
+			combined_pt              =-10000.1;
+			recoil_mass         =-10000.1;
+
+			lepton_pair_costheta     =-10000.1;
+			lepton_pair_costheta_pair=-10000.1;
+			lepton_pair_azimuth      =-10000.1;
+			lepton_pair_azimuth_pair =-10000.1;
+
+			vtx  = -10000.1;
+			vty  = -10000.1;
+			vtz  = -10000.1;
+			chi2 = -10000.1;        
 		}
 
 		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
 		void Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) ;
+		void Get_Vertex_Information( VertexInfo& vv) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
@@ -163,13 +195,13 @@ class PFOLeptonTagging_Variable{
 		float mass                 ;        
 
 		void Init(){
-		    pdg              =-10000.1;        
-		    p                =-10000.1;        
-		    pt               =-10000.1;        
-		    costheta         =-10000.1;        
-		    phi              =-10000.1;        
-		    e                =-10000.1;        
-		    mass             =-10000.1;        
+			pdg              =-10000.1;        
+			p                =-10000.1;        
+			pt               =-10000.1;        
+			costheta         =-10000.1;        
+			phi              =-10000.1;        
+			e                =-10000.1;        
+			mass             =-10000.1;        
 		}
 
 		void Get_MCParticle_Information( MCParticle* input) ;
@@ -199,13 +231,13 @@ class PFOLeptonTagging_Variable_Vec{
 		std::vector<float> vertexr              ;        
 
 		void Init(){
-		    pdg              .clear();        
-		    p                .clear();        
-		    pt               .clear();        
-		    costheta         .clear();        
-		    phi              .clear();        
-		    e                .clear();        
-		    mass             .clear();        
+			pdg              .clear();        
+			p                .clear();        
+			pt               .clear();        
+			costheta         .clear();        
+			phi              .clear();        
+			e                .clear();        
+			mass             .clear();        
 			endpointx        .clear();
 			endpointy        .clear();
 			endpointz        .clear();
@@ -231,9 +263,9 @@ class PFOLeptonTagging_Number{
 		float num_forward                ;
 
 		void Init(){
-		    num                = 0;
-		    num_plus           = 0;
-		    num_minus          = 0;
+			num                = 0;
+			num_plus           = 0;
+			num_minus          = 0;
 			num_neutral        = 0;
 			num_central        = 0;
 			num_forward        = 0;
@@ -250,12 +282,16 @@ class PFOLeptonTagging_Information_Single{
 	public:
 		PFOLeptonTagging_Observable                      obv;
 		PFOLeptonTagging_Variable_Vec                    particle;
+		PFOLeptonTagging_Variable  p1;
+		PFOLeptonTagging_Variable  p2;
 		PFOLeptonTagging_Number                          num;
 
 
 		void Init(){
 			obv         .Init();
 			particle    .Init();
+			p1          .Init();
+			p2          .Init();
 			num.Init();
 		}
 
@@ -267,26 +303,54 @@ class PFOLeptonTagging_Information_Single{
 }; 
 
 class PFOLeptonTagging_Information{
+	private:
+		bool _switch_root;
 	public:
-		PFOLeptonTagging_Information_Single pfo_lepton;
+		PFOLeptonTagging_Information_Single pfo_input_lepton;
+		PFOLeptonTagging_Information_Single mcs_input_lepton;
+		PFOLeptonTagging_Information_Single pfo_input_other;
+		PFOLeptonTagging_Information_Single pfo_output_lepton;
+		PFOLeptonTagging_Information_Single pfo_output_other;
 
 		void Init(){
-			pfo_lepton.Init();
+			_switch_root=false;
+		}
+
+		void Init(bool switch_root){
+			_switch_root=switch_root;
+			if(_switch_root){
+				pfo_input_lepton     .Init();
+				mcs_input_lepton     .Init();
+				pfo_input_other      .Init();
+				pfo_output_lepton    .Init();
+				pfo_output_other     .Init();
+			}
+		}
+
+		void Set_Switch(bool open){
+			_switch_root=open;
 		}
 
 
 		void Fill_Data(TTree* tree){
-			pfo_lepton.Fill_Data(tree,"pfo_lepton");
+			if(_switch_root){
+				pfo_input_lepton     .Fill_Data(tree,"pfo_input_lepton");
+				mcs_input_lepton     .Fill_Data(tree,"mcs_input_lepton");
+				pfo_input_other      .Fill_Data(tree,"pfo_input_other");
+				pfo_output_lepton    .Fill_Data(tree,"pfo_output_lepton");
+				pfo_output_other     .Fill_Data(tree,"pfo_output_other");
+			}
 		}
 
 }; 
 
 class PFOLeptonTagging_Output_Collection{
-	public:
-    	std::string      name;
-		LCCollectionVec* col;
+	private:
 		bool             Jopen;
-	
+	public:
+		std::string      name;
+		LCCollectionVec* col;
+
 		void Init(){
 			Jopen=false;
 		}
@@ -302,14 +366,14 @@ class PFOLeptonTagging_Output_Collection{
 		void Set_Collection_MCParticle(){
 			if(Jopen){
 				col= new LCCollectionVec( LCIO::MCPARTICLE ) ;
-			    col->setSubset(true) ;
+				col->setSubset(true) ;
 			}
 		}
 
 		void Set_Collection_RCParticle(){
 			if(Jopen){
 				col= new LCCollectionVec( LCIO::RECONSTRUCTEDPARTICLE) ;
-			    col->setSubset(true) ;
+				col->setSubset(true) ;
 			}
 		}
 
@@ -321,21 +385,21 @@ class PFOLeptonTagging_Output_Collection{
 
 		void Add_Element_MCParticle(std::vector<MCParticle*> input){
 			if(Jopen){
-			    for (int i = 0; i < input.size(); i++ ) {
+				for (int i = 0; i < input.size(); i++ ) {
 					if(input[i]!=NULL){
 						col->addElement(input[i]);
 					}
-			    }
+				}
 			}
 		}
 
 		void Add_Element_RCParticle(std::vector<ReconstructedParticle*> input){
 			if(Jopen){
-			    for (int i = 0; i < input.size(); i++ ) {
+				for (int i = 0; i < input.size(); i++ ) {
 					if(input[i]!=NULL){
 						col->addElement(input[i]);
 					}
-			    }
+				}
 			}
 		}
 };

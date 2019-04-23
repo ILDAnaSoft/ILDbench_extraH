@@ -40,7 +40,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv2.h>
 
-void plot_1D_different_observable_vec(std::vector<std::string> input_name,std::vector<std::string> title_name,std::vector<std::string> leg_name, std::vector<float> region,std::vector<string> axistype){
+void plot_1D_different_observable_vec(std::vector<std::string> input_name,std::vector<std::string> title_name,std::vector<std::string> leg_name, std::vector<std::string> tree_name,std::vector<float> region,std::vector<string> axistype){
 
 	if(region.size()!=3 || axistype.size()!=1){
 		std::cout << "wrong input, please use region[6] and axistype[2] for input";
@@ -80,7 +80,7 @@ void plot_1D_different_observable_vec(std::vector<std::string> input_name,std::v
 	int colornum=0;
 	int stylenum=0;
     for(int i=0;i<filename.size();i++){
-    	TTree *MyLCTuple=(TTree*)in_file[i]->Get("datatrain");
+    	TTree *MyLCTuple=(TTree*)in_file[i]->Get(tree_name[i].c_str());
 
     	int nevent = MyLCTuple->GetEntries();
 		std::vector<float> *variable=0;

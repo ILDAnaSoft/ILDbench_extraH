@@ -1,5 +1,6 @@
 <marlin>
 	<execute>
+		<processor name="InitDD4hep"/>
 		<processor name="MyAdd4MomCovMatrixCharged"/>
 		<processor name="MyMCLevelClassify"/>
 		<processor name="MyMCLeptonTagging_HS"/>
@@ -10,8 +11,6 @@
 		<processor name="MyMCPhotonFinder_DS"/>
 
 		<processor name="MyIsolatedLeptonTaggingProcessor"/>
-		<processor name="MyFastJetProcessor"/>
-		<processor name="MyOverlay_Removal"/>
 		<processor name="MyPandoraIsolatedPhotonFinderProcessor"/>
 
 		<processor name="MyStrange_Photon"/>
@@ -30,6 +29,12 @@
 		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
 		<parameter name="AllowToModifyEvent" value="true" />
 	</global>
+
+	<processor name="InitDD4hep" type="InitializeDD4hep">
+		<!--InitializeDD4hep reads a compact xml file and initializes the DD4hep::LCDD object-->
+		<parameter name="DD4hepXMLFile" type="string"> $lcgeo_DIR/ILD/compact/ILD_l5_v02/ILD_l5_v02.xml </parameter>
+	</processor>
+
 
 	<processor name="MyAdd4MomCovMatrixCharged" type="Add4MomCovMatrixCharged">
 		<parameter name="InputPandoraPFOsCollection" type="string"> PandoraPFOs </parameter>
@@ -76,7 +81,7 @@
 		<parameter name="OutputCollectionLepton" type="string" lcioOutType="MCParticle">MCHS_Lepton</parameter>
 
 		<!--Input parameter-->
-		 <parameter name="lep_type" type="int"> 13  </parameter>
+		<parameter name="lep_type" type="int"> 13  </parameter>
 		<!--Maximum cos cone angle size-->
 		<parameter name="MinimalLeptonEnergy" type="float">5</parameter>
 		<parameter name="MaximalCosConeAngle" type="float">0.98 </parameter>
@@ -101,7 +106,7 @@
 		<parameter name="OutputCollectionLepton" type="string" lcioOutType="MCParticle">MCPS_Lepton</parameter>
 
 		<!--Input parameter-->
-		 <parameter name="lep_type" type="int"> 13  </parameter>
+		<parameter name="lep_type" type="int"> 13  </parameter>
 		<!--Maximum cos cone angle size-->
 		<parameter name="MinimalLeptonEnergy" type="float">5</parameter>
 		<parameter name="MaximalCosConeAngle" type="float">0.98 </parameter>
@@ -126,7 +131,7 @@
 		<parameter name="OutputCollectionLepton" type="string" lcioOutType="MCParticle">MCDS_Lepton</parameter>
 
 		<!--Input parameter-->
-		 <parameter name="lep_type" type="int"> 13  </parameter>
+		<parameter name="lep_type" type="int"> 13  </parameter>
 		<!--Maximum cos cone angle size-->
 		<parameter name="MinimalLeptonEnergy" type="float">5</parameter>
 		<parameter name="MaximalCosConeAngle" type="float">0.98 </parameter>
@@ -324,7 +329,7 @@
 		<parameter name="DirOfISOElectronWeights" type="string"> /afs/desy.de/user/y/ywang/Software/executable/MarlinReco/Analysis/IsolatedLeptonTagging/weights/yyxyev_yyxyyx_500.mILD_l5_o1_v02  </parameter>
 		<parameter name="DirOfISOMuonWeights" type="string"> /afs/desy.de/user/y/ywang/Software/executable/MarlinReco/Analysis/IsolatedLeptonTagging/weights/yyxylv_yyxyyx_woYoke_500.mILD_l5_o1_v02 </parameter>
 		<parameter name="InputPandoraPFOsCollection" type="string" lcioInType="ReconstructedParticle"> PandoraPFOs </parameter>
-  <!--Name of the Primary Vertex collection-->
+		<!--Name of the Primary Vertex collection-->
 		<parameter name="InputPrimaryVertexCollection" type="string" lcioInType="ReconstructedParticle">PrimaryVertex </parameter>
 		<parameter name="IsSelectingOneIsoLep" type="bool"> false </parameter>
 		<parameter name="MinPForElectron" type="float">5 </parameter>
@@ -343,55 +348,26 @@
 		<parameter name="Verbosity" type="string"> SILENT </parameter>
 	</processor>
 
-	<!-- Jet clustering here -->
-	<processor name="MyFastJetProcessor" type="FastJetProcessor">
-		<!--Using the FastJet library to identify jets-->
-		<!--a list of all reconstructed particles we are searching for jets in.-->
-		<parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PFOWoIsoleps </parameter>
-		<!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
-		<!-- <parameter name="Verbosity" type="string">DEBUG5 </parameter> -->
-		<!--The identified jets-->
-		<parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle"> FastJets </parameter>
-		<!--Store the list of particles that were clustered into jets in the recParticleOut collection-->
-		<parameter name="storeParticlesInJets" type="bool"> true </parameter>
-		<!--a list of all reconstructed particles used to make jets. If no value specified collection is not created-->
-		<parameter name="recParticleOut" type="string" lcioOutType="ReconstructedParticle"> PFOsFromFastJet </parameter>
-		<!--Selects the algorithm and its parameters. E.g. 'kt_algorithm 0.7' or 'ee_kt_algorithm'. For a full list of supported algorithms, see the logfile after execution.-->
-		<parameter name="algorithm" type="StringVec"> kt_algorithm 1.6</parameter>
-		<!--One of 'Inclusive <minPt>', 'InclusiveIterativeNJets <nrJets> <minE>', 'ExclusiveNJets <nrJets>', 'ExclusiveYCut <yCut>'. Note: not all modes are available for all algorithms.-->
-		<parameter name="clusteringMode" type="StringVec"> ExclusiveNJets 6 </parameter>
-		<!--The recombination scheme used when merging 2 particles. Usually there is no need to use anything else than 4-Vector addition: E_scheme-->
-		<parameter name="recombinationScheme" type="string"> E_scheme </parameter>
-	</processor>
-
-	<processor name="MyOverlay_Removal" type="Overlay_Removal">
-		<!--Input collection of Jet constituets -->
-		<parameter name="InputPFOCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs</parameter>
-		<!--Input collection of Jet constituets -->
-		<parameter name="PFOsFromClusteredJets" type="string" lcioInType="ReconstructedParticle">PFOsFromFastJet</parameter>
-		<!--Input collection for IsolatedLeptonTaggingProcessor-->
-		<parameter name="InputIsolepsCollection" type="string" lcioInType="ReconstructedParticle"> Isoleps </parameter>
-
-		<!--Output whether to write a collection-->
-		<parameter name="SwitchOutputCollection"> true </parameter>
-		<!--Output whether to write a collection-->
-		<parameter name="OutputPFOwoOverlayCollection" type="string" lcioInType="ReconstructedParticle">PFOWoOverlay</parameter>
-		<!--Output whether to write a collection-->
-		<parameter name="OutputPFOOverlayCollection" type="string" lcioInType="ReconstructedParticle">PFOOverlay</parameter>
-
-		<!--Output whether to write a root file -->
-		<parameter name="SwitchOutputRoot"> false  </parameter>
-		<!--Output root file name-->
-		<parameter name="RootFileName"> $PWD/../results/overlay.root </parameter>
-	</processor>
 
 	<processor name="MyPandoraIsolatedPhotonFinderProcessor" type="PandoraIsolatedPhotonFinder">
 		<!--Isolated Lepton Finder Processor-->
 
 		<!--Input collection of ReconstructedParticles-->
-		<parameter name="InputCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs</parameter>
+		<parameter name="InputMCsCollection" type="string" lcioInType="ReconstructedParticle">MCDS_Photon</parameter>
+		<parameter name="InputPFOCollection" type="string" lcioInType="ReconstructedParticle">PandoraPFOs</parameter>
+
+		<!--Input collection of Link from MC to Reco-->
+		<parameter name="InputMCTruthRecoLink" type="string" lcioInType="LCRELATION">MCTruthRecoLink</parameter>
+		<!--Input collection of ReconstructedParticles-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+
+
+
+		<parameter name="MVACut" type="float"> 0.70</parameter>
+		<parameter name="DirOfWeights" type="string"> /afs/desy.de/user/y/ywang/Code/ILDbench_extraH/PandoraIsolatedPhotonFinder/macro/dataset/weights </parameter>
+
 		<!--Output collection of whether need output collection-->
-		<parameter name="SwitchOutputCollection" type="bool"> true </parameter>
+		<parameter name="SwitchOutputCollection" type="bool">  true </parameter>
 		<!--Output collection of isolated photons-->
 		<parameter name="OutputCollectionIsolatedPhoton" type="string" lcioOutType="ReconstructedParticle">PFO_Photon</parameter>
 		<!--Output collection of without isolated photons-->
@@ -399,7 +375,7 @@
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
-		<parameter name="RootFileName"> ../results/output_PFO.root </parameter>
+		<parameter name="RootFileName"> ../results/higgs_e2_lr_application.root </parameter>
 
 		<!---------------------------->
 		<!-- Isolation requirements -->
@@ -432,13 +408,15 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPollarAngle" type="float">1.00 </parameter>
+		<parameter name="MaximalForwardPollarAngle" type="float">0.99 </parameter>
 
 
 		<!--Use Isolation Cone-->
 		<parameter name="UseIsolationCone" type="bool">true</parameter>
 		<!--Maximum cos cone angle size-->
-		<parameter name="MaximalCosConeAngle" type="float">0.90 </parameter>
+		<parameter name="MinimalCosConeAngle" type="float">0.98 </parameter>
+		<!--Maximum cos cone angle size-->
+		<parameter name="MaximalCosConeAngle" type="float">0.95 </parameter>
 		<!--photon energy over cone energy ratio should larger than this value-->
 		<parameter name="ConeEnergyRatio" type="float">0.95</parameter>
 	</processor>
@@ -447,7 +425,15 @@
 
 	<processor name="MyStrange_Lepton" type="Strange_Lepton">
 		<!--Input collection of MCParticles-->
-		<parameter name="InputMCsPhotonCollection" type="string" lcioInType="MCParticles">MCPS_Lepton</parameter>
+		<parameter name="InputMCsLeptonCollection" type="string" lcioInType="MCParticle">MCHS</parameter>
+
+		<!--Input collection of RCParticles-->
+		<parameter name="InputPFOLeptonCollection" type="string" lcioInType="ReconstructedParticles">Isoleps</parameter>
+
+		<!--Input collection of Link from Reco to MC-->
+		<parameter name="InputRecoMCTruthLink" type="string" lcioInType="LCRELATION">RecoMCTruthLink</parameter>
+		<!--Input collection of Link from MC to Reco-->
+		<parameter name="InputMCTruthRecoLink" type="string" lcioInType="LCRELATION">MCTruthRecoLink</parameter>
 
 		<!--Output collection-->
 		<!--Output collection of whether need output collection-->
@@ -458,14 +444,9 @@
 
 		<!--Output root file name-->
 		<parameter name="SwitchOutputRoot" type="bool"> false </parameter>
-		<parameter name="RootFileName"> $PWD/../results/2f_l_eL.pR_test.root </parameter>
+		<parameter name="RootFileName"> $PWD/../results/2f_l_eL.pR.root </parameter>
 
-
-		<!--Input parameters -->
-		<!--Minimum energy difference between mc photon and reconstructed constituents-->
-		<parameter name="MinEnergyDifferenceRario" type="float">0.05 </parameter>
 	</processor>
-
 
 	<processor name="MyStrange_Photon" type="Strange_Photon">
 		<!--Input collection of MCParticles-->
@@ -475,7 +456,7 @@
 		<!--Input collection of ReconstructedParticles-->
 		<parameter name="InputPFOPhotonCollection" type="string" lcioInType="ReconstructedParticle">PFO_Photon </parameter>
 		<!--Input collection of ReconstructedParticles-->
-		<parameter name="InputPFOWoPhotonCollection" type="string" lcioInType="ReconstructedParticle">PFO_WoPhoton </parameter>
+		<parameter name="InputPFOWoPhotonCollection" type="string" lcioInType="ReconstructedParticle">PFO_WoPhoton</parameter>
 
 
 		<!--Input collection of Link from MC to Reco-->
@@ -516,7 +497,7 @@
 
 		<!--Input parameters -->
 		<!--Minimum energy difference between mc photon and reconstructed constituents-->
-		<parameter name="MinEnergyDifferenceRario" type="float">0.05 </parameter>
+		<parameter name="MinEnergyDifferenceRario" type="float">0.02 </parameter>
 	</processor>
 
 
@@ -526,9 +507,6 @@
 		<!--Input basic collection of MC-->
 		<parameter name="MCParticleCollection" type="string" lcioInType="MCParticle">MCParticle</parameter>
 		<parameter name="InputAllPFOsCollection" type="string" lcioInType="ReconstructedParticle"> PandoraPFOs</parameter>
-
-		<!--Input collection from Overlay_Removal-->
-		<parameter name="InputPFOWoOverlayCollection" type="string" lcioInType="ReconstructedParticle"> PFOWoOverlay </parameter>
 
 		<!--Input collection from MCHS-->
 		<parameter name="InputMCHS_Collection" type="string" lcioInType="MCParticle">            MCHS</parameter>

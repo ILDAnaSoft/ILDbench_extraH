@@ -263,15 +263,44 @@ class MCLeptonTagging_Information_Single{
 
 class MCLeptonTagging_Information{
 	public:
-		MCLeptonTagging_Information_Single isolep;
+		MCLeptonTagging_Information_Single iso_leps;
+		MCLeptonTagging_Information_Single iso_woleps;
+		MCLeptonTagging_Information_Single iso_in_lep_cone;
+		MCLeptonTagging_Information_Single iso_non_lep_cone;
+
+		MCLeptonTagging_Information_Single new_leps;
+
+		//real means only count lepton coming from Z boson
+		MCLeptonTagging_Information_Single real_leps;
+		MCLeptonTagging_Information_Single real_woleps;
+		MCLeptonTagging_Information_Single real_in_lep_cone;
+		MCLeptonTagging_Information_Single real_non_lep_cone;
 
 		void Init(){
-			isolep           .Init();
+			iso_leps         .Init();
+			iso_woleps       .Init();
+			iso_in_lep_cone  .Init();
+			iso_non_lep_cone .Init();
+			new_leps         .Init();
+			real_leps         .Init();
+			real_woleps       .Init();
+			real_in_lep_cone  .Init();
+			real_non_lep_cone .Init();
 		}
 
 
 		void Fill_Data(TTree* tree){
-			isolep           .Fill_Data(tree,"isolep");
+			iso_leps           .Fill_Data(tree,"iso_leps");
+			iso_woleps         .Fill_Data(tree,"iso_woleps");
+			iso_in_lep_cone    .Fill_Data(tree,"iso_in_lep_cone");
+			iso_non_lep_cone   .Fill_Data(tree,"iso_non_lep_cone");
+
+			new_leps           .Fill_Data(tree,"new_leps");
+
+			real_leps           .Fill_Data(tree,"real_leps");
+			real_woleps         .Fill_Data(tree,"real_woleps");
+			real_in_lep_cone    .Fill_Data(tree,"real_in_lep_cone");
+			real_non_lep_cone   .Fill_Data(tree,"real_non_lep_cone");
 		}
 
 }; 

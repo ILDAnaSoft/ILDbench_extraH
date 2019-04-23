@@ -18,6 +18,7 @@
 #include <lcio.h>
 
 #include <EVENT/LCCollection.h>
+#include <EVENT/Vertex.h>
 #include <EVENT/LCParameters.h>
 #include <UTIL/LCRelationNavigator.h>
 
@@ -45,10 +46,17 @@ class Strange_Lepton : public Processor {
 
 		// input string 
 		std::string _inputMCsLeptonCollection;
-
+		std::string _inputPFOLeptonCollection;
 
 		// input collection 
 		LCCollection* _mcsLeptonCol;
+		LCCollection* _pfoLeptonCol;
+
+		// input relation 
+		std::string _mcpfoRelation;
+		std::string _pfomcRelation;
+		LCRelationNavigator* _navpfomc;
+		LCRelationNavigator* _navmcpfo;
 
 		// input para
 
@@ -73,9 +81,12 @@ class Strange_Lepton : public Processor {
 		/** Calculates the cone energy */
 
 		int analyseMCParticle( LCCollection* Input_MCsLeptonCol, 
+				LCCollection* Input_PFOLeptonCol,
 			Strange_Lepton_Output_Collection& NewPFOIsoLeptonCol, 
+			LCRelationNavigator* navMCToPFO,  LCRelationNavigator* navPFOToMC, 
 			Strange_Lepton_Information&info, Strange_Lepton_Function_Counter& counter) ;
 
+		bool Get_Best_Pair(std::vector<ReconstructedParticle*> in, std::vector<ReconstructedParticle*> &out) ;
 		//internal para 
 		int  _nEvt; 
 		int _nRun;

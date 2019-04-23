@@ -42,19 +42,20 @@ class MCLeptonTagging : public Processor {
 
 		/** Input collection */
 		std::string _inputMCsCollection;
+		LCCollection*    _MCsCol;
 
+
+		// output collection 
 		/** Output collection of isolated photons */
 		std::string _outputLeptonCollection;
 
 		/** Output collection (all input with isolated photons removed) */
 		std::string _outputMCsWoLeptonCollection;
 
-		LCCollection*    _MCsCol;
+		bool _output_switch_collection;
 		MCLeptonTagging_Output_Collection _outputLeptonCol;
 		MCLeptonTagging_Output_Collection _outputWoLeptonCol;
 
-		bool _output_switch_root;
-		bool _output_switch_collection;
 
 		// input para
 		int   _lep_type;
@@ -63,6 +64,7 @@ class MCLeptonTagging : public Processor {
     	float _ConeEnergyRatio;
 
 		// output
+		bool _output_switch_root;
 		std::string _rootfilename;
 		TFile*      _outfile;
 		TTree*      _datatrain;

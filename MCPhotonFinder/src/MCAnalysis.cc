@@ -56,7 +56,6 @@ bool MCPhotonFinder::IsIsoPhoton( MCParticle* mc, std::vector<MCParticle*> all )
 
 	std::vector<MCParticle*> incone=ToolSet::CMC::Get_InCone(mc, all, _maxCosConeAngle);
 	TLorentzVector sum_incone=ToolSet::CMC::Get_Sum_To_Lorentz(incone);
-
 	float cone_energy=sum_incone.E();
 	float mc_energy =mc->getEnergy();
 	float energy_ratio = mc_energy/cone_energy;

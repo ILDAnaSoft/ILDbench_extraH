@@ -55,9 +55,9 @@ if [[ ! -z ${pol_weight_aux} ]] ; then
 	file=`  ${DIR}/get_weight.sh  ${class_name} ${final_state} ${pol_in} file  ` 
 	root_name=${data_direction}/${class_name}_${final_state}_${polarization}.root 
 	file_test=` echo -e ${file/'\n'}`
-	sed -i  "580c\ <parameter name=\"RootFileName\"> ${root_name} </parameter>" ${xml_file}
-	sed -i  "579c\ <parameter name=\"hmass\" type=\"float\"> ${mass} </parameter>" ${xml_file}
-	sed -i  "25i\ ${file_test} " ${xml_file}
+	sed -i  "558c\ <parameter name=\"RootFileName\"> ${root_name} </parameter>" ${xml_file}
+	sed -i  "557c\ <parameter name=\"hmass\" type=\"float\"> ${mass} </parameter>" ${xml_file}
+	sed -i  "24i\ ${file_test} " ${xml_file}
 	echo "true"
 else
 	if [[ -f ${xml_file} ]] ; then

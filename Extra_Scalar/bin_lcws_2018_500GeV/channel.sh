@@ -76,7 +76,8 @@ echo ""
 echo "has setting all variables!"
 echo ""
 
-xml_direction=${DIR}/../xml_500_lcws
+xml_folder=xml_500_lcws_with_overlay
+xml_direction=${DIR}/../${xml_folder}
 	echo "begin to generate samples!"
 	echo ""
 	for (( k=0; k<$(( $class_name_length)); k++ ))
@@ -94,10 +95,10 @@ xml_direction=${DIR}/../xml_500_lcws
 				if [[ -a ${xml_direction}/${NewXml} ]] ; then
 					if [[ $info == "subjob" ]] ; then
 						echo "--------${class_name} ${final_state} ${pol} ${mass}  -------"
-						${HOME}/Code/HTCondor/run_it_on_condor.sh run.sh ${NewXml} 
+						${HOME}/Code/HTCondor/run_it_on_condor.sh run.sh ${xml_folder}/${NewXml} 
 						sleep 1
 					else
-						${DIR}/run.sh ${NewXml} 
+						${DIR}/run.sh ${xml_folder}/${NewXml} 
 						sleep 1
 					fi
 				fi

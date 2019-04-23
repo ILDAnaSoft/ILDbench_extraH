@@ -46,7 +46,7 @@ void plot_1D_vec(std::vector<std::string> input_name,std::string title_name,std:
 
 	int num=input_name.size();
 	for(int i=0;i<num;i++){
-		filename.push_back(input_name[i] +".root");
+		filename.push_back(input_name[i] );
 	}
 	std::vector<TFile*> in_file;
 	std::vector<TH1F*> hvariable;

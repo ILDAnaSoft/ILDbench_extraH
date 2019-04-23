@@ -135,6 +135,7 @@ void Strange_Photon::init() {
 
 	_nEvt = 0;
 	_nRun = 0;
+	_pnum =0;
 	_global_counter.Init();
 	_single_counter.Init();
 	_counter.Init();
@@ -172,9 +173,12 @@ void Strange_Photon::processEvent( LCEvent * evt ) {
 
 	Init(evt);
 
-	int JMC1 =analyseMCParticle_Conversion(_mcsPhotonCol, _mcsWoPhotonCol, _pfoPhotonCol, _pfoWoPhotonCol, _outputPFOLostEnergyPhotonCol, _outputPFOLostEnergyPhoton_CombinedCol, _outputMCsLostEnergyPhotonCol, _outputPFOPhoton_ConversionCol, _outputPFOWoPhoton_ConversionCol, _navmcpfo, _navpfomc,_info, _counter.MCs1);
+//	int JMC1 =analyseMCParticle_Conversion(_mcsPhotonCol, _mcsWoPhotonCol, _pfoPhotonCol, _pfoWoPhotonCol, _outputPFOLostEnergyPhotonCol, _outputPFOLostEnergyPhoton_CombinedCol, _outputMCsLostEnergyPhotonCol, _outputPFOPhoton_ConversionCol, _outputPFOWoPhoton_ConversionCol, _navmcpfo, _navpfomc,_info, _counter.MCs1);
 
-	int JMC2 =analyseMCParticle_OnlyPhoton(_mcsPhotonCol, _mcsWoPhotonCol, _pfoPhotonCol, _pfoWoPhotonCol, _outputPFOLostEnergyPhoton_RCOnlyCol, _outputPFOPhoton_OnlyCol, _outputPFOWoPhoton_OnlyCol, _navmcpfo, _navpfomc,_info, _counter.MCs2);
+//	int JMC2 =analyseMCParticle_OnlyPhoton(_mcsPhotonCol, _mcsWoPhotonCol, _pfoPhotonCol, _pfoWoPhotonCol, _outputPFOLostEnergyPhoton_RCOnlyCol, _outputPFOPhoton_OnlyCol, _outputPFOWoPhoton_OnlyCol, _navmcpfo, _navpfomc,_info, _counter.MCs2);
+
+	int JMC1=0, JMC2=0;
+  	int JMC3 =analyseMCParticle_Check(_mcsPhotonCol, _mcsWoPhotonCol, _pfoPhotonCol, _pfoWoPhotonCol, _navmcpfo, _navpfomc,_info, _counter.MCs1);
 
 	Counter(JMC1, JMC2,  evt);
 
@@ -236,6 +240,7 @@ void Strange_Photon::Init(LCEvent* evt) {
 
 	_navmcpfo = new LCRelationNavigator( evt->getCollection( _mcpfoRelation ) );
 	_navpfomc = new LCRelationNavigator( evt->getCollection( _pfomcRelation ) );
+	ToolSet::CMC::Set_Nav_From_MC_To_RC(_navmcpfo);
 
 	_outputPFOPhoton_ConversionCol           .Set_Collection_RCParticle();
 	_outputPFOWoPhoton_ConversionCol         .Set_Collection_RCParticle();
@@ -278,6 +283,7 @@ void Strange_Photon::end() {
 		_datatrain->Write();
 		_outfile->Close();
 	}
+	std::cout << "total photon number " << _pnum << std::endl;
 	_global_counter.Print();
 }
 

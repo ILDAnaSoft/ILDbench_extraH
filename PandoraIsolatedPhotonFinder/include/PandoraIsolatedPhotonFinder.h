@@ -102,13 +102,13 @@ class PandoraIsolatedPhotonFinder : public Processor {
 		int   _nEvt;
 		int   _nRun; 
 		int   _pnum; 
-
-		// internal function 
-		void  Init  (LCEvent* evt); 
-		void  Finish(LCEvent* evt);
-		void  Counter(bool JPFO, LCEvent* evt);
-
-
+ 
+ 		// internal function 
+ 		void  Init  (LCEvent* evt); 
+ 		void  Finish(LCEvent* evt);
+ 		void  Counter(bool JPFO, LCEvent* evt);
+ 
+ 
 		bool  analysePFOParticle( LCCollection* input_mc, LCCollection* input_pfo, PandoraIsolatedPhotonFinder_Output_Collection& outputPhoton, PandoraIsolatedPhotonFinder_Output_Collection& outputWoPhotonCol, PandoraIsolatedPhotonFinder_Information& info_isr, PandoraIsolatedPhotonFinder_Information& info_normal, PandoraIsolatedPhotonFinder_Function_Counter& counter);
 
 		/** Returns true if pfo is an isolated photon */
@@ -132,9 +132,46 @@ class PandoraIsolatedPhotonFinder : public Processor {
 
 		//MVA input
 		TMVA::Reader*     _reader;
-		Float_t _coneec{}, _coneen{}, _momentum{}, _coslarcon{}, _energyratio{};
-		Float_t _ratioecal{}, _ratiototcal{}, _nsigd0{}, _nsigz0{}, _yokeenergy{}, _totalcalenergy{};
 
+		float _small_input_energy       ;
+		float _small_num_incone_total   ;
+		float _small_num_incone_charge  ;
+	    float _small_num_incone_neutral ;
+		float _small_num_incone_photon  ;
+		float _small_num_incone_lepton  ;
+	    float _small_num_incone_hadron  ; 
+		float _small_cone_energy_total  ;
+		float _small_cone_energy_charge ;
+		float _small_cone_energy_neutral;
+		float _small_cone_energy_photon ;
+		float _small_cone_energy_lepton ;
+		float _small_cone_energy_hadron ;
+		float _small_cone_energy_ratio_total  ;
+		float _small_cone_energy_ratio_charge ;
+		float _small_cone_energy_ratio_neutral;
+		float _small_cone_energy_ratio_photon ;
+		float _small_cone_energy_ratio_lepton ;
+		float _small_cone_energy_ratio_hadron ;
+		float _small_cone_costheta            ;
+		float _large_num_incone_total   ;
+		float _large_num_incone_charge  ;
+		float _large_num_incone_neutral ;
+		float _large_num_incone_photon  ;
+		float _large_num_incone_lepton  ;
+		float _large_num_incone_hadron  ;
+		float _large_cone_energy_total  ;
+		float _large_cone_energy_charge ;
+		float _large_cone_energy_neutral;
+		float _large_cone_energy_photon ;
+		float _large_cone_energy_lepton ;
+		float _large_cone_energy_hadron ;
+		float _large_cone_energy_ratio_total  ;
+		float _large_cone_energy_ratio_charge ;
+		float _large_cone_energy_ratio_neutral;
+		float _large_cone_energy_ratio_photon ;
+		float _large_cone_energy_ratio_lepton ;
+		float _large_cone_energy_ratio_hadron ;
+		float _large_cone_costheta            ;
 } ;
 
 #endif

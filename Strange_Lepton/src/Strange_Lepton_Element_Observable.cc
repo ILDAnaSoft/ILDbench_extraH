@@ -23,8 +23,10 @@ void Strange_Lepton_Function_Counter::Fill_Data(TTree* tree, std::string prefix)
 }
 
 void Strange_Lepton_Observable::Fill_Data(TTree* tree, std::string prefix){
-	tree->Branch( (prefix+"_mc_minus_pfo_energy").c_str(), &visible_energy,(prefix+"_mc_minus_pfo_energy").c_str()  );
-	tree->Branch( (prefix+"_invisible_energy").c_str()   , &invisible_energy,(prefix+"_invisible_energy").c_str()   );
+	tree->Branch( (prefix+"_vtx").c_str(), &vtx, (prefix+"_vtx").c_str()  );
+	tree->Branch( (prefix+"_vty").c_str(), &vty, (prefix+"_vty").c_str()  );
+	tree->Branch( (prefix+"_vtz").c_str(), &vtz, (prefix+"_vtz").c_str()  );
+	tree->Branch( (prefix+"_chi2").c_str(), &chi2, (prefix+"_chi2").c_str()  );
 }
 
 void Strange_Lepton_Variable::Get_MCParticle_Information( MCParticle* input) {
@@ -171,17 +173,19 @@ void Strange_Lepton_Number::Fill_Data(TTree* tree, std::string prefix){
 }
 
 void Strange_Lepton_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
-	particle.Get_MCParticles_Information(input);
-	num.Get_MCParticles_Number(input);
+	HS.Get_MCParticles_Information(input);
+	num_HS.Get_MCParticles_Number(input);
 }
 
 void Strange_Lepton_Information_Single::Get_PFOParticles( std::vector<ReconstructedParticle*> input) {
 	particle.Get_PFOParticles_Information(input);
-	num.Get_PFOParticles_Number(input);
+	num_pfo.Get_PFOParticles_Number(input);
 }
 
 void Strange_Lepton_Information_Single::Fill_Data(TTree* tree, std::string prefix){
 	obv         .Fill_Data(tree,prefix+"_obv");
 	particle    .Fill_Data(tree,prefix+"_particle");
-	num.Fill_Data(tree,prefix+"_num");
+	HS          .Fill_Data(tree,prefix+"_HS");
+	num_pfo     .Fill_Data(tree,prefix+"_num_pfo");
+	num_HS      .Fill_Data(tree,prefix+"_num_HS");
 }

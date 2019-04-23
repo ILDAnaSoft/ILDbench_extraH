@@ -68,10 +68,10 @@ int Strange_Photon::analyseMCParticle_Conversion( LCCollection* Input_MCsPhotonC
 		std::vector<ReconstructedParticle*>  related_rc = _photon_chain.Get_Flat_RC()[i];
 		float                                pfo_energy = combined_rc->getEnergy();
 
-		if(std::abs(mc_energy-pfo_energy)/mc_energy>_minEnergyDifferenceRatio){
+		if(std::abs(pfo_energy-mc_energy)/pfo_energy>_minEnergyDifferenceRatio){
 			// store data
 			//info.photon.Get_MCParticles_Information(_photon_chain.Get_FromRC_MC()[i]);
-			info.mcs_lostenergy_photon.obv.visible_energy=mc_energy-pfo_energy;
+			info.mcs_lostenergy_photon.obv.visible_energy=pfo_energy-mc_energy;
 
 			//This includes all the particles coming from the mc photon, so it includes the constituents both in the input pfo photon and input pfo_wo_photon collections.
 			PFOLostEnergyPhoton+=related_rc;

@@ -119,10 +119,15 @@ class Strange_Photon : public Processor {
 				LCRelationNavigator* navMCToPFO, LCRelationNavigator* navPFOToMC,   
 				Strange_Photon_Information&info, Strange_Photon_Function_Counter& counter) ;
 
+		int analyseMCParticle_Check( LCCollection* Input_MCsPhotonCol, LCCollection* Input_MCsWoPhotonCol, 
+				LCCollection* Input_PFOPhotonCol, LCCollection* Input_PFOWoPhotonCol, 
+				LCRelationNavigator* navMCToPFO, LCRelationNavigator* navPFOToMC,   
+				Strange_Photon_Information&info, Strange_Photon_Function_Counter& counter) ;
 
 		//internal para 
 		int  _nEvt; 
 		int _nRun;
+		int _pnum;
 
 		Strange_Photon_Global_Counter       _global_counter;
 		Strange_Photon_Single_Counter       _single_counter;

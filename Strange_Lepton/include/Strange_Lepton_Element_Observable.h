@@ -134,16 +134,18 @@ class Strange_Lepton_Observable{
 		//************************
 		//inserted by process file
 		//************************
-		float visible_energy   ;        
-		float invisible_energy   ;        
+		float vtx;
+		float vty;
+		float vtz;
+		float chi2;        
 
 		void Init(){
-		    visible_energy =-10000.1;        
-		    invisible_energy =-10000.1;        
+			vtx  = -10000.1;
+			vty  = -10000.1;
+			vtz  = -10000.1;
+			chi2 = -10000.1;        
 		}
 
-		void Get_MCParticles_Information( std::vector<MCParticle*> input) ;
-		void Get_PFOParticles_Information( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 };
 
@@ -250,13 +252,17 @@ class Strange_Lepton_Information_Single{
 	public:
 		Strange_Lepton_Observable                      obv;
 		Strange_Lepton_Variable_Vec                    particle;
-		Strange_Lepton_Number                          num;
+		Strange_Lepton_Variable_Vec                    HS;
+		Strange_Lepton_Number                          num_pfo;
+		Strange_Lepton_Number                          num_HS;
 
 
 		void Init(){
 			obv         .Init();
 			particle    .Init();
-			num.Init();
+			HS          .Init();
+			num_pfo     .Init();
+			num_HS      .Init();
 		}
 
 
@@ -268,15 +274,21 @@ class Strange_Lepton_Information_Single{
 
 class Strange_Lepton_Information{
 	public:
-		Strange_Lepton_Information_Single pfo_lepton;
+		Strange_Lepton_Information_Single input_mcs_lepton;
+		Strange_Lepton_Information_Single input_pfo_lepton;
+		Strange_Lepton_Information_Single output_pfo_lepton;
 
 		void Init(){
-			pfo_lepton.Init();
+			input_mcs_lepton.Init();
+			input_pfo_lepton.Init();
+			output_pfo_lepton.Init();
 		}
 
 
 		void Fill_Data(TTree* tree){
-			pfo_lepton.Fill_Data(tree,"pfo_lepton");
+			input_mcs_lepton .Fill_Data(tree,"input_mcs_lepton" );
+			input_pfo_lepton .Fill_Data(tree,"input_pfo_lepton" );
+			output_pfo_lepton.Fill_Data(tree,"output_pfo_lepton");
 		}
 
 }; 
