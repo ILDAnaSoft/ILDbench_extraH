@@ -9,11 +9,11 @@ int MCLeptonTagging::analyseMCParticle( LCCollection* Input_MCCol,
 
 	std::vector<MCParticle*> MCs=ToolSet::CMC::Get_MCParticle(inputmcCol);
 	std::vector<MCParticle*> leps,woleps;
-	std::vector<ReconstructedParticle*> leps,woleps,in_lep_cone, in_non_iso_cone;
-	std::vector<ReconstructedParticle*> real_leps,real_woleps,real_in_lep_cone, real_in_non_iso_cone;
+	std::vector<ReconstructedParticle*> iso_leps,iso_woleps,iso_in_lep_cone, iso_non_iso_cone;
+	std::vector<ReconstructedParticle*> real_leps,real_woleps,real_in_lep_cone, real_non_iso_cone;
 
-	checkIsoLeptons(MCs,leps,in_lep_cone,in_non_iso_cone,woleps,info);
-	checkRealZDecayLeptons(MCs,real_leps,real_in_lep_cone,real_in_non_iso_cone,rea_woleps,info);
+	checkIsoLeptons(MCs,iso_leps,iso_in_lep_cone,iso_non_iso_cone,iso_woleps,info);
+	checkRealZDecayLeptons(MCs,real_leps,real_in_lep_cone,real_non_iso_cone,real_woleps,info);
 
 	counter.pass_all++;
 
