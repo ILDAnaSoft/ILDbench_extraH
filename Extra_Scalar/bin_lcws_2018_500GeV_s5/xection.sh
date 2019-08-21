@@ -120,10 +120,10 @@ do
 					polarization="eR.pR"
 				fi
 
-				pol_weight_aux=( ` eval " ${DIR}/get_weight.sh  ${class_name} ${final_state} ${pol_in} weight " ` )
+				pol_weight_aux=( ` eval " ${DIR}/get_weight.sh  ${class_name} ${final_state} ${pol_in}" ` )
 				if [[ ! -z ${pol_weight_aux} ]] ; then
 					root_name=${data_direction}/${class_name}_${final_state}_${polarization}.root 
-					echo "        ${root_name}  :  ${pol_weight_aux} "
+					echo "        ${root_name}  :  0"
 					exist=$(( exist + 1  ))
 				fi
 			done

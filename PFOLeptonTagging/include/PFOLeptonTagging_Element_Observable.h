@@ -144,13 +144,16 @@ class PFOLeptonTagging_Observable{
 		//inserted by process file
 		//************************
 		float  combined_inm                ;
+		float  sigma_inm                   ;
 		float  combined_pt                 ;
 		float  recoil_mass                 ;
+		float  sigma_recoil                ;
 
 		float  lepton_pair_costheta;
 		float  lepton_pair_costheta_pair;
 		float  lepton_pair_azimuth;
 		float  lepton_pair_azimuth_pair;
+
 
 		float vtx;
 		float vty;
@@ -159,8 +162,10 @@ class PFOLeptonTagging_Observable{
 
 		void Init(){
 			combined_inm             =-10000.1;
+			sigma_inm                =-10000.1;
 			combined_pt              =-10000.1;
-			recoil_mass         =-10000.1;
+			recoil_mass              =-10000.1;
+			sigma_recoil             =-10000.1;
 
 			lepton_pair_costheta     =-10000.1;
 			lepton_pair_costheta_pair=-10000.1;
@@ -296,7 +301,7 @@ class PFOLeptonTagging_Information_Single{
 		}
 
 
-		void Get_MCParticles ( std::vector<MCParticle*> input) ;
+		void Get_MCsParticles ( std::vector<MCParticle*> input) ;
 		void Get_PFOParticles( std::vector<ReconstructedParticle*> input) ;
 		void Fill_Data(TTree* tree, std::string prefix);
 

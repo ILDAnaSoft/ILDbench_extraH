@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
 
 # project name
- PROJECT( Strange_Lepton )
+PROJECT( Strange_Lepton )
 
 
 # project version
@@ -29,14 +29,16 @@ INCLUDE_DIRECTORIES( ${Marlin_INCLUDE_DIRS} )
 LINK_LIBRARIES( ${Marlin_LIBRARIES} )
 ADD_DEFINITIONS( ${Marlin_DEFINITIONS} )
 
- FIND_PACKAGE( ROOT REQUIRED )
- INCLUDE_DIRECTORIES( ${ROOT_INCLUDE_DIRS} )
- LINK_LIBRARIES( ${ROOT_LIBRARIES} )
- FIND_PACKAGE( LCIO REQUIRED )
- INCLUDE_DIRECTORIES( ${LCIO_INCLUDE_DIRS} )
- LINK_LIBRARIES( ${LCIO_LIBRARIES} )
- INCLUDE_DIRECTORIES( "/afs/desy.de/user/y/ywang/Code/Tool_Set/src" )
- LINK_LIBRARIES     ( "/afs/desy.de/user/y/ywang/Code/Tool_Set/libtoolset.so" )
+FIND_PACKAGE( ROOT REQUIRED )
+INCLUDE_DIRECTORIES( ${ROOT_INCLUDE_DIRS} )
+LINK_LIBRARIES( ${ROOT_LIBRARIES} )
+
+FIND_PACKAGE( LCIO REQUIRED )
+INCLUDE_DIRECTORIES( ${LCIO_INCLUDE_DIRS} )
+LINK_LIBRARIES( ${LCIO_LIBRARIES} )
+
+INCLUDE_DIRECTORIES( "/afs/desy.de/user/y/ywang/Code/Tool_Set/src" )
+LINK_LIBRARIES     ( "/afs/desy.de/user/y/ywang/Code/Tool_Set/libtoolset.so" )
 # optional package
 #FIND_PACKAGE( AIDA )
 #IF( AIDA_FOUND )
@@ -49,13 +51,24 @@ ADD_DEFINITIONS( ${Marlin_DEFINITIONS} )
 #ENDIF()
 
 
+#MarlinUtil thing
+FIND_PACKAGE( MarlinUtil 1.0 REQUIRED  ) # minimum required MarlinUtil version
+INCLUDE_DIRECTORIES( SYSTEM ${MarlinUtil_INCLUDE_DIRS}  )
+LINK_LIBRARIES( ${MarlinUtil_LIBRARIES}  )
+ADD_DEFINITIONS( ${MarlinUtil_DEFINITIONS}  )
+
+#LCFIVertex thing
+FIND_PACKAGE( LCFIVertex REQUIRED  )
+INCLUDE_DIRECTORIES( ${LCFIVertex_INCLUDE_DIRS}  )
+INCLUDE_DIRECTORIES( ${LCFIVertex_ROOT}/vertex_lcfi ${LCFIVertex_ROOT}/boost  )
+LINK_LIBRARIES( ${LCFIVertex_LIBRARIES}  )
 
 ### DOCUMENTATION ###########################################################
 
 OPTION( INSTALL_DOC "Set to OFF to skip build/install Documentation" OFF )
 
 IF( INSTALL_DOC AND EXISTS "${PROJECT_SOURCE_DIR}/doc/CMakeLists.txt" )
-    ADD_SUBDIRECTORY( ./doc )
+	ADD_SUBDIRECTORY( ./doc )
 ENDIF()
 
 
@@ -63,8 +76,8 @@ ENDIF()
 ### LIBRARY #################################################################
 
 # definitions to pass to the compiler
- ADD_DEFINITIONS( "-Wall -ansi -pedantic -std=gnu++11" )
- ADD_DEFINITIONS( "-Wno-long-long" )
+ADD_DEFINITIONS( "-Wall -ansi -pedantic -std=gnu++11" )
+ADD_DEFINITIONS( "-Wno-long-long" )
 
 # include directories
 INCLUDE_DIRECTORIES( ./include )

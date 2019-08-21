@@ -1,0 +1,9 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
+cd ${DIR}
+
+mass=$1
+echo "mass is " ${mass}
+#./Analyse_Root control_new_var_consistent_cut_1806/path_${mass}.dat 
+../Analyse_Root ../control_500_test/path_${mass}.dat 

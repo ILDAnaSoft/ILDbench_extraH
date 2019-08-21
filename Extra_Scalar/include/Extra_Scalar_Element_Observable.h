@@ -171,10 +171,12 @@ class Extra_Scalar_Observable{
 		//inserted by process file
 		//************************
 		float  kcut_zmass                 ;
+		float  sigma_inm                   ;
 		float  kcut_zpt                   ;
 		float  kcut_invis_costheta        ;
 		float  kcut_invis_e               ;
 		float  kcut_recoil_mass           ;
+		float  sigma_recoil                ;
 		float  kcut_vis_e                 ;
 		float  kcut_vis_all_e             ;
 
@@ -208,10 +210,12 @@ class Extra_Scalar_Observable{
 
 		void Init(){
 			kcut_zmass                =-10000.1;
+			sigma_inm                =-10000.1;
 			kcut_zpt                  =-10000.1;
 			kcut_invis_costheta       =-10000.1;
 			kcut_invis_e              =-10000.1;
 			kcut_recoil_mass          =-10000.1;
+			sigma_recoil             =-10000.1;
 			kcut_vis_e                =-10000.1;
 			kcut_vis_all_e            =-10000.1;
 

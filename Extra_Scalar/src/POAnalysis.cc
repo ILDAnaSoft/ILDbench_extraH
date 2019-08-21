@@ -16,7 +16,7 @@ int Extra_Scalar::analysePhysicalObject(LCCollection* Leps,LCCollection* ISR, LC
 	POCutPhoton(photon,info.num_photon,info.vari_photon_central,info.vari_photon_forward);
 
 	std::vector<ReconstructedParticle*> muon_choosed, muon_combined, womuon_combined;
-	bool Jrecoil=obvRecoil(muon,muon_choosed);
+	bool Jrecoil=POCut_Recoil(muon,muon_choosed);
 	std::vector<ReconstructedParticle*> muon_left=muon-muon_choosed;
 	std::vector<ReconstructedParticle*> other=muon_left+wo_muon_photon;
 

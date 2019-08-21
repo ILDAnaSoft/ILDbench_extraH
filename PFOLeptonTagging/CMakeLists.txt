@@ -49,6 +49,17 @@ ADD_DEFINITIONS( ${Marlin_DEFINITIONS} )
 #ENDIF()
 
 
+#MarlinUtil thing
+FIND_PACKAGE( MarlinUtil 1.0 REQUIRED  ) # minimum required MarlinUtil version
+INCLUDE_DIRECTORIES( SYSTEM ${MarlinUtil_INCLUDE_DIRS}  )
+LINK_LIBRARIES( ${MarlinUtil_LIBRARIES}  )
+ADD_DEFINITIONS( ${MarlinUtil_DEFINITIONS}  )
+
+#LCFIVertex thing
+FIND_PACKAGE( LCFIVertex REQUIRED  )
+INCLUDE_DIRECTORIES( ${LCFIVertex_INCLUDE_DIRS}  )
+INCLUDE_DIRECTORIES( ${LCFIVertex_ROOT}/vertex_lcfi ${LCFIVertex_ROOT}/boost  )
+LINK_LIBRARIES( ${LCFIVertex_LIBRARIES}  )
 
 ### DOCUMENTATION ###########################################################
 

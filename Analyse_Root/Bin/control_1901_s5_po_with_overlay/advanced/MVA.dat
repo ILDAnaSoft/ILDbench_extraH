@@ -1,0 +1,32 @@
+MVA :
+    method1 :
+         MVA_type            : "BDTG"
+         MVA_level           : 2 
+         MVA_weight          : 2
+         MVA_event_setting   : "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V"
+         MVA_method_setting  : "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=5"
+         MVA_factory_setting : "!V:!Silent:Color:!DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" 
+         MVA_file_num        : 13 
+         MVA_file_0          : nh 
+         MVA_file_1          : 4f_{zz}^{l} 
+         MVA_file_2          : 4f_{ww}^{l} 
+         MVA_file_3          : 4f_{ww}^{sl} 
+         MVA_file_4          : 4f_{zz}^{sl} 
+         MVA_file_5          : 4f_{zzww}^{l} 
+         MVA_file_6          : 4f_{szee}^{l} 
+         MVA_file_7          : 4f_{szee}^{sl} 
+         MVA_file_8          : 4f_{sznn}^{l} 
+         MVA_file_9          : 4f_{sznn}^{sl} 
+         MVA_file_10          : 4f_{szsw}^{l} 
+         MVA_file_11          : 4f_{sw}^{l} 
+         MVA_file_12          : 4f_{sw}^{sl} 
+    method2 :
+         MVA_type            : "BDTG"
+         MVA_level           : 2 
+         MVA_weight          : 2
+         MVA_event_setting   : "nTrain_Signal=0:nTrain_Background=0:SplitMode=Random:NormMode=NumEvents:!V"
+         MVA_method_setting  : "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=5"
+         MVA_factory_setting : "!V:!Silent:Color:!DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" 
+         MVA_file_num        : 2
+         MVA_file_0          : nh 
+         MVA_file_1          : 2f_{z}^{l} 

@@ -36,8 +36,10 @@ void PFOLeptonTagging_Observable::Get_Vertex_Information( VertexInfo &vv) {
 
 void PFOLeptonTagging_Observable::Fill_Data(TTree* tree, std::string prefix){
 	tree->Branch( (prefix+"_inm").c_str(), &combined_inm,(prefix+"_inm").c_str()  );
-	tree->Branch( (prefix+"_pt").c_str(), &combined_pt,(prefix+"_pt").c_str()  );
+	tree->Branch( (prefix+"_sigma_inm").c_str(), &sigma_inm,(prefix+"_sigma_inm").c_str()  );
+	tree->Branch( (prefix+"_sigma_pt").c_str(), &combined_pt,(prefix+"_pt").c_str()  );
 	tree->Branch( (prefix+"_recoil").c_str(), &recoil_mass,(prefix+"_recoil").c_str()  );
+	tree->Branch( (prefix+"_sigma_recoil").c_str(), &sigma_recoil,(prefix+"_sigma_recoil").c_str()  );
 	tree->Branch( (prefix+"_lepton_pair_costheta").c_str(), &lepton_pair_costheta,(prefix+"_lepton_pair_costheta").c_str()  );
 	tree->Branch( (prefix+"_lepton_pair_costheta_pair").c_str(), &lepton_pair_costheta_pair,(prefix+"_lepton_pair_costheta_pair").c_str()  );
 	tree->Branch( (prefix+"_lepton_pair_azimuth").c_str(), &lepton_pair_azimuth,(prefix+"_lepton_pair_azimuth").c_str()  );
@@ -183,15 +185,15 @@ void PFOLeptonTagging_Number::Get_PFOParticles_Number( std::vector<Reconstructed
 }
 
 void PFOLeptonTagging_Number::Fill_Data(TTree* tree, std::string prefix){
-	tree->Branch( (prefix+"num"            ).c_str()    , &num        ,(prefix+"num"            ).c_str()        );
-	tree->Branch( (prefix+"num_plus"       ).c_str()    , &num_plus   ,(prefix+"num_plus"       ).c_str()        );
-	tree->Branch( (prefix+"num_minus"      ).c_str()    , &num_minus  ,(prefix+"num_minus"      ).c_str()        );
-	tree->Branch( (prefix+"num_neutral"    ).c_str()    , &num_neutral,(prefix+"num_neutral"    ).c_str()        );
-	tree->Branch( (prefix+"num_central"    ).c_str()    , &num_central,(prefix+"num_central"    ).c_str()        );
-	tree->Branch( (prefix+"num_forward"    ).c_str()    , &num_forward,(prefix+"num_forward"    ).c_str()        );
+	tree->Branch( (prefix+"_num"            ).c_str()    , &num        ,(prefix+"_num"            ).c_str()        );
+	tree->Branch( (prefix+"_num_plus"       ).c_str()    , &num_plus   ,(prefix+"_num_plus"       ).c_str()        );
+	tree->Branch( (prefix+"_num_minus"      ).c_str()    , &num_minus  ,(prefix+"_num_minus"      ).c_str()        );
+	tree->Branch( (prefix+"_num_neutral"    ).c_str()    , &num_neutral,(prefix+"_num_neutral"    ).c_str()        );
+	tree->Branch( (prefix+"_num_central"    ).c_str()    , &num_central,(prefix+"_num_central"    ).c_str()        );
+	tree->Branch( (prefix+"_num_forward"    ).c_str()    , &num_forward,(prefix+"_num_forward"    ).c_str()        );
 }
 
-void PFOLeptonTagging_Information_Single::Get_MCParticles( std::vector<MCParticle*> input) {
+void PFOLeptonTagging_Information_Single::Get_MCsParticles( std::vector<MCParticle*> input) {
 	particle.Get_MCParticles_Information(input);
 	num.Get_MCParticles_Number(input);
 }

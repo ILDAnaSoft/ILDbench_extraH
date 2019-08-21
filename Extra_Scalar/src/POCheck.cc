@@ -4,6 +4,7 @@ bool Extra_Scalar::POCutDetail(std::vector<ReconstructedParticle*> &choosed_lep,
 
 	TLorentzVector pair=ToolSet::CRC::Get_Sum_To_Lorentz(choosed_lep);
 	obv.kcut_zmass     =pair.M();
+	obv.sigma_inm      = ToolSet::CRC::Get_Resolution_Invariant_Mass(choosed_lep[0],choosed_lep[1],91.187);
 	obv.kcut_zpt       =pair.Pt();
 
 	obv.lep_pair_costheta     =pair.CosTheta();
@@ -14,6 +15,7 @@ bool Extra_Scalar::POCutDetail(std::vector<ReconstructedParticle*> &choosed_lep,
 
 	TLorentzVector recoil=ToolSet::CRC::Get_InVisible_To_Lorentz(choosed_lep);
 	obv.kcut_recoil_mass=recoil.M();
+	obv.sigma_recoil= ToolSet::CRC::Get_Resolution_Invariant_Mass(choosed_lep[0],choosed_lep[1],_hmass);
 
 
 
@@ -200,6 +202,66 @@ bool Extra_Scalar::POCut_Global(std::vector<ReconstructedParticle*> &choosed_lep
 	obv.kcut_vis_e    =visible_womuon.E();
 	return(true);
 
+}
+
+
+bool Extra_Scalar::POCut_Recoil(std::vector<ReconstructedParticle*> in, std::vector<ReconstructedParticle*> &out) {
+	int num=in.size();
+	if(num<2){
+		return(false);
+	}
+
+	float chi_min= 1000000.0;
+	float chi_tmp=chi_min;
+	float recoil_mass_final = 999.99;
+	float pair_mass_final = 999.99;
+
+	int choosei=1000,choosej=1000;
+	for(int i=0;i<num-1;i++){
+		for(int j=1;j<num;j++){
+			std::vector<ReconstructedParticle*> test_pair;
+			test_pair.push_back(in[i]);
+			test_pair.push_back(in[j]);
+			TLorentzVector pair_mom = ToolSet::CRC::Get_Sum_To_Lorentz(test_pair);
+			TLorentzVector recoil_mom = ToolSet::CRC::Get_InVisible_To_Lorentz(test_pair);
+			float  recoil_mass=recoil_mom.M();
+			float  pair_mass=pair_mom.M();
+			if(std::abs(pair_mass-91.187)>40.0){
+				continue;
+			}
+			if((in[i]->getCharge())*(in[j]->getCharge())>0){//Should be different sign lepton
+				continue;
+			}
+			float  sigma_pair=1;
+			float  sigma_recoil=1;
+		
+			sigma_pair  = ToolSet::CRC::Get_Resolution_Invariant_Mass(in[i],in[j],91.187);
+			sigma_recoil= ToolSet::CRC::Get_Resolution_Invariant_Mass(in[i],in[j],_hmass);
+
+			chi_tmp = std::pow((pair_mass-91.187)/sigma_pair,2)+std::pow((recoil_mass-_hmass)/sigma_recoil,2);
+
+			if(chi_tmp<chi_min){
+				chi_min = chi_tmp;
+				choosei=i;
+				choosej=j;
+				recoil_mass_final=recoil_mass;
+				pair_mass_final=pair_mass;
+			}
+		}
+	}
+
+	if(choosei!=1000 && choosej!=1000){
+		if(in[choosei]->getCharge()>0){
+			out.push_back(in[choosei]);
+			out.push_back(in[choosej]);
+		}
+		else{
+			out.push_back(in[choosej]);
+			out.push_back(in[choosei]);
+		}
+		return(true);
+	}
+	return(false);
 }
 
 

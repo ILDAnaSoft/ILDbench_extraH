@@ -15,7 +15,7 @@
 			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_4.slcio
 			/pnfs/desy.de/ilc/prod/ilc/mc-opt-3/ild/dst-merged/500-TDR_ws/2f_Z_leptonic/ILD_l5_o1_v02/v02-00-01/rv02-00-01.sv02-00-01.mILD_l5_o1_v02.E500-TDR_ws.I250106.P2f_z_l.eL.pR.n001.d_dstm_10255_5.slcio
 		</parameter>
-		<parameter name="MaxRecordNumber" value="1000" />  
+		<parameter name="MaxRecordNumber" value="10000" />  
 		<parameter name="SkipNEvents" value="0" />  
 		<parameter name="SupressCheck" value="false" />  
 		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING</parameter>
@@ -62,7 +62,7 @@
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
-		<parameter name="RootFileName"> ../results/output_HS.root </parameter>
+		<parameter name="RootFileName"> ../results/2f_z_l_lr_HS.root </parameter>
 
 		<!---------------------------->
 		<!-- Isolation requirements -->
@@ -95,13 +95,13 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPolarAngle" type="float">0.98 </parameter>
+		<parameter name="MaximalForwardPolarAngle" type="float">0.99 </parameter>
 
 
 		<!--Use Isolation Cone-->
 		<parameter name="UseIsolationCone" type="bool">false</parameter>
 		<!--Maximum cos cone angle size-->
-		<parameter name="MaximalCosConeAngle" type="float">0.95 </parameter>
+		<parameter name="MaximalCosConeAngle" type="float">0.90 </parameter>
 		<!--photon energy over cone energy ratio should larger than this value-->
 		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
 	</processor>
@@ -120,7 +120,7 @@
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
-		<parameter name="RootFileName"> ../results/output_PS.root </parameter>
+		<parameter name="RootFileName"> ../results/2f_z_l_lr_PS.root </parameter>
 
 		<!---------------------------->
 		<!-- Isolation requirements -->
@@ -153,13 +153,13 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPolarAngle" type="float">0.98 </parameter>
+		<parameter name="MaximalForwardPolarAngle" type="float">0.99 </parameter>
 
 
 		<!--Use Isolation Cone-->
 		<parameter name="UseIsolationCone" type="bool">false</parameter>
 		<!--Maximum cos cone angle size-->
-		<parameter name="MaximalCosConeAngle" type="float">0.95 </parameter>
+		<parameter name="MaximalCosConeAngle" type="float">0.90 </parameter>
 		<!--photon energy over cone energy ratio should larger than this value-->
 		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
 	</processor>
@@ -178,7 +178,7 @@
 
 		<!--Output root file-->
 		<parameter name="SwitchOutputRoot" type="bool"> true </parameter>
-		<parameter name="RootFileName"> ../results/output_DS.root </parameter>
+		<parameter name="RootFileName"> ../results/2f_z_l_lr_DS.root </parameter>
 
 		<!---------------------------->
 		<!-- Isolation requirements -->
@@ -211,13 +211,13 @@
 		<!--Minimum energy cut for isolation requirement-->
 		<parameter name="MinimalForwardPolarAngle" type="float">0.95 </parameter>
 		<!--Maximum energy cut for isolation requirement-->
-		<parameter name="MaximalForwardPolarAngle" type="float">0.98 </parameter>
+		<parameter name="MaximalForwardPolarAngle" type="float">0.99 </parameter>
 
 
 		<!--Use Isolation Cone-->
 		<parameter name="UseIsolationCone" type="bool">false</parameter>
 		<!--Maximum cos cone angle size-->
-		<parameter name="MaximalCosConeAngle" type="float">0.95 </parameter>
+		<parameter name="MaximalCosConeAngle" type="float">0.90 </parameter>
 		<!--photon energy over cone energy ratio should larger than this value-->
 		<parameter name="ConeEnergyRatio" type="float">0.95 </parameter>
 	</processor>

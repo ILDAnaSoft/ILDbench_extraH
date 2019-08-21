@@ -238,6 +238,7 @@ void Extra_Scalar::init() {
 	_single_counter.Init();
 	_counter.Init();
 
+	std::cout << "begin run event analysis" << std::endl; 
 }
 
 void Extra_Scalar::processRunHeader( LCRunHeader* run ) { 
@@ -567,7 +568,6 @@ void Extra_Scalar::end(){
 void Extra_Scalar::makeNTuple() {
 
 	//Output root file
-	std::cout << _rootfilename << std::endl;
 	_otfile = new TFile( _rootfilename.c_str() , "RECREATE" );
 
 	//Define root tree

@@ -2,7 +2,8 @@
 #include "CMC.h"
 using namespace lcio;
 
-int PFOLeptonTagging::analysePOParticle( LCCollection* Input_PFOLeptonCol, LCCollection* Input_PFOWoLeptonCol, 
+int PFOLeptonTagging::analysePOParticle( LCCollection* Input_PFOLeptonCol,  LCCollection* Input_PFOWoLeptonCol, 
+		LCCollection* Input_MCsCol,
 		PFOLeptonTagging_Output_Collection &NewPFOIsoLeptonCol,
 		PFOLeptonTagging_Output_Collection &NewPFOWoIsoLeptonCol, 
 		PFOLeptonTagging_Information &info, PFOLeptonTagging_Function_Counter& counter){
@@ -10,11 +11,14 @@ int PFOLeptonTagging::analysePOParticle( LCCollection* Input_PFOLeptonCol, LCCol
 	std::vector<ReconstructedParticle*> input_lepton =ToolSet::CRC::Get_POParticle(Input_PFOLeptonCol);
 	std::vector<ReconstructedParticle*> input_other  =ToolSet::CRC::Get_POParticle(Input_PFOWoLeptonCol);
 	std::vector<ReconstructedParticle*> choosed_leps, others;
+	std::vector<MCParticle*>            input_mclepton=ToolSet::CMC::Get_MCParticle(Input_MCsCol);
 
+	if(input_mclepton.size()>=2){
+		lepnum++;
+	}
 
 	POCut_Detail(input_lepton, input_other, choosed_leps, others, info);
-
-	counter.pass_all++;
+	MCCut_Detail(input_mclepton, info);
 
 
 	//add into output collections
@@ -67,6 +71,8 @@ bool PFOLeptonTagging::POCut_Muon( std::vector<ReconstructedParticle*> &muon, PF
 	int numt = muon.size();
 	int nump = muonplus .size();
 	int numm = muonminus.size();
+	info.Get_PFOParticles(muon);
+
 	if(numt<2) {
 		return(false);
 	}
@@ -76,8 +82,6 @@ bool PFOLeptonTagging::POCut_Muon( std::vector<ReconstructedParticle*> &muon, PF
 	if(numm<1) {
 		return(false);
 	}
-
-	info.Get_PFOParticles(muon);
 
 	return(true);
 }
@@ -178,11 +182,10 @@ bool PFOLeptonTagging::POCut_Observable(std::vector<ReconstructedParticle*> &cho
 	TLorentzVector recoil=ToolSet::CRC::Get_InVisible_To_Lorentz(choosed_leps);
 
 	obv.combined_inm=pair.M();
+	obv.sigma_inm = ToolSet::CRC::Get_Resolution_Invariant_Mass(choosed_leps[0],choosed_leps[1],91.187);
 	obv.combined_pt=pair.Pt();
 	obv.recoil_mass=recoil.M();
-	if(obv.recoil_mass<0){
-		ToolSet::ShowMessage(1,"recoil",recoil);
-	}
+	obv.sigma_recoil= ToolSet::CRC::Get_Resolution_Invariant_Mass(choosed_leps[0],choosed_leps[1],_hmass);
 
 	obv.lepton_pair_costheta     =pair.CosTheta();
 	obv.lepton_pair_costheta_pair=ToolSet::CMC::Cal_CosTheta(choosed_leps[0],choosed_leps[1]);
@@ -193,4 +196,35 @@ bool PFOLeptonTagging::POCut_Observable(std::vector<ReconstructedParticle*> &cho
 	return(true);
 }
 
+
+bool PFOLeptonTagging::MCCut_Detail(std::vector<MCParticle*> &input_leps, PFOLeptonTagging_Information &info){
+
+	std::vector<MCParticle*> muonplus =ToolSet::CMC::Get_MCParticleType(input_leps, 13);
+	std::vector<MCParticle*> muonminus=ToolSet::CMC::Get_MCParticleType(input_leps,-13);
+	int numt = input_leps.size();
+	int nump = muonplus .size();
+	int numm = muonminus.size();
+	info.mcs_input_lepton.Get_MCsParticles(muon_pair);
+	if(numt<2) {
+		return(false);
+	}
+	if(nump<1) {
+		return(false);
+	}
+	if(numm<1) {
+		return(false);
+	}
+
+	std::vector<MCParticle*> muon_pair;
+	muon_pair.push_back(muonplus[0]);
+	muon_pair.push_back(muonminus[0]);
+	TLorentzVector pair=ToolSet::CMC::Get_Sum_To_Lorentz(muon_pair);
+	TLorentzVector recoil=ToolSet::CMC::Get_InVisible_To_Lorentz(muon_pair);
+
+	info.mcs_input_lepton.obv.combined_inm=pair.M();
+	info.mcs_input_lepton.obv.combined_pt=pair.Pt();
+	info.mcs_input_lepton.obv.recoil_mass=recoil.M();
+
+	return(true);
+}
 

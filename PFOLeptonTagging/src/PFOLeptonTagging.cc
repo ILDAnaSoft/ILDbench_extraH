@@ -21,6 +21,12 @@ PFOLeptonTagging::PFOLeptonTagging()
 				_inputPFOWoLeptonCollection,
 				std::string("PFO_Wo_Lepton") );
 
+		registerInputCollection( LCIO::MCPARTICLE,
+				"InputMCsLeptonCollection", 
+				"Name of the MCs lepton collection",
+				_inputMCsLeptonCollection,
+				std::string("MCParticles") );
+
 		//output collection
 		registerProcessorParameter( "SwitchOutputCollection",
 				"whether to write a Marlin collection for further Marlin",
@@ -89,6 +95,7 @@ void PFOLeptonTagging::init() {
 
 	ToolSet::CMC::Set_Collider_Energy(_center_energy);
 
+	lepnum=0;
 }
 
 void PFOLeptonTagging::processRunHeader( LCRunHeader* run) { 
@@ -99,7 +106,7 @@ void PFOLeptonTagging::processEvent( LCEvent * evt ) {
 
 	Init(evt);
 
-	int JPFO=analysePOParticle(_PFOLeptonCol,_PFOWoLeptonCol,_outputPFOLeptonCol,_outputPFOWoLeptonCol,_info, _counter.PFO);
+	int JPFO=analysePOParticle(_PFOLeptonCol,_PFOWoLeptonCol,_MCsLeptonCol,_outputPFOLeptonCol,_outputPFOWoLeptonCol,_info, _counter.PFO);
 
 	Counter(JPFO,  evt);
 
@@ -148,6 +155,7 @@ void PFOLeptonTagging::Init(LCEvent* evt) {
 	// PFO loop
 	_PFOLeptonCol   = evt->getCollection( _inputPFOLeptonCollection  ) ;
 	_PFOWoLeptonCol = evt->getCollection( _inputPFOWoLeptonCollection) ;
+	_MCsLeptonCol   = evt->getCollection( _inputMCsLeptonCollection) ;
 
 	_outputPFOLeptonCol  .Set_Collection_RCParticle();
 	_outputPFOWoLeptonCol.Set_Collection_RCParticle();
@@ -177,6 +185,7 @@ void PFOLeptonTagging::end() {
 		_outfile->Close();
 	}
 	_global_counter.Print();
+	std::cout << "tot lepnum is " <<lepnum << std::endl;
 }
 
 

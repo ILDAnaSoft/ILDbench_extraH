@@ -48,11 +48,11 @@ else
 	fi
 fi
 
-pol_weight_aux=( ` eval " ${DIR}/get_weight.sh  ${class_name} ${final_state} ${pol_in} weight " ` )
+pol_weight_aux=( ` eval " ${DIR}/get_weight.sh  ${class_name} ${final_state} ${pol_in} " ` )
 
 if [[ ! -z ${pol_weight_aux} ]] ; then
 	cp ${template_file} ${xml_file}
-	file=`  ${DIR}/get_weight.sh  ${class_name} ${final_state} ${pol_in} file  ` 
+	file=`  ${DIR}/get_weight.sh  ${class_name} ${final_state} ${pol_in} ` 
 	root_name=${data_direction}/${class_name}_${final_state}_${polarization}.root 
 	file_test=` echo -e ${file/'\n'}`
 	sed -i  "558c\ <parameter name=\"RootFileName\"> ${root_name} </parameter>" ${xml_file}

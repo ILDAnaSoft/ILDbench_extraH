@@ -46,15 +46,18 @@ class PFOLeptonTagging : public Processor {
 		// input string 
 		std::string _inputPFOLeptonCollection;
 		std::string _inputPFOWoLeptonCollection;
+		std::string _inputMCsLeptonCollection;
 
 
 		// input collection 
 		LCCollection* _PFOLeptonCol;
 		LCCollection* _PFOWoLeptonCol;
+		LCCollection* _MCsLeptonCol;
 
 		// input para
 		float _center_energy;
 		float _hmass;
+		long long int lepnum;
 
 
 		// output collection 
@@ -80,6 +83,7 @@ class PFOLeptonTagging : public Processor {
 		/** Calculates the cone energy */
 
 		int analysePOParticle( LCCollection* Input_PFOLeptonCol, LCCollection* Input_PFOWoLeptonCol, 
+				LCCollection* Input_MCsCol,
 				PFOLeptonTagging_Output_Collection& NewPFOIsoLeptonCol, 
 				PFOLeptonTagging_Output_Collection& NewPFOWoIsoLeptonCol, 
 				PFOLeptonTagging_Information&info, PFOLeptonTagging_Function_Counter& counter) ;
@@ -90,6 +94,7 @@ class PFOLeptonTagging : public Processor {
 		bool POCut_MuonPair  ( std::vector<ReconstructedParticle*> &muon, PFOLeptonTagging_Observable& obv) ;
 		bool POCut_Recoil    (std::vector<ReconstructedParticle*> in, std::vector<ReconstructedParticle*> &out) ;
 		bool POCut_Observable(std::vector<ReconstructedParticle*> &choosed_leps,  PFOLeptonTagging_Observable &obv);
+		bool MCCut_Detail    (std::vector<MCParticle*> &input_leps, PFOLeptonTagging_Information &info);
 
 		//internal para 
 		int  _nEvt; 

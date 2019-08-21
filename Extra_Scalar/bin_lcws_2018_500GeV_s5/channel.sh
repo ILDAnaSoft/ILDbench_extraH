@@ -95,10 +95,10 @@ xml_direction=${DIR}/../${xml_folder}
 					if [[ $info == "subjob" ]] ; then
 						echo "--------${class_name} ${final_state} ${pol} ${mass}  -------"
 						${HOME}/Code/HTCondor/run_it_on_condor.sh run.sh ${xml_folder}/${NewXml} 
-						sleep 1
+						sleep 0.05
 					else
 						${DIR}/run.sh ${xml_folder}/${NewXml} 
-						sleep 1
+						sleep 0.05
 					fi
 				fi
 				echo ""

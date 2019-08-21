@@ -80,6 +80,7 @@ class Extra_Scalar : public Processor{
 
 		bool MCCut_Muon(std::vector<MCParticle*> &choosed_lep,  Extra_Scalar_Observable &obv);
 		bool POCut_Muon(std::vector<ReconstructedParticle*> &choosed_lep,  Extra_Scalar_Observable &obv);
+		bool POCut_Recoil    (std::vector<ReconstructedParticle*> in, std::vector<ReconstructedParticle*> &out) ;
 
 		bool POCut_Global(std::vector<ReconstructedParticle*> &choosed_lep, std::vector<ReconstructedParticle*> &photon, std::vector<ReconstructedParticle*> &PFOWoMuonPhoton,  Extra_Scalar_Observable &obv);
 		bool POCut_Global(std::vector<MCParticle*> &choosed_lep, std::vector<ReconstructedParticle*> &photon, std::vector<ReconstructedParticle*> &PFOWoMuonPhoton,  Extra_Scalar_Observable &obv);

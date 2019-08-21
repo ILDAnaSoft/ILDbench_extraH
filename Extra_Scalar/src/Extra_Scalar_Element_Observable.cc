@@ -42,10 +42,12 @@ void Extra_Scalar_Observable::Get_Vertex_Information( VertexInfo &vv) {
 
 void Extra_Scalar_Observable::Fill_Data(TTree* tree, std::string prefix){
 	tree->Branch( (prefix+"kcut_zmass"               ).c_str()    , &kcut_zmass                      ,(prefix+"kcut_zmass"               ).c_str()        );
+	tree->Branch( (prefix+"sigma_inm"                ).c_str()    , &sigma_inm                       ,(prefix+"sigma_inm"                ).c_str()        );
 	tree->Branch( (prefix+"kcut_zpt"                 ).c_str()    , &kcut_zpt                        ,(prefix+"kcut_zpt"                 ).c_str()        );
 	tree->Branch( (prefix+"kcut_invis_costheta"      ).c_str()    , &kcut_invis_costheta             ,(prefix+"kcut_invis_costheta"      ).c_str()        );
 	tree->Branch( (prefix+"kcut_invis_e"             ).c_str()    , &kcut_invis_e                    ,(prefix+"kcut_invis_e"             ).c_str()        );
 	tree->Branch( (prefix+"kcut_recoil_mass"         ).c_str()    , &kcut_recoil_mass                ,(prefix+"kcut_recoil_mass"         ).c_str()        );
+	tree->Branch( (prefix+"sigma_recoil"             ).c_str()    , &sigma_recoil                    ,(prefix+"sigma_recoil"             ).c_str()        );
 	tree->Branch( (prefix+"kcut_vis_e"               ).c_str()    , &kcut_vis_e                      ,(prefix+"kcut_vis_e"               ).c_str()        );
 	tree->Branch( (prefix+"kcut_vis_all_e"           ).c_str()    , &kcut_vis_all_e                  ,(prefix+"kcut_vis_all_e"           ).c_str()        );
 

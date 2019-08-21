@@ -1,0 +1,9 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
+cd ${DIR}
+cd ../
+
+mass=$1
+echo "mass is " ${mass}
+./BASDA Bin/control_1907_l5_diff_bkg_mass/path_${mass}.dat 
